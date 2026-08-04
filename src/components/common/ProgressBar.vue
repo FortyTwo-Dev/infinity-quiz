@@ -28,7 +28,7 @@ const percentage = computed(() => {
       :style="{
         width: `${percentage}%`,
         height: '100%',
-        backgroundColor: props.color,
+        backgroundColor: props.color || 'var(--color-primary)',
         borderRadius: props.height,
       }"
     />
@@ -39,11 +39,11 @@ const percentage = computed(() => {
 .progress-container {
   width: 100%;
   background-color: v-bind(backgroundColor);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .progress-bar {
-  transition: width 0.3s ease;
+  transition: width var(--transition-normal);
 }
 </style>

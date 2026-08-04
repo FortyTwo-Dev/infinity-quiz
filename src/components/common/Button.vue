@@ -46,36 +46,36 @@ function handleClick(event: MouseEvent) {
   align-items: center;
   justify-content: center;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   font-family: inherit;
   font-size: 1rem;
-  transition: all 0.2s ease;
+  transition: all var(--transition-normal);
 }
 
 /* Variants */
 .btn--primary {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: var(--color-primary-hover);
 }
 
 .btn--secondary {
-  background-color: white;
-  border: 1px solid #ccc;
-  color: #333;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background-color: #f0f0f0;
+  background-color: var(--color-border-light);
 }
 
 .btn--text {
   background-color: transparent;
-  color: #007bff;
+  color: var(--color-primary);
   padding: 0;
 }
 
@@ -85,17 +85,17 @@ function handleClick(event: MouseEvent) {
 
 /* Sizes */
 .btn--small {
-  padding: 6px 12px;
+  padding: var(--space-sm) var(--space-md);
   font-size: 0.875rem;
 }
 
 .btn--medium {
-  padding: 12px 24px;
+  padding: var(--space-md) var(--space-lg);
   font-size: 1rem;
 }
 
 .btn--large {
-  padding: 16px 32px;
+  padding: var(--space-lg) var(--space-xl);
   font-size: 1.125rem;
 }
 

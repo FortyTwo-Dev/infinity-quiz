@@ -44,101 +44,98 @@ const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback
 .results-view {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--space-md);
   text-align: center;
 }
 
 .results-view h1 {
-  color: #333;
-  margin-bottom: 20px;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
 }
 
 .results-container {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 30px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
 }
 
 .results-container h2 {
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
 }
 
 .feedback {
   font-size: 1.5rem;
   font-weight: bold;
-  margin: 20px 0;
+  margin: var(--space-md) 0;
 }
 
-.feedback.excellent {
-  color: #28a745;
-}
-
+.feedback.excellent,
 .feedback.good {
-  color: #28a745;
+  color: var(--color-success);
 }
 
 .feedback.average {
-  color: #ffc107;
+  color: var(--color-warning);
 }
 
 .feedback.poor {
-  color: #dc3545;
+  color: var(--color-danger);
 }
 
 .score-display {
-  margin: 30px 0;
+  margin: var(--space-xl) 0;
 }
 
 .score-circle {
   width: 150px;
   height: 150px;
-  border: 8px solid #007bff;
-  border-radius: 50%;
+  border: 8px solid var(--color-primary);
+  border-radius: var(--radius-full);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0 auto 20px;
-  background: white;
+  margin: 0 auto var(--space-md);
+  background: var(--color-bg-card);
 }
 
 .score-value {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #007bff;
+  color: var(--color-primary);
   line-height: 1;
 }
 
 .score-max {
   font-size: 1rem;
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .percentage {
   font-size: 2rem;
   font-weight: bold;
-  color: #007bff;
+  color: var(--color-primary);
 }
 
 .summary {
-  background: white;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 30px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-xl);
 }
 
 .summary p {
   margin: 0;
-  color: #333;
+  color: var(--color-text);
   font-size: 1.1rem;
 }
 
 .actions {
   display: flex;
-  gap: 15px;
+  gap: var(--space-md);
   justify-content: center;
 }
 
@@ -148,11 +145,11 @@ const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback
 
 .no-results {
   text-align: center;
-  padding: 40px;
-  color: #666;
+  padding: var(--space-xl);
+  color: var(--color-text-secondary);
 }
 
 .no-results > * {
-  margin-top: 20px;
+  margin-top: var(--space-md);
 }
 </style>

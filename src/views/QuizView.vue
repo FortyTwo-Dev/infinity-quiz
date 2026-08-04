@@ -69,48 +69,48 @@ const {
 .quiz-view {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--space-md);
 }
 
 .quiz-header {
-  margin-bottom: 30px;
+  margin-bottom: var(--space-xl);
   text-align: center;
   position: relative;
 }
 
 .back-button {
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: var(--space-md);
+  top: var(--space-md);
 }
 
 .quiz-header h1 {
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
 }
 
 .quiz-header p {
-  color: #666;
-  margin-bottom: 20px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
 }
 
 .progress-text {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
 .question-container {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 30px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
   text-align: center;
 }
 
 .question-container h2 {
   margin-top: 0;
-  margin-bottom: 30px;
-  color: #333;
+  margin-bottom: var(--space-xl);
+  color: var(--color-text);
   font-size: 1.3rem;
   min-height: 60px;
 }
@@ -118,33 +118,33 @@ const {
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
 }
 
 .option-button {
   width: 100%;
   text-align: left;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
 }
 
 .option-button:hover {
-  border-color: #007bff;
-  background: #f0f7ff;
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
 }
 
 .option-button--selected {
-  border-color: #007bff;
-  background: #e3f2fd;
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
   font-weight: bold;
 }
 
 .navigation {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .navigation > * {
@@ -153,7 +153,7 @@ const {
 
 .no-question {
   text-align: center;
-  padding: 40px;
-  color: #666;
+  padding: var(--space-xl);
+  color: var(--color-text-secondary);
 }
 </style>
