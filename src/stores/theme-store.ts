@@ -51,7 +51,7 @@ export const useThemeStore = defineStore('theme', () => {
 
     const theme = currentTheme.value
     styleElement.value.textContent = generateThemeCSS(theme)
-    document.documentElement.setAttribute('data-theme', theme.name)
+    document.documentElement.dataset.theme = theme.name
   }
 
   // Actions

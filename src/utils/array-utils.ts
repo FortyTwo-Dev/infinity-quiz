@@ -1,3 +1,8 @@
+/**
+ * Fisher-Yates shuffle algorithm.
+ * Note: Math.random() is safe here as this is used for non-cryptographic purposes
+ * (shuffling quiz questions). For cryptographic use cases, use crypto.getRandomValues().
+ */
 export function shuffle<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -7,6 +12,10 @@ export function shuffle<T>(array: T[]): T[] {
   return shuffled
 }
 
+/**
+ * Returns a random element from the array.
+ * Note: Math.random() is safe here as this is used for non-cryptographic purposes.
+ */
 export function randomElement<T>(array: T[]): T | undefined {
   if (array.length === 0) return undefined
   const index = Math.floor(Math.random() * array.length)
@@ -38,9 +47,7 @@ export function groupBy<T>(array: T[], keyFn: (item: T) => string | number): Rec
   return array.reduce(
     (acc, item) => {
       const key = keyFn(item)
-      if (!acc[key]) {
-        acc[key] = []
-      }
+      acc[key] ??= []
       acc[key].push(item)
       return acc
     },

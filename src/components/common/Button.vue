@@ -26,6 +26,7 @@ function handleClick(event: MouseEvent) {
 
 <template>
   <button
+    type="button"
     :class="[
       'btn',
       `btn--${props.variant}`,

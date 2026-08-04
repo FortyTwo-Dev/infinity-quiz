@@ -59,4 +59,5 @@ export interface ThemeTokens {
   typography: ThemeTypography
 }
 
-export type ThemeName = 'light' | 'dark' | string
+export type BuiltInThemeName = 'light' | 'dark'
+export type ThemeName = BuiltInThemeName | string
