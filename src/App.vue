@@ -1,11 +1,24 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useQuizStore } from './stores'
+
+const quizStore = useQuizStore()
+
+onMounted(() => {
+  quizStore.initializeSampleQuizzes()
+})
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div class="app-container">
+    <router-view />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #fafafa;
+}
+</style>
