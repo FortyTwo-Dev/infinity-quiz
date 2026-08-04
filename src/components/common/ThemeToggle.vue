@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useThemeStore } from '@/stores/theme-store'
+import { PhSun, PhMoon } from '@phosphor-icons/vue'
 import Button from './Button.vue'
 
 const themeStore = useThemeStore()
@@ -15,7 +16,7 @@ const themeStore = useThemeStore()
       }"
       @click="themeStore.setTheme('light')"
     >
-      ☀️
+      <PhSun :size="24" weight="duotone" />
     </Button>
     <Button
       variant="text"
@@ -25,7 +26,7 @@ const themeStore = useThemeStore()
       }"
       @click="themeStore.setTheme('dark')"
     >
-      🌙
+      <PhMoon :size="24" weight="duotone" />
     </Button>
   </div>
 </template>
