@@ -37,7 +37,7 @@ describe('useQuizStore', () => {
   describe('actions', () => {
     it('initializeSampleQuizzes should populate quizzes when empty', () => {
       const store = useQuizStore()
-      expect(store.quizzes.length).toBe(0)
+      expect(store.quizzes).toHaveLength(0)
       store.initializeSampleQuizzes()
       expect(store.quizzes.length).toBeGreaterThan(0)
     })
@@ -47,7 +47,7 @@ describe('useQuizStore', () => {
       store.initializeSampleQuizzes()
       const initialCount = store.quizzes.length
       store.initializeSampleQuizzes()
-      expect(store.quizzes.length).toBe(initialCount)
+      expect(store.quizzes).toHaveLength(initialCount)
     })
 
     it('addQuiz should add a new quiz', () => {
@@ -60,7 +60,7 @@ describe('useQuizStore', () => {
       }
       store.addQuiz(newQuiz)
       expect(store.quizzes).toContainEqual(newQuiz)
-      expect(store.quizzes.length).toBe(1)
+      expect(store.quizzes).toHaveLength(1)
     })
 
     it('updateQuiz should update an existing quiz', () => {
@@ -79,7 +79,7 @@ describe('useQuizStore', () => {
     it('updateQuiz should do nothing when quiz not found', () => {
       const store = useQuizStore()
       store.updateQuiz('non-existent', { title: 'Updated Quiz' })
-      expect(store.quizzes.length).toBe(0)
+      expect(store.quizzes).toHaveLength(0)
     })
 
     it('deleteQuiz should remove a quiz', () => {
@@ -91,15 +91,15 @@ describe('useQuizStore', () => {
         questions: [],
       }
       store.addQuiz(quiz)
-      expect(store.quizzes.length).toBe(1)
+      expect(store.quizzes).toHaveLength(1)
       store.deleteQuiz('test-quiz')
-      expect(store.quizzes.length).toBe(0)
+      expect(store.quizzes).toHaveLength(0)
     })
 
     it('deleteQuiz should do nothing when quiz not found', () => {
       const store = useQuizStore()
       store.deleteQuiz('non-existent')
-      expect(store.quizzes.length).toBe(0)
+      expect(store.quizzes).toHaveLength(0)
     })
   })
 })
