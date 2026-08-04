@@ -14,7 +14,10 @@ function getResult(quizId: string) {
 function getResultIcon(quizId: string) {
   const result = getResult(quizId)
   if (!result) return null
-  return result.passed ? PhTrophy : result.score > 0 ? PhCheckCircle : PhXCircle
+
+  if (result.passed) return PhTrophy
+  if (result.score > 0) return PhCheckCircle
+  return PhXCircle
 }
 
 function getResultScore(quizId: string) {
