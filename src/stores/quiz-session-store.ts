@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useQuizStore } from './quiz-store'
+import { useQuizStore, useQuizHistoryStore } from './'
 
 interface QuizSessionState {
   currentQuizId: string | null
@@ -117,6 +117,14 @@ export const useQuizSessionStore = defineStore(
     completeQuiz() {
       this.calculateScore()
       this.isCompleted = true
+
+      // Save result to history
+      const historyStore = useQuizHistoryStore()
+      const quiz = this.currentQuiz
+      if (quiz) {
+        const passed = this.score >= quiz.questions.length * 0.7 // 70% to pass
+        historyStore.addResult(quiz.id, this.score, quiz.questions.length, passed)
+      }
     },
 
     restartQuiz() {
