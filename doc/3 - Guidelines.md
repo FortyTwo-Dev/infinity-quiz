@@ -306,8 +306,9 @@ User Action → View → (Dispatch Action) → Store → (State Change) → Stor
 - Return promises for async actions
 
 ### Persistence
-- Use `pinia-plugin-persistedstate` with `persist: true` option
-- Specify which state to persist in `persist` configuration
+- Use `pinia-plugin-persistedstate` to persist state to localStorage/sessionStorage
+- Specify which state to persist using the `pick` option in `persist` configuration
+- Use `omit` to exclude specific properties from persistence
 - Use custom storage keys for clarity
 - Consider migration strategies for breaking changes
 
@@ -321,12 +322,13 @@ export const useQuizStore = defineStore('quiz', {
     currentQuizId: null as string | null,
   }),
   persist: {
-    enabled: true,
-    strategies: [{ storage: localStorage, paths: ['quizzes'] }],
+    pick: ['quizzes'],
   },
   // ...getters and actions
 })
 ```
+
+See: [pinia-plugin-persistedstate Configuration Guide](https://prazdevs.github.io/pinia-plugin-persistedstate/guide/config.html)
 
 ---
 
