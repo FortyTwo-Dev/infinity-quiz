@@ -63,9 +63,6 @@ bun preview
 # Run unit tests with Vitest
 bun test:unit
 
-# Run tests with coverage
-bun test:unit:coverage
-
 # Run tests in watch mode
 bun test:unit --watch
 ```
@@ -73,11 +70,14 @@ bun test:unit --watch
 ### Linting & Formatting
 
 ```sh
-# Run ESLint
+# Run all linters
 bun lint
 
 # Run Oxlint (fast Rust-based linter)
-bun lint:ox
+bun lint:oxlint
+
+# Run ESLint
+bun lint:eslint
 
 # Format code with Prettier
 bun format
