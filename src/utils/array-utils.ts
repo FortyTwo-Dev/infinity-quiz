@@ -12,6 +12,10 @@ export function shuffle<T>(array: T[]): T[] {
   return shuffled
 }
 
+/**
+ * Returns a random element from the array.
+ * Note: Math.random() is safe here as this is used for non-cryptographic purposes.
+ */
 export function randomElement<T>(array: T[]): T | undefined {
   if (array.length === 0) return undefined
   const index = Math.floor(Math.random() * array.length)
