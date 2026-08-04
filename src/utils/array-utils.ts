@@ -1,3 +1,8 @@
+/**
+ * Fisher-Yates shuffle algorithm.
+ * Note: Math.random() is safe here as this is used for non-cryptographic purposes
+ * (shuffling quiz questions). For cryptographic use cases, use crypto.getRandomValues().
+ */
 export function shuffle<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
