@@ -63,6 +63,12 @@
 | [npm-run-all2](https://github.com/mysticatea/npm-run-all2) | ^9.0.2 | Run multiple npm scripts in parallel or sequential |
 | [jiti](https://github.com/unjs/jiti) | ^2.7.0 | Runtime TypeScript transpiler |
 
+## Icons
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [@phosphor-icons/vue](https://github.com/phosphor-icons/vue) | ^2.2.1 | Flexible icon library for Vue 3 |
+
 ## Node.js Compatibility
 
 | Tool | Version | Purpose |

@@ -27,6 +27,7 @@ See [doc/2 - Roadmap.md](./doc/2%20-%20Roadmap.md) for the complete 6-phase deve
 | **Testing** | Vitest 4.1.10, @vue/test-utils 2.4.11 |
 | **Linting** | ESLint 10.7.0, Oxlint 1.74.0 |
 | **Formatting** | Prettier 3.9.5 |
+| **Icons** | [Phosphor Icons](https://phosphoricons.com/) |
 
 See [doc/1 - Stack.md](./doc/1%20-%20Stack.md) for the full technical stack details.
 
