@@ -1,13 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useRouter } from 'vue-router'
 import { useQuizList } from '../../composables/useQuizList'
 import { useQuizStore } from '../../stores'
 import type { Quiz } from '../../types/quiz'
 
 // Mock useRouter
 const mockRouter = {
-  push: vi.fn(),
+  push: vi.fn<() => void>(),
 }
 
 vi.mock('vue-router', () => ({

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useQuizSessionStore } from '../../stores/quiz-session-store'
 import { useQuizStore } from '../../stores'
-import type { Quiz, Question } from '../../types/quiz'
+import type { Quiz } from '../../types/quiz'
 
 describe('useQuizSessionStore', () => {
   beforeEach(() => {

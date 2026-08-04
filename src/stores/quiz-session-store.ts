@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { useQuizStore } from './quiz-store'
-import type { Quiz } from '../types/quiz'
 
 interface QuizSessionState {
   currentQuizId: string | null
