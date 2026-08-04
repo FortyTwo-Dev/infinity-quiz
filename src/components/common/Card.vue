@@ -29,24 +29,24 @@ const props = withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .card {
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
 }
 
 /* Variants */
 .card--default {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
 }
 
 .card--elevated {
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-bg-card);
+  box-shadow: var(--shadow-md);
 }
 
 .card--outlined {
   background-color: transparent;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-border);
 }
 
 /* Padding */
@@ -55,20 +55,20 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 .card--padding-small {
-  padding: 12px;
+  padding: var(--space-sm);
 }
 
 .card--padding-medium {
-  padding: 20px;
+  padding: var(--space-md);
 }
 
 .card--padding-large {
-  padding: 30px;
+  padding: var(--space-lg);
 }
 
 /* Hover */
 .card--hoverable:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 </style>

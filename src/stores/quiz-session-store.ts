@@ -21,33 +21,46 @@ export const useQuizSessionStore = defineStore(
     }),
 
     getters: {
-    currentQuiz: (state) => {
+    currentQuiz(state) {
       const quizStore = useQuizStore()
       if (!state.currentQuizId) return null
       return quizStore.getQuizById(state.currentQuizId) ?? null
     },
 
-    currentQuestion: (state) => {
-      const quiz = state.currentQuiz
+    currentQuestion(state) {
+      const quizStore = useQuizStore()
+      if (!state.currentQuizId) return null
+      const quiz = quizStore.getQuizById(state.currentQuizId)
       if (!quiz || state.currentQuestionIndex >= quiz.questions.length) return null
       return quiz.questions[state.currentQuestionIndex]
     },
 
-    totalQuestions: (state) => {
-      return state.currentQuiz?.questions.length ?? 0
+    totalQuestions(state) {
+      const quizStore = useQuizStore()
+      if (!state.currentQuizId) return 0
+      const quiz = quizStore.getQuizById(state.currentQuizId)
+      return quiz?.questions.length ?? 0
     },
 
-    progress: (state) => {
-      if (state.totalQuestions === 0) return 0
-      return (state.currentQuestionIndex / state.totalQuestions) * 100
+    progress(state) {
+      const quizStore = useQuizStore()
+      if (!state.currentQuizId) return 0
+      const quiz = quizStore.getQuizById(state.currentQuizId)
+      if (!quiz) return 0
+      const total = quiz.questions.length
+      if (total === 0) return 0
+      return (state.currentQuestionIndex / total) * 100
     },
 
-    hasNextQuestion: (state) => {
-      if (!state.currentQuiz) return false
-      return state.currentQuestionIndex < state.currentQuiz.questions.length - 1
+    hasNextQuestion(state) {
+      const quizStore = useQuizStore()
+      if (!state.currentQuizId) return false
+      const quiz = quizStore.getQuizById(state.currentQuizId)
+      if (!quiz) return false
+      return state.currentQuestionIndex < quiz.questions.length - 1
     },
 
-    hasPreviousQuestion: (state) => {
+    hasPreviousQuestion(state) {
       return state.currentQuestionIndex > 0
     },
   },

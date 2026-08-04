@@ -32,25 +32,25 @@ const { quizzes, startQuiz } = useQuizList()
 .quiz-list-view {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--space-md);
   text-align: center;
 }
 
 .quiz-list-view h1 {
-  color: #333;
-  margin-bottom: 10px;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
 }
 
 .quiz-list-view p {
-  color: #666;
-  margin-bottom: 30px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
 }
 
 .quiz-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
 }
 
 .quiz-card {
@@ -60,23 +60,23 @@ const { quizzes, startQuiz } = useQuizList()
 
 .quiz-card h2 {
   margin-top: 0;
-  margin-bottom: 10px;
-  color: #333;
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
   font-size: 1.2rem;
 }
 
 .quiz-card p {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-sm);
 }
 
 .question-count {
   display: inline-block;
-  background: #007bff;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
 }
 </style>
