@@ -75,28 +75,15 @@ describe('useFeedback', () => {
       expect(level.value).toBe('good')
     })
 
-    it('isPositive should return true for excellent', () => {
-      const percentage = ref(100)
-      const { isPositive } = useFeedback(percentage)
-      expect(isPositive.value).toBe(true)
-    })
-
-    it('isPositive should return true for good', () => {
-      const percentage = ref(70)
-      const { isPositive } = useFeedback(percentage)
-      expect(isPositive.value).toBe(true)
-    })
-
-    it('isPositive should return false for average', () => {
-      const percentage = ref(40)
-      const { isPositive } = useFeedback(percentage)
-      expect(isPositive.value).toBe(false)
-    })
-
-    it('isPositive should return false for poor', () => {
-      const percentage = ref(20)
-      const { isPositive } = useFeedback(percentage)
-      expect(isPositive.value).toBe(false)
+    it.each([
+      [100, true],  // excellent
+      [70, true],   // good
+      [40, false],  // average
+      [20, false],  // poor
+    ])('isPositive should return %s for percentage %i', (percentage, expected) => {
+      const percentageRef = ref(percentage)
+      const { isPositive } = useFeedback(percentageRef)
+      expect(isPositive.value).toBe(expected)
     })
   })
 })
