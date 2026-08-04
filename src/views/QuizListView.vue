@@ -1,8 +1,27 @@
 <script setup lang="ts">
 import { useQuizList } from '../composables/useQuizList'
+import { useQuizHistoryStore } from '../stores'
 import Card from '../components/common/Card.vue'
+import { PhTrophy, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
 const { quizzes, startQuiz } = useQuizList()
+const historyStore = useQuizHistoryStore()
+
+function getResult(quizId: string) {
+  return historyStore.getLatestResultByQuizId(quizId)
+}
+
+function getResultIcon(quizId: string) {
+  const result = getResult(quizId)
+  if (!result) return null
+  return result.passed ? PhTrophy : result.score > 0 ? PhCheckCircle : PhXCircle
+}
+
+function getResultScore(quizId: string) {
+  const result = getResult(quizId)
+  if (!result) return null
+  return `${result.score}/${result.totalQuestions}`
+}
 </script>
 
 <template>
@@ -20,9 +39,24 @@ const { quizzes, startQuiz } = useQuizList()
         class="quiz-card"
         @click="startQuiz(quiz.id)"
       >
-        <h2>{{ quiz.title }}</h2>
-        <p>{{ quiz.description }}</p>
-        <span class="question-count">{{ quiz.questions.length }} questions</span>
+        <div class="quiz-card-content">
+          <h2>{{ quiz.title }}</h2>
+          <p>{{ quiz.description }}</p>
+          <span class="question-count">{{ quiz.questions.length }} questions</span>
+        </div>
+        <div v-if="getResult(quiz.id)" class="quiz-card-result">
+          <component
+            :is="getResultIcon(quiz.id)"
+            :size="20"
+            weight="duotone"
+            :class="{
+              'result-icon--passed': getResult(quiz.id)!.passed,
+              'result-icon--failed': !getResult(quiz.id)!.passed && getResult(quiz.id)!.score > 0,
+              'result-icon--zero': getResult(quiz.id)!.score === 0,
+            }"
+          />
+          <span class="result-score">{{ getResultScore(quiz.id) }}</span>
+        </div>
       </Card>
     </div>
   </div>
@@ -56,6 +90,12 @@ const { quizzes, startQuiz } = useQuizList()
 .quiz-card {
   cursor: pointer;
   text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-card-content {
+  padding-right: var(--space-xl);
 }
 
 .quiz-card h2 {
@@ -78,5 +118,36 @@ const { quizzes, startQuiz } = useQuizList()
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
+}
+
+.quiz-card-result {
+  position: absolute;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--color-bg);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+}
+
+.result-score {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.result-icon--passed {
+  color: var(--color-success);
+}
+
+.result-icon--failed {
+  color: var(--color-warning);
+}
+
+.result-icon--zero {
+  color: var(--color-danger);
 }
 </style>
