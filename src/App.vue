@@ -16,7 +16,7 @@ onMounted(() => {
 <template>
   <div class="app-container">
     <div class="header">
-      <h1 class="title">Infinity Quiz</h1>
+      <h1 class="title">IQuiz</h1>
       <ThemeToggle />
     </div>
     <router-view />

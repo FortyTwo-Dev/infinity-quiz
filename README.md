@@ -147,3 +147,7 @@ See [Vite Configuration Reference](https://vite.dev/config/) for build configura
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+Powered by Mistral Vibe. Created by FortyTwo_Dev.
