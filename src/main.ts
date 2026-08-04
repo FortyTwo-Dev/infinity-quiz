@@ -8,9 +8,6 @@ import router from './router'
 // Import styles
 import './assets/styles/_variables.css'
 
-// Import theme store
-import { useThemeStore } from './stores/theme-store'
-
 const app = createApp(App)
 const pinia = createPinia()
 
