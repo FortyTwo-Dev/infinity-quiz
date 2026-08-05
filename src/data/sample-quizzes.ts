@@ -168,6 +168,60 @@ export const SAMPLE_QUIZZES: Quiz[] = [
       },
     ],
   },
+  {
+    id: 'quiz-7',
+    title: 'Quiz Réponses Mélangées - Maths',
+    description: 'Les réponses sont mélangées à chaque question !',
+    shuffleAnswers: true,
+    questions: [
+      {
+        id: 'q7-1',
+        text: 'Quelle est la capitale de la France ?',
+        options: ['Londres', 'Paris', 'Berlin', 'Madrid'],
+        correctAnswerIndex: 2,
+      },
+      {
+        id: 'q7-2',
+        text: 'Quel est le résultat de 3 + 5 ?',
+        options: ['7', '8', '9', '10'],
+        correctAnswerIndex: 2,
+      },
+      {
+        id: 'q7-3',
+        text: 'Quel est le plus grand pays du monde ?',
+        options: ['Chine', 'États-Unis', 'Russie', 'Canada'],
+        correctAnswerIndex: 3,
+      },
+    ],
+  },
+  {
+    id: 'quiz-8',
+    title: 'Quiz Mixte - Mélange Sélectif',
+    description: 'Certaines questions ont leurs réponses mélangées',
+    questions: [
+      {
+        id: 'q8-1',
+        text: '2 + 2 ?',
+        options: ['3', '4', '5', '6'],
+        correctAnswerIndex: 1,
+        shuffleAnswers: true, // Cette question seulement
+      },
+      {
+        id: 'q8-2',
+        text: '5 × 5 ?',
+        options: ['20', '25', '30', '15'],
+        correctAnswerIndex: 1,
+        // Pas de shuffleAnswers, donc les réponses restent dans l'ordre
+      },
+      {
+        id: 'q8-3',
+        text: '10 - 3 ?',
+        options: ['6', '7', '8', '9'],
+        correctAnswerIndex: 1,
+        shuffleAnswers: true, // Cette question aussi
+      },
+    ],
+  },
 ]
 
 export function hasInitializedQuizzes(quizzes: Quiz[]): boolean {

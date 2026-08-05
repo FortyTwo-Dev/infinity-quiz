@@ -1,6 +1,12 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizSessionStore } from '../stores'
+import { shuffle } from '../utils/array-utils'
+
+export interface QuestionOption {
+  option: string
+  originalIndex: number
+}
 
 export function useQuiz() {
   const route = useRoute()
@@ -20,6 +26,27 @@ export function useQuiz() {
   const isCompleted = computed(() => sessionStore.isCompleted)
   const timeLeft = computed(() => sessionStore.timeLeft)
   const hasTimer = computed(() => sessionStore.hasTimer)
+
+  const currentQuestionOptions = computed<QuestionOption[]>(() => {
+    const question = currentQuestion.value
+    if (!question) return []
+
+    const options = [...question.options]
+    const quiz = currentQuiz.value
+    const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
+
+    if (shouldShuffle) {
+      return shuffle(options).map((option, shuffledIndex) => ({
+        option,
+        originalIndex: question.options.findIndex(o => o === option),
+      }))
+    }
+
+    return options.map((option, index) => ({
+      option,
+      originalIndex: index,
+    }))
+  })
 
   function initializeQuiz() {
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
@@ -66,6 +93,7 @@ export function useQuiz() {
     quizId,
     currentQuiz,
     currentQuestion,
+    currentQuestionOptions,
     totalQuestions,
     currentQuestionIndex,
     score,

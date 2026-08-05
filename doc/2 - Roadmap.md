@@ -42,7 +42,7 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [x] **Timer**: Optional time limit per quiz
 - [x] **Progress Bar**: Visual indicator of quiz completion percentage
 - [x] **Question Shuffling**: Randomize question order
-- [ ] **Answer Shuffling**: Randomize answer order for each question
+- [x] **Answer Shuffling**: Randomize answer order for each question
 - [ ] **Skip Question**: Allow users to skip and return later
 - [ ] **Review Mode**: Review all questions and answers at the end
 - [ ] **Correct Answer Highlight**: Show correct answer after selection

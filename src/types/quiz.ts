@@ -4,6 +4,7 @@ export interface Question {
   options: string[]
   correctAnswerIndex: number
   timeLimit?: number // Time limit in seconds for this specific question
+  shuffleAnswers?: boolean // Whether to shuffle the order of answers for this question
 }
 
 export interface Quiz {
@@ -13,6 +14,7 @@ export interface Quiz {
   questions: Question[]
   timeLimit?: number // Time limit in seconds for the entire quiz (applies to questions without individual timeLimit)
   shuffleQuestions?: boolean // Whether to shuffle the order of questions
+  shuffleAnswers?: boolean // Whether to shuffle answers for all questions (can be overridden per question)
 }
 
 export interface QuizState {

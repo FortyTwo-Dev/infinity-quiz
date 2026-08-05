@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useQuiz } from '../composables/useQuiz'
+import { useQuiz, type QuestionOption } from '../composables/useQuiz'
 import Button from '../components/common/Button.vue'
 import ProgressBar from '../components/common/ProgressBar.vue'
 
 const {
   currentQuiz,
   currentQuestion,
+  currentQuestionOptions,
   totalQuestions,
   currentQuestionIndex,
   progress,
@@ -31,6 +32,12 @@ const formattedTime = computed(() => {
 const isTimeLow = computed(() => {
   return timeLeft.value !== null && timeLeft.value <= 30 && timeLeft.value > 0
 })
+
+// Helper to check if an option is selected
+const isOptionSelected = (originalIndex: number): boolean => {
+  const currentAnswer = getCurrentAnswer()
+  return currentAnswer === originalIndex
+}
 </script>
 
 <template>
@@ -46,9 +53,9 @@ const isTimeLow = computed(() => {
         <span class="progress-text"
           >Question {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}</span
         >
-        <span v-if="hasTimer" class="timer" :class="{ 'timer--low': isTimeLow }"
-          >{{ formattedTime }}</span
-        >
+        <span v-if="hasTimer" class="timer" :class="{ 'timer--low': isTimeLow }">{{
+          formattedTime
+        }}</span>
       </div>
     </div>
 
@@ -56,15 +63,15 @@ const isTimeLow = computed(() => {
       <h2>{{ currentQuestion.text }}</h2>
       <div class="options">
         <Button
-          v-for="(option, index) in currentQuestion.options"
-          :key="index"
+          v-for="(item, displayIndex) in currentQuestionOptions"
+          :key="displayIndex"
           variant="secondary"
           size="medium"
-          :class="{ 'option-button--selected': getCurrentAnswer() === index }"
+          :class="{ 'option-button--selected': isOptionSelected(item.originalIndex) }"
           class="option-button"
-          @click="selectAnswer(index)"
+          @click="selectAnswer(item.originalIndex)"
         >
-          {{ option }}
+          {{ item.option }}
         </Button>
       </div>
 
@@ -146,7 +153,8 @@ const isTimeLow = computed(() => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {

@@ -26,7 +26,9 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const currentQuestion = computed(() => {
     const quiz = currentQuiz.value
     if (!quiz || currentQuestionIndex.value >= quiz.questions.length) return null
-    return quiz.questions[currentQuestionIndex.value]
+    const question = quiz.questions[currentQuestionIndex.value]
+    if (!question) return null
+    return question
   })
 
   const totalQuestions = computed(() => {
@@ -71,6 +73,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   })
 
   // Helper functions
+
   const clearTimer = () => {
     if (timerInterval.value) {
       clearInterval(timerInterval.value)
