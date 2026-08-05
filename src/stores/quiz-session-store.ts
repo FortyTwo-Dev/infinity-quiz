@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
-import type { Quiz, Question } from '../types/quiz'
 
 export const useQuizSessionStore = defineStore('quizSession', () => {
   // State
