@@ -1,6 +1,6 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'secondary' | 'text'
+  variant?: 'primary' | 'secondary' | 'text' | 'outline'
   size?: 'small' | 'medium' | 'large'
   disabled?: boolean
   fullWidth?: boolean
@@ -80,6 +80,16 @@ function handleClick(event: MouseEvent) {
 
 .btn--text:hover:not(:disabled) {
   text-decoration: underline;
+}
+
+.btn--outline {
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn--outline:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
 }
 
 /* Sizes */

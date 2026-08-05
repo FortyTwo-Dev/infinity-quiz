@@ -26,6 +26,8 @@ export function useQuiz() {
   const isCompleted = computed(() => sessionStore.isCompleted)
   const timeLeft = computed(() => sessionStore.timeLeft)
   const hasTimer = computed(() => sessionStore.hasTimer)
+  const canSkip = computed(() => sessionStore.canSkip)
+  const remainingSkips = computed(() => sessionStore.remainingSkips)
 
   const currentQuestionOptions = computed<QuestionOption[]>(() => {
     const question = currentQuestion.value
@@ -56,6 +58,20 @@ export function useQuiz() {
 
   function selectAnswer(answerIndex: number) {
     sessionStore.selectAnswer(answerIndex)
+  }
+
+  function skipQuestion() {
+    const quizCompleted = sessionStore.skipQuestion()
+    if (quizCompleted) {
+      router.push({ name: 'results' })
+    }
+  }
+
+  function handleTimerExpiry() {
+    const quizCompleted = sessionStore.handleTimerExpiry()
+    if (quizCompleted) {
+      router.push({ name: 'results' })
+    }
   }
 
   function submitAndNext() {
@@ -89,6 +105,13 @@ export function useQuiz() {
 
   watch(() => quizId.value, initializeQuiz, { immediate: true })
 
+  // Handle timer expiry navigation
+  watch(timeLeft, (newTimeLeft) => {
+    if (newTimeLeft === 0) {
+      handleTimerExpiry()
+    }
+  })
+
   return {
     quizId,
     currentQuiz,
@@ -103,8 +126,12 @@ export function useQuiz() {
     isCompleted,
     timeLeft,
     hasTimer,
+    canSkip,
+    remainingSkips,
     initializeQuiz,
     selectAnswer,
+    skipQuestion,
+    handleTimerExpiry,
     submitAndNext,
     goToPrevious,
     restartQuiz,

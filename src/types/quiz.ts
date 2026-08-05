@@ -15,6 +15,7 @@ export interface Quiz {
   timeLimit?: number // Time limit in seconds for the entire quiz (applies to questions without individual timeLimit)
   shuffleQuestions?: boolean // Whether to shuffle the order of questions
   shuffleAnswers?: boolean // Whether to shuffle answers for all questions (can be overridden per question)
+  maxSkips?: number // Maximum number of questions that can be skipped (undefined = unlimited)
 }
 
 export interface QuizState {
