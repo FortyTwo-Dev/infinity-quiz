@@ -7,7 +7,7 @@ export function shuffle<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    ;[shuffled[i]!, shuffled[j]!] = [shuffled[j]!, shuffled[i]!]
   }
   return shuffled
 }
@@ -40,7 +40,7 @@ export function unique<T>(array: T[]): T[] {
 }
 
 export function flatten<T>(array: (T | T[])[]): T[] {
-  return array.flat()
+  return array.flat() as T[]
 }
 
 export function groupBy<T>(array: T[], keyFn: (item: T) => string | number): Record<string, T[]> {

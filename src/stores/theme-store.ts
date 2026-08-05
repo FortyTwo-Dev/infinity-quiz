@@ -18,7 +18,7 @@ export const useThemeStore = defineStore('theme', () => {
   }))
 
   // Tous les thèmes (built-in + custom)
-  const allThemes = computed(() => ({
+  const allThemes = computed<Record<string, ThemeTokens>>(() => ({
     ...builtInThemes.value,
     ...Object.fromEntries(customThemes.value),
   }))
@@ -86,9 +86,9 @@ export const useThemeStore = defineStore('theme', () => {
     customizations: Partial<Omit<ThemeTokens, 'name'>>,
   ): ThemeTokens => {
     return {
-      name,
       ...lightTheme,
       ...customizations,
+      name,
     }
   }
 

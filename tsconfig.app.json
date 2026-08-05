@@ -7,9 +7,8 @@
     "noUncheckedIndexedAccess": true,
 
     // Path mapping for cleaner imports.
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.

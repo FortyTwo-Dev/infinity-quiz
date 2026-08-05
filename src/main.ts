@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import type { PiniaPluginContext } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
@@ -14,14 +15,12 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 
 // Persist theme in localStorage
-pinia.use(() => {
-  return {
-    onSet: (store, key, value) => {
-      if (store.$id === 'theme' && key === 'currentThemeName') {
-        localStorage.setItem('theme', value)
-      }
-    },
-  }
+pinia.use(({ store }: PiniaPluginContext) => {
+  store.$subscribe((mutation, state) => {
+    if (store.$id === 'theme') {
+      localStorage.setItem('theme', state.currentThemeName)
+    }
+  })
 })
 
 app.use(pinia)

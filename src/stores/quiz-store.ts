@@ -25,7 +25,7 @@ export const useQuizStore = defineStore('quiz', () => {
   const updateQuiz = (id: string, updatedQuiz: Partial<Quiz>) => {
     const index = quizzes.value.findIndex((q) => q.id === id)
     if (index !== -1) {
-      quizzes.value[index] = { ...quizzes.value[index], ...updatedQuiz }
+      quizzes.value[index] = { ...quizzes.value[index], ...updatedQuiz } as Quiz
     }
   }
 
