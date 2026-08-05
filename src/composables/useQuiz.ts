@@ -18,6 +18,8 @@ export function useQuiz() {
   const hasNextQuestion = computed(() => sessionStore.hasNextQuestion)
   const hasPreviousQuestion = computed(() => sessionStore.hasPreviousQuestion)
   const isCompleted = computed(() => sessionStore.isCompleted)
+  const timeLeft = computed(() => sessionStore.timeLeft)
+  const hasTimer = computed(() => sessionStore.hasTimer)
 
   function initializeQuiz() {
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
@@ -71,6 +73,8 @@ export function useQuiz() {
     hasNextQuestion,
     hasPreviousQuestion,
     isCompleted,
+    timeLeft,
+    hasTimer,
     initializeQuiz,
     selectAnswer,
     submitAndNext,

@@ -1,45 +1,49 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import type { Quiz } from '../types/quiz'
 import { SAMPLE_QUIZZES, hasInitializedQuizzes } from '../data/sample-quizzes'
 
-interface QuizStoreState {
-  quizzes: Quiz[]
-}
+export const useQuizStore = defineStore('quiz', () => {
+  // State
+  const quizzes = ref<Quiz[]>([])
 
-export const useQuizStore = defineStore('quiz', {
-  state: (): QuizStoreState => ({
-    quizzes: [],
-  }),
+  // Getters
+  const getQuizById = computed(() => (id: string) => {
+    return quizzes.value.find((q) => q.id === id) ?? null
+  })
 
-  getters: {
-    getQuizById: (state) => (id: string) => {
-      return state.quizzes.find((q) => q.id === id) ?? null
-    },
-  },
+  // Actions
+  const initializeSampleQuizzes = () => {
+    if (hasInitializedQuizzes(quizzes.value)) return
+    quizzes.value = SAMPLE_QUIZZES
+  }
 
-  actions: {
-    initializeSampleQuizzes() {
-      if (hasInitializedQuizzes(this.quizzes)) return
-      this.quizzes = SAMPLE_QUIZZES
-    },
+  const addQuiz = (quiz: Quiz) => {
+    quizzes.value.push(quiz)
+  }
 
-    addQuiz(quiz: Quiz) {
-      this.quizzes.push(quiz)
-    },
+  const updateQuiz = (id: string, updatedQuiz: Partial<Quiz>) => {
+    const index = quizzes.value.findIndex((q) => q.id === id)
+    if (index !== -1) {
+      quizzes.value[index] = { ...quizzes.value[index], ...updatedQuiz }
+    }
+  }
 
-    updateQuiz(id: string, updatedQuiz: Partial<Quiz>) {
-      const index = this.quizzes.findIndex((q) => q.id === id)
-      if (index !== -1) {
-        this.quizzes[index] = { ...this.quizzes[index], ...updatedQuiz }
-      }
-    },
+  const deleteQuiz = (id: string) => {
+    quizzes.value = quizzes.value.filter((q) => q.id !== id)
+  }
 
-    deleteQuiz(id: string) {
-      this.quizzes = this.quizzes.filter((q) => q.id !== id)
-    },
-  },
+  return {
+    // State
+    quizzes,
 
-  persist: {
-    pick: ['quizzes'],
-  },
+    // Getters
+    getQuizById,
+
+    // Actions
+    initializeSampleQuizzes,
+    addQuiz,
+    updateQuiz,
+    deleteQuiz,
+  }
 })

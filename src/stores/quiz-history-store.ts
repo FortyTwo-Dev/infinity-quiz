@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 interface QuizResult {
   quizId: string
@@ -8,51 +9,53 @@ interface QuizResult {
   passed: boolean
 }
 
-interface QuizHistoryState {
-  results: QuizResult[]
-}
+export const useQuizHistoryStore = defineStore('quizHistory', () => {
+  // State
+  const results = ref<QuizResult[]>([])
 
-export const useQuizHistoryStore = defineStore('quizHistory', {
-  state: (): QuizHistoryState => ({
-    results: [],
-  }),
+  // Getters
+  const getResultByQuizId = computed(() => (quizId: string) => {
+    return results.value.find((r) => r.quizId === quizId) ?? null
+  })
 
-  getters: {
-    getResultByQuizId: (state) => (quizId: string) => {
-      return state.results.find((r) => r.quizId === quizId) ?? null
-    },
+  const getLatestResultByQuizId = computed(() => (quizId: string) => {
+    const quizResults = results.value
+      .filter((r) => r.quizId === quizId)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    return quizResults.length > 0 ? quizResults[0] : null
+  })
 
-    getLatestResultByQuizId: (state) => (quizId: string) => {
-      const quizResults = state.results
-        .filter((r) => r.quizId === quizId)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      return quizResults.length > 0 ? quizResults[0] : null
-    },
-  },
+  // Actions
+  const addResult = (quizId: string, score: number, totalQuestions: number, passed: boolean) => {
+    const result: QuizResult = {
+      quizId,
+      score,
+      totalQuestions,
+      date: new Date().toISOString(),
+      passed,
+    }
+    results.value.push(result)
+  }
 
-  actions: {
-    addResult(quizId: string, score: number, totalQuestions: number, passed: boolean) {
-      const result: QuizResult = {
-        quizId,
-        score,
-        totalQuestions,
-        date: new Date().toISOString(),
-        passed,
-      }
-      this.results.push(result)
-    },
+  const clearResults = () => {
+    results.value = []
+  }
 
-    clearResults() {
-      this.results = []
-    },
+  const clearResultByQuizId = (quizId: string) => {
+    results.value = results.value.filter((r) => r.quizId !== quizId)
+  }
 
-    clearResultByQuizId(quizId: string) {
-      this.results = this.results.filter((r) => r.quizId !== quizId)
-    },
-  },
+  return {
+    // State
+    results,
 
-  persist: {
-    key: 'quiz-history',
-    pick: ['results'],
-  },
+    // Getters
+    getResultByQuizId,
+    getLatestResultByQuizId,
+
+    // Actions
+    addResult,
+    clearResults,
+    clearResultByQuizId,
+  }
 })

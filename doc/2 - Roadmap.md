@@ -11,15 +11,15 @@ Infinity Quiz is a local-first quiz application built with Vue 3. The goal is to
 Create a minimal working quiz app that runs locally with basic question/answer flow.
 
 ### Features
-- [ ] **Quiz List**: Display a list of available quizzes (stored locally)
-- [ ] **Quiz Selection**: User can select a quiz from the list
-- [ ] **Question Display**: Show one question at a time with multiple choice answers
-- [ ] **Answer Selection**: User can select an answer
-- [ ] **Navigation**: Next/Previous buttons to move between questions
-- [ ] **Score Calculation**: Track correct/incorrect answers
-- [ ] **Results Screen**: Show final score at the end of the quiz
-- [ ] **Restart Quiz**: Ability to restart the same quiz
-- [ ] **Back to Quiz List**: Return to quiz selection after completion
+- [x] **Quiz List**: Display a list of available quizzes (stored locally)
+- [x] **Quiz Selection**: User can select a quiz from the list
+- [x] **Question Display**: Show one question at a time with multiple choice answers
+- [x] **Answer Selection**: User can select an answer
+- [x] **Navigation**: Next/Previous buttons to move between questions
+- [x] **Score Calculation**: Track correct/incorrect answers
+- [x] **Results Screen**: Show final score at the end of the quiz
+- [x] **Restart Quiz**: Ability to restart the same quiz
+- [x] **Back to Quiz List**: Return to quiz selection after completion
 
 ### Data Structure
 ```typescript
