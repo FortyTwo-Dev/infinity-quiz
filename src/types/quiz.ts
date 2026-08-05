@@ -3,6 +3,7 @@ export interface Question {
   text: string
   options: string[]
   correctAnswerIndex: number
+  timeLimit?: number // Time limit in seconds for this specific question
 }
 
 export interface Quiz {
@@ -10,6 +11,7 @@ export interface Quiz {
   title: string
   description: string
   questions: Question[]
+  timeLimit?: number // Time limit in seconds for the entire quiz (applies to questions without individual timeLimit)
 }
 
 export interface QuizState {
