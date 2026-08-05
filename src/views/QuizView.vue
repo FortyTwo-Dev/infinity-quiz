@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useQuiz, type QuestionOption } from '../composables/useQuiz'
+import { useQuiz } from '../composables/useQuiz'
 import Button from '../components/common/Button.vue'
 import ProgressBar from '../components/common/ProgressBar.vue'
 
