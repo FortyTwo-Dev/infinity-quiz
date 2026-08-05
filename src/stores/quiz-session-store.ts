@@ -1,260 +1,278 @@
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
+import type { Quiz, Question } from '../types/quiz'
 
-interface QuizSessionState {
-  currentQuizId: string | null
-  currentQuestionIndex: number
-  selectedAnswers: Record<string, number | null>
-  score: number
-  isCompleted: boolean
-  timeLeft: number | null
-  timerInterval: ReturnType<typeof setInterval> | null
-}
+export const useQuizSessionStore = defineStore('quizSession', () => {
+  // State
+  const currentQuizId = ref<string | null>(null)
+  const currentQuestionIndex = ref<number>(0)
+  const selectedAnswers = ref<Record<string, number | null>>({})
+  const score = ref<number>(0)
+  const isCompleted = ref<boolean>(false)
+  const timeLeft = ref<number | null>(null)
+  const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
 
-export const useQuizSessionStore = defineStore(
-  'quizSession',
-  {
-    state: (): QuizSessionState => ({
-      currentQuizId: null,
-      currentQuestionIndex: 0,
-      selectedAnswers: {},
-      score: 0,
-      isCompleted: false,
-      timeLeft: null,
-      timerInterval: null,
-    }),
+  // Getters
+  const currentQuiz = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return null
+    return quizStore.getQuizById(currentQuizId.value) ?? null
+  })
 
-    getters: {
-      currentQuiz(state) {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return null
-        return quizStore.getQuizById(state.currentQuizId) ?? null
-      },
+  const currentQuestion = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return null
+    const quiz = quizStore.getQuizById(currentQuizId.value)
+    if (!quiz || currentQuestionIndex.value >= quiz.questions.length) return null
+    return quiz.questions[currentQuestionIndex.value]
+  })
 
-      currentQuestion(state) {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return null
-        const quiz = quizStore.getQuizById(state.currentQuizId)
-        if (!quiz || state.currentQuestionIndex >= quiz.questions.length) return null
-        return quiz.questions[state.currentQuestionIndex]
-      },
+  const totalQuestions = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return 0
+    const quiz = quizStore.getQuizById(currentQuizId.value)
+    return quiz?.questions.length ?? 0
+  })
 
-      totalQuestions(state) {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return 0
-        const quiz = quizStore.getQuizById(state.currentQuizId)
-        return quiz?.questions.length ?? 0
-      },
+  const progress = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return 0
+    const quiz = quizStore.getQuizById(currentQuizId.value)
+    if (!quiz) return 0
+    const total = quiz.questions.length
+    if (total === 0) return 0
+    return (currentQuestionIndex.value / total) * 100
+  })
 
-      progress(state) {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return 0
-        const quiz = quizStore.getQuizById(state.currentQuizId)
-        if (!quiz) return 0
-        const total = quiz.questions.length
-        if (total === 0) return 0
-        return (state.currentQuestionIndex / total) * 100
-      },
+  const hasNextQuestion = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return false
+    const quiz = quizStore.getQuizById(currentQuizId.value)
+    if (!quiz) return false
+    return currentQuestionIndex.value < quiz.questions.length - 1
+  })
 
-      hasNextQuestion(state) {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return false
-        const quiz = quizStore.getQuizById(state.currentQuizId)
-        if (!quiz) return false
-        return state.currentQuestionIndex < quiz.questions.length - 1
-      },
+  const hasPreviousQuestion = computed(() => {
+    return currentQuestionIndex.value > 0
+  })
 
-      hasPreviousQuestion(state) {
-        return state.currentQuestionIndex > 0
-      },
+  const hasTimer = computed(() => {
+    return timeLeft.value !== null
+  })
 
-      hasTimer(state) {
-        return state.timeLeft !== null
-      },
+  const getCurrentQuestionTimeLimit = computed(() => {
+    const quizStore = useQuizStore()
+    if (!currentQuizId.value) return null
+    const quiz = quizStore.getQuizById(currentQuizId.value)
+    if (!quiz) return null
+    const currentQuestion = quiz.questions[currentQuestionIndex.value]
+    if (!currentQuestion) return null
 
-      getCurrentQuestionTimeLimit(state): number | null {
-        const quizStore = useQuizStore()
-        if (!state.currentQuizId) return null
-        const quiz = quizStore.getQuizById(state.currentQuizId)
-        if (!quiz) return null
-        const currentQuestion = quiz.questions[state.currentQuestionIndex]
-        if (!currentQuestion) return null
+    // Question-level time limit takes priority over quiz-level
+    if (currentQuestion.timeLimit !== undefined) {
+      return currentQuestion.timeLimit
+    }
+    return quiz.timeLimit ?? null
+  })
 
-        // Question-level time limit takes priority over quiz-level
-        if (currentQuestion.timeLimit !== undefined) {
-          return currentQuestion.timeLimit
+  // Helper functions
+  const clearTimer = () => {
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
+    timeLeft.value = null
+  }
+
+  const startTimer = (duration: number) => {
+    clearTimer()
+    timeLeft.value = duration
+    timerInterval.value = setInterval(() => {
+      if (timeLeft.value === null) return
+      timeLeft.value--
+      if (timeLeft.value <= 0) {
+        clearTimer()
+        handleTimerExpiry()
+      }
+    }, 1000)
+  }
+
+  const handleTimerExpiry = () => {
+    // Mark current answer as empty (null = not answered = wrong)
+    const question = currentQuestion.value
+    if (question) {
+      selectedAnswers.value[question.id] = null
+    }
+
+    // Move to next question or complete quiz
+    if (hasNextQuestion.value) {
+      nextQuestion()
+    } else {
+      completeQuiz()
+    }
+  }
+
+  // Actions
+  const selectQuiz = (quizId: string) => {
+    const quizStore = useQuizStore()
+    const quiz = quizStore.getQuizById(quizId)
+    if (!quiz) return
+
+    clearTimer()
+    currentQuizId.value = quizId
+    currentQuestionIndex.value = 0
+    selectedAnswers.value = {}
+    score.value = 0
+    isCompleted.value = false
+
+    // Start timer if quiz or first question has time limit
+    const timeLimit = quiz.timeLimit ?? quiz.questions[0]?.timeLimit
+    if (timeLimit !== undefined && timeLimit > 0) {
+      startTimer(timeLimit)
+    }
+  }
+
+  const selectAnswer = (answerIndex: number) => {
+    const question = currentQuestion.value
+    if (!question) return
+    selectedAnswers.value[question.id] = answerIndex
+  }
+
+  const calculateScore = () => {
+    const quiz = currentQuiz.value
+    if (!quiz) return
+
+    let newScore = 0
+    for (const question of quiz.questions) {
+      const selectedIndex = selectedAnswers.value[question.id]
+      if (selectedIndex !== undefined && selectedIndex !== null) {
+        if (selectedIndex === question.correctAnswerIndex) {
+          newScore += 1
         }
-        return quiz.timeLimit ?? null
-      },
-    },
+      }
+      // null answers are counted as wrong (not incrementing score)
+    }
+    score.value = newScore
+  }
 
-    actions: {
-      clearTimer() {
-        if (this.timerInterval) {
-          clearInterval(this.timerInterval)
-          this.timerInterval = null
-        }
-        this.timeLeft = null
-      },
+  const nextQuestion = () => {
+    if (!hasNextQuestion.value) return
+    clearTimer()
+    currentQuestionIndex.value += 1
 
-      startTimer(duration: number) {
-        this.clearTimer()
-        this.timeLeft = duration
-        this.timerInterval = setInterval(() => {
-          if (this.timeLeft === null) return
-          this.timeLeft--
-          if (this.timeLeft <= 0) {
-            this.clearTimer()
-            this.handleTimerExpiry()
-          }
-        }, 1000)
-      },
+    // Start timer for new question if it has a time limit
+    const timeLimit = getCurrentQuestionTimeLimit.value
+    if (timeLimit !== null && timeLimit > 0) {
+      startTimer(timeLimit)
+    }
+  }
 
-      handleTimerExpiry() {
-        // Mark current answer as empty (null = not answered = wrong)
-        const currentQuestion = this.currentQuestion
-        if (currentQuestion) {
-          this.selectedAnswers[currentQuestion.id] = null
-        }
+  const previousQuestion = () => {
+    if (!hasPreviousQuestion.value) return
+    clearTimer()
+    currentQuestionIndex.value -= 1
 
-        // Move to next question or complete quiz
-        if (this.hasNextQuestion) {
-          this.nextQuestion()
-        } else {
-          this.completeQuiz()
-        }
-      },
+    // Start timer for previous question if it has a time limit
+    const timeLimit = getCurrentQuestionTimeLimit.value
+    if (timeLimit !== null && timeLimit > 0) {
+      startTimer(timeLimit)
+    }
+  }
 
-      selectQuiz(quizId: string) {
-        const quizStore = useQuizStore()
-        const quiz = quizStore.getQuizById(quizId)
-        if (!quiz) return
+  const goToQuestion = (index: number) => {
+    if (index < 0 || index >= totalQuestions.value) return
+    clearTimer()
+    currentQuestionIndex.value = index
 
-        this.clearTimer()
-        this.currentQuizId = quizId
-        this.currentQuestionIndex = 0
-        this.selectedAnswers = {}
-        this.score = 0
-        this.isCompleted = false
+    // Start timer for new question if it has a time limit
+    const timeLimit = getCurrentQuestionTimeLimit.value
+    if (timeLimit !== null && timeLimit > 0) {
+      startTimer(timeLimit)
+    }
+  }
 
-        // Start timer if quiz or first question has time limit
-        const timeLimit = quiz.timeLimit ?? quiz.questions[0]?.timeLimit
-        if (timeLimit !== undefined && timeLimit > 0) {
-          this.startTimer(timeLimit)
-        }
-      },
+  const completeQuiz = () => {
+    clearTimer()
+    calculateScore()
+    isCompleted.value = true
 
-      selectAnswer(answerIndex: number) {
-        const question = this.currentQuestion
-        if (!question) return
-        this.selectedAnswers[question.id] = answerIndex
-      },
+    // Save result to history
+    const historyStore = useQuizHistoryStore()
+    const quiz = currentQuiz.value
+    if (quiz) {
+      const passed = score.value >= quiz.questions.length * 0.7 // 70% to pass
+      historyStore.addResult(quiz.id, score.value, quiz.questions.length, passed)
+    }
+  }
 
-      calculateScore() {
-        if (!this.currentQuiz) return
+  const restartQuiz = () => {
+    if (!currentQuizId.value) return
 
-        let newScore = 0
-        for (const question of this.currentQuiz.questions) {
-          const selectedIndex = this.selectedAnswers[question.id]
-          if (selectedIndex !== undefined && selectedIndex !== null) {
-            if (selectedIndex === question.correctAnswerIndex) {
-              newScore += 1
-            }
-          }
-          // null answers are counted as wrong (not incrementing score)
-        }
-        this.score = newScore
-      },
+    clearTimer()
+    currentQuestionIndex.value = 0
+    selectedAnswers.value = {}
+    score.value = 0
+    isCompleted.value = false
 
-      nextQuestion() {
-        if (!this.hasNextQuestion) return
-        this.clearTimer()
-        this.currentQuestionIndex += 1
+    // Restart timer for first question if it has a time limit
+    const timeLimit = getCurrentQuestionTimeLimit.value
+    if (timeLimit !== null && timeLimit > 0) {
+      startTimer(timeLimit)
+    }
+  }
 
-        // Start timer for new question if it has a time limit
-        const timeLimit = this.getCurrentQuestionTimeLimit
-        if (timeLimit !== null && timeLimit > 0) {
-          this.startTimer(timeLimit)
-        }
-      },
+  const backToQuizList = () => {
+    clearTimer()
+    currentQuizId.value = null
+    currentQuestionIndex.value = 0
+    selectedAnswers.value = {}
+    score.value = 0
+    isCompleted.value = false
+  }
 
-      previousQuestion() {
-        if (!this.hasPreviousQuestion) return
-        this.clearTimer()
-        this.currentQuestionIndex -= 1
+  const getAnswerForCurrentQuestion = (): number | null => {
+    const question = currentQuestion.value
+    if (!question) return null
+    return selectedAnswers.value[question.id] ?? null
+  }
 
-        // Start timer for previous question if it has a time limit
-        const timeLimit = this.getCurrentQuestionTimeLimit
-        if (timeLimit !== null && timeLimit > 0) {
-          this.startTimer(timeLimit)
-        }
-      },
+  const getAnswerForQuestion = (questionId: string): number | null => {
+    return selectedAnswers.value[questionId] ?? null
+  }
 
-      goToQuestion(index: number) {
-        if (index < 0 || index >= this.totalQuestions) return
-        this.clearTimer()
-        this.currentQuestionIndex = index
+  return {
+    // State
+    currentQuizId,
+    currentQuestionIndex,
+    selectedAnswers,
+    score,
+    isCompleted,
+    timeLeft,
 
-        // Start timer for new question if it has a time limit
-        const timeLimit = this.getCurrentQuestionTimeLimit
-        if (timeLimit !== null && timeLimit > 0) {
-          this.startTimer(timeLimit)
-        }
-      },
+    // Getters
+    currentQuiz,
+    currentQuestion,
+    totalQuestions,
+    progress,
+    hasNextQuestion,
+    hasPreviousQuestion,
+    hasTimer,
+    getCurrentQuestionTimeLimit,
 
-      completeQuiz() {
-        this.clearTimer()
-        this.calculateScore()
-        this.isCompleted = true
-
-        // Save result to history
-        const historyStore = useQuizHistoryStore()
-        const quiz = this.currentQuiz
-        if (quiz) {
-          const passed = this.score >= quiz.questions.length * 0.7 // 70% to pass
-          historyStore.addResult(quiz.id, this.score, quiz.questions.length, passed)
-        }
-      },
-
-      restartQuiz() {
-        if (!this.currentQuizId) return
-
-        this.clearTimer()
-        this.currentQuestionIndex = 0
-        this.selectedAnswers = {}
-        this.score = 0
-        this.isCompleted = false
-
-        // Restart timer for first question if it has a time limit
-        const timeLimit = this.getCurrentQuestionTimeLimit
-        if (timeLimit !== null && timeLimit > 0) {
-          this.startTimer(timeLimit)
-        }
-      },
-
-      backToQuizList() {
-        this.clearTimer()
-        this.currentQuizId = null
-        this.currentQuestionIndex = 0
-        this.selectedAnswers = {}
-        this.score = 0
-        this.isCompleted = false
-      },
-
-      getAnswerForCurrentQuestion(): number | null {
-        const question = this.currentQuestion
-        if (!question) return null
-        return this.selectedAnswers[question.id] ?? null
-      },
-
-      getAnswerForQuestion(questionId: string): number | null {
-        return this.selectedAnswers[questionId] ?? null
-      },
-    },
-
-    persist: {
-      key: 'quiz-session',
-      pick: ['currentQuizId', 'currentQuestionIndex', 'selectedAnswers', 'score', 'isCompleted'],
-    },
-  },
-)
+    // Actions
+    clearTimer,
+    startTimer,
+    selectQuiz,
+    selectAnswer,
+    calculateScore,
+    nextQuestion,
+    previousQuestion,
+    goToQuestion,
+    completeQuiz,
+    restartQuiz,
+    backToQuizList,
+    getAnswerForCurrentQuestion,
+    getAnswerForQuestion,
+  }
+})
