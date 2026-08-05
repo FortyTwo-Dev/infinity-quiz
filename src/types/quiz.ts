@@ -5,6 +5,7 @@ export interface Question {
   correctAnswerIndex: number
   timeLimit?: number // Time limit in seconds for this specific question
   shuffleAnswers?: boolean // Whether to shuffle the order of answers for this question
+  explanation?: string // Explanation shown when feedback is enabled (required if quiz.feedbackEnabled is true)
 }
 
 export interface Quiz {
@@ -17,6 +18,7 @@ export interface Quiz {
   shuffleAnswers?: boolean // Whether to shuffle answers for all questions (can be overridden per question)
   maxSkips?: number // Maximum number of questions that can be skipped (undefined = unlimited)
   enableReviewMode?: boolean // Whether to enable review mode after quiz completion
+  feedbackEnabled?: boolean // Whether to show immediate feedback after answer selection
 }
 
 export interface QuestionResult {

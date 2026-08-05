@@ -35,11 +35,16 @@ body {
   --color-primary-light: #dbeafe;
   --color-secondary: #64748b;
   --color-success: #22c55e;
+  --color-success-light: #bbf7d0;
+  --color-success-dark: #166534;
   --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-warning-dark: #92400e;
   --color-danger: #ef4444;
   --color-info: #06b6d4;
   --color-bg: #f8fafc;
   --color-bg-card: #ffffff;
+  --color-bg-secondary: #f1f5f9;
   --color-text: #1e293b;
   --color-text-secondary: #64748b;
   --color-text-inverse: #ffffff;

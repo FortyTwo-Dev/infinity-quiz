@@ -44,9 +44,9 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [x] **Question Shuffling**: Randomize question order
 - [x] **Answer Shuffling**: Randomize answer order for each question
 - [x] **Skip Question**: Allow users to skip and return later
-- [ ] **Review Mode**: Review all questions and answers at the end
-- [ ] **Correct Answer Highlight**: Show correct answer after selection
-- [ ] **Feedback**: Immediate feedback on answer selection
+- [x] **Review Mode**: Review all questions and answers at the end
+- [x] **Correct Answer Highlight**: Show correct answer after selection
+- [x] **Feedback**: Immediate feedback on answer selection
 
 ---
 

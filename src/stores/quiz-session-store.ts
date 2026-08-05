@@ -10,11 +10,14 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const currentQuestionIndex = ref<number>(0)
   const selectedAnswers = ref<Record<string, number | null>>({})
   const skippedQuestions = ref<Set<string>>(new Set())
+  const verifiedQuestions = ref<Set<string>>(new Set())
   const score = ref<number>(0)
   const isCompleted = ref<boolean>(false)
   const timeLeft = ref<number | null>(null)
   const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
   const shuffledQuiz = ref<Quiz | null>(null)
+  const isAnswerVerified = ref<boolean>(false)
+  const verifiedAnswerCorrect = ref<boolean | null>(null)
 
   // Getters
   const currentQuiz = computed(() => {
@@ -82,6 +85,35 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     // Review mode is enabled if quiz has enableReviewMode set to true
     // Default to true if not specified (backward compatibility)
     return quiz.enableReviewMode !== false
+  })
+
+  const hasFeedbackEnabled = computed(() => {
+    const quiz = currentQuiz.value
+    if (!quiz) return false
+    return quiz.feedbackEnabled === true
+  })
+
+  const shouldShowFeedback = computed(() => {
+    return isAnswerVerified.value && hasFeedbackEnabled.value
+  })
+
+  const shouldShowVerifyButton = computed(() => {
+    const answer = getAnswerForCurrentQuestion()
+    return hasFeedbackEnabled.value && answer !== null && !isAnswerVerified.value
+  })
+
+  const shouldShowContinueButton = computed(() => {
+    return isAnswerVerified.value && hasFeedbackEnabled.value
+  })
+
+  const isCurrentQuestionVerified = computed(() => {
+    const question = currentQuestion.value
+    if (!question) return false
+    return verifiedQuestions.value.has(question.id)
+  })
+
+  const canSkipCurrentQuestion = computed(() => {
+    return canSkip.value && !isCurrentQuestionVerified.value
   })
 
   const getQuestionResults = computed(() => {
@@ -159,8 +191,11 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
     skippedQuestions.value = new Set()
+    verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
+    isAnswerVerified.value = false
+    verifiedAnswerCorrect.value = null
 
     if (originalQuiz.shuffleQuestions) {
       shuffledQuiz.value = {
@@ -181,14 +216,48 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const selectAnswer = (answerIndex: number) => {
     const question = currentQuestion.value
     if (!question) return
+
+    // Prevent changing answer if question is already verified
+    if (verifiedQuestions.value.has(question.id)) {
+      return
+    }
+
     selectedAnswers.value[question.id] = answerIndex
     skippedQuestions.value.delete(question.id)
+    // Reset verification state when selecting a new answer
+    isAnswerVerified.value = false
+    verifiedAnswerCorrect.value = null
+  }
+
+  const verifyAnswer = (): boolean => {
+    const question = currentQuestion.value
+    if (!question) return false
+
+    const userAnswer = selectedAnswers.value[question.id]
+    if (userAnswer === undefined || userAnswer === null) return false
+
+    isAnswerVerified.value = true
+    verifiedAnswerCorrect.value = userAnswer === question.correctAnswerIndex
+    verifiedQuestions.value.add(question.id)
+    return verifiedAnswerCorrect.value
+  }
+
+  const continueToNext = (): boolean => {
+    isAnswerVerified.value = false
+    verifiedAnswerCorrect.value = null
+
+    if (!hasNextQuestion.value) {
+      completeQuiz()
+      return true
+    }
+    nextQuestion()
+    return false
   }
 
   const skipQuestion = (): boolean => {
     const question = currentQuestion.value
     if (!question) return false
-    if (!canSkip.value) return false
+    if (!canSkipCurrentQuestion.value) return false
 
     selectedAnswers.value[question.id] = null
     skippedQuestions.value.add(question.id)
@@ -218,10 +287,28 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = newScore
   }
 
+  const updateVerificationState = () => {
+    const question = currentQuestion.value
+    if (!question) {
+      isAnswerVerified.value = false
+      verifiedAnswerCorrect.value = null
+      return
+    }
+    const wasVerified = verifiedQuestions.value.has(question.id)
+    isAnswerVerified.value = wasVerified
+    if (wasVerified) {
+      const userAnswer = selectedAnswers.value[question.id]
+      verifiedAnswerCorrect.value = userAnswer === question.correctAnswerIndex
+    } else {
+      verifiedAnswerCorrect.value = null
+    }
+  }
+
   const nextQuestion = () => {
     if (!hasNextQuestion.value) return
     clearTimer()
     currentQuestionIndex.value += 1
+    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -233,6 +320,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     if (!hasPreviousQuestion.value) return
     clearTimer()
     currentQuestionIndex.value -= 1
+    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -244,6 +332,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     if (index < 0 || index >= totalQuestions.value) return
     clearTimer()
     currentQuestionIndex.value = index
+    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -271,8 +360,11 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
     skippedQuestions.value = new Set()
+    verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
+    isAnswerVerified.value = false
+    verifiedAnswerCorrect.value = null
 
     const quizStore = useQuizStore()
     const originalQuiz = quizStore.getQuizById(currentQuizId.value)
@@ -295,8 +387,11 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
     skippedQuestions.value = new Set()
+    verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
+    isAnswerVerified.value = false
+    verifiedAnswerCorrect.value = null
     shuffledQuiz.value = null
   }
 
@@ -316,9 +411,12 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuestionIndex,
     selectedAnswers,
     skippedQuestions,
+    verifiedQuestions,
     score,
     isCompleted,
     timeLeft,
+    isAnswerVerified,
+    verifiedAnswerCorrect,
 
     // Getters
     currentQuiz,
@@ -331,8 +429,14 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     getCurrentQuestionTimeLimit,
     skippedCount,
     canSkip,
+    canSkipCurrentQuestion,
     remainingSkips,
     canReview,
+    hasFeedbackEnabled,
+    isCurrentQuestionVerified,
+    shouldShowFeedback,
+    shouldShowVerifyButton,
+    shouldShowContinueButton,
     getQuestionResults,
 
     // Actions
@@ -342,6 +446,9 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectAnswer,
     skipQuestion,
     handleTimerExpiry,
+    updateVerificationState,
+    verifyAnswer,
+    continueToNext,
     calculateScore,
     nextQuestion,
     previousQuestion,
