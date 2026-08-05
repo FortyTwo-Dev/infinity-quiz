@@ -39,9 +39,9 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 ## Phase 2: Enhanced Quiz Experience
 
 ### Features
-- [ ] **Timer**: Optional time limit per quiz
-- [ ] **Progress Bar**: Visual indicator of quiz completion percentage
-- [ ] **Question Shuffling**: Randomize question order
+- [x] **Timer**: Optional time limit per quiz
+- [x] **Progress Bar**: Visual indicator of quiz completion percentage
+- [x] **Question Shuffling**: Randomize question order
 - [ ] **Answer Shuffling**: Randomize answer order for each question
 - [ ] **Skip Question**: Allow users to skip and return later
 - [ ] **Review Mode**: Review all questions and answers at the end
