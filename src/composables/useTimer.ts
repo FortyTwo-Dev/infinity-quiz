@@ -37,7 +37,7 @@ export function useTimer(initialTime: number): TimerResult {
 
   const reset = (newTime?: number) => {
     stop()
-    timeLeft.value = newTime !== undefined ? newTime : initialTime
+    timeLeft.value = newTime ?? initialTime
   }
 
   onUnmounted(() => {
