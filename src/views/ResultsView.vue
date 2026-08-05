@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useResults } from '../composables/useResults'
+import { PhEye, PhEyeClosed } from '@phosphor-icons/vue'
 import Button from '../components/common/Button.vue'
+import QuestionReviewCard from '../components/quiz/QuestionReviewCard.vue'
 
 const router = useRouter()
-const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback, restartQuiz, backToQuizList } = useResults()
+const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback, canReview, questionResults, restartQuiz, backToQuizList } = useResults()
+
+const showReview = ref(false)
+
+function toggleReview() {
+  showReview.value = !showReview.value
+}
 </script>
 
 <template>
@@ -27,9 +36,29 @@ const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback
         <p>Bonnes réponses : {{ formattedScore }}</p>
       </div>
 
+      <div v-if="canReview" class="review-toggle">
+        <Button variant="outline" size="medium" @click="toggleReview">
+          <PhEye v-if="!showReview" :size="18" class="button-icon" />
+          <PhEyeClosed v-else :size="18" class="button-icon" />
+          {{ showReview ? 'Masquer la revue' : 'Voir la revue' }}
+        </Button>
+      </div>
+
       <div class="actions">
         <Button variant="primary" size="medium" @click="restartQuiz">Recommencer le quiz</Button>
         <Button variant="secondary" size="medium" @click="backToQuizList">Retour à la liste</Button>
+      </div>
+
+      <div v-if="showReview && canReview" class="review-section">
+        <h3>Revue des questions</h3>
+        <div class="review-cards">
+          <QuestionReviewCard
+            v-for="(result, index) in questionResults"
+            :key="result.question.id"
+            :question-result="result"
+            :show-feedback="true"
+          />
+        </div>
       </div>
     </div>
 
@@ -151,5 +180,32 @@ const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback
 
 .no-results > * {
   margin-top: var(--space-md);
+}
+
+.review-toggle {
+  margin: var(--space-md) 0 var(--space-lg);
+  text-align: center;
+}
+
+.review-toggle .button-icon {
+  margin-right: var(--space-sm);
+}
+
+.review-section {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.review-section h3 {
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+.review-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 </style>

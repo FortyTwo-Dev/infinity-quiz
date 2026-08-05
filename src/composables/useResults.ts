@@ -29,6 +29,8 @@ export function useResults() {
     percentage,
     formattedScore,
     feedback,
+    canReview: sessionStore.canReview,
+    questionResults: sessionStore.getQuestionResults,
     restartQuiz,
     backToQuizList,
   }

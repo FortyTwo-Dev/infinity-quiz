@@ -16,6 +16,14 @@ export interface Quiz {
   shuffleQuestions?: boolean // Whether to shuffle the order of questions
   shuffleAnswers?: boolean // Whether to shuffle answers for all questions (can be overridden per question)
   maxSkips?: number // Maximum number of questions that can be skipped (undefined = unlimited)
+  enableReviewMode?: boolean // Whether to enable review mode after quiz completion
+}
+
+export interface QuestionResult {
+  question: Question
+  userAnswer: number | null
+  isCorrect: boolean
+  isSkipped: boolean
 }
 
 export interface QuizState {

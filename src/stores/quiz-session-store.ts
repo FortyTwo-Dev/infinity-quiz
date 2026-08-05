@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
 import { shuffle } from '../utils/array-utils'
-import type { Quiz } from '@/types'
+import type { Quiz, QuestionResult } from '@/types'
 
 export const useQuizSessionStore = defineStore('quizSession', () => {
   // State
@@ -74,6 +74,29 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     const quiz = currentQuiz.value
     if (!quiz?.maxSkips) return null
     return quiz.maxSkips - skippedCount.value
+  })
+
+  const canReview = computed(() => {
+    const quiz = currentQuiz.value
+    if (!quiz) return false
+    // Review mode is enabled if quiz has enableReviewMode set to true
+    // Default to true if not specified (backward compatibility)
+    return quiz.enableReviewMode !== false
+  })
+
+  const getQuestionResults = computed(() => {
+    const quiz = currentQuiz.value
+    if (!quiz) return [] as QuestionResult[]
+    return quiz.questions.map((question): QuestionResult => {
+      const userAnswer = selectedAnswers.value[question.id] ?? null
+      const isSkipped = skippedQuestions.value.has(question.id)
+      return {
+        question,
+        userAnswer,
+        isCorrect: userAnswer === question.correctAnswerIndex,
+        isSkipped,
+      }
+    })
   })
 
   const getCurrentQuestionTimeLimit = computed(() => {
@@ -309,6 +332,8 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     skippedCount,
     canSkip,
     remainingSkips,
+    canReview,
+    getQuestionResults,
 
     // Actions
     clearTimer,
