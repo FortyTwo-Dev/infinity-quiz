@@ -181,6 +181,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
       nextQuestion()
     } else {
       completeQuiz()
+      router.push({ name: 'results' })
     }
   }
 
