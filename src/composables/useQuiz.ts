@@ -60,6 +60,10 @@ export function useQuiz() {
     sessionStore.selectAnswer(answerIndex)
   }
 
+  function skipQuestion() {
+    sessionStore.skipQuestion()
+  }
+
   function submitAndNext() {
     if (sessionStore.hasNextQuestion) {
       sessionStore.nextQuestion()
