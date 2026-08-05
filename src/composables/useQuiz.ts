@@ -28,6 +28,12 @@ export function useQuiz() {
   const hasTimer = computed(() => sessionStore.hasTimer)
   const canSkip = computed(() => sessionStore.canSkip)
   const remainingSkips = computed(() => sessionStore.remainingSkips)
+  const hasFeedbackEnabled = computed(() => sessionStore.hasFeedbackEnabled)
+  const isAnswerVerified = computed(() => sessionStore.isAnswerVerified)
+  const verifiedAnswerCorrect = computed(() => sessionStore.verifiedAnswerCorrect)
+  const shouldShowFeedback = computed(() => sessionStore.shouldShowFeedback)
+  const canSkipCurrentQuestion = computed(() => sessionStore.canSkipCurrentQuestion)
+  const isCurrentQuestionVerified = computed(() => sessionStore.isCurrentQuestionVerified)
 
   const currentQuestionOptions = computed<QuestionOption[]>(() => {
     const question = currentQuestion.value
@@ -83,6 +89,17 @@ export function useQuiz() {
     }
   }
 
+  function verifyAnswer() {
+    return sessionStore.verifyAnswer()
+  }
+
+  function continueToNext() {
+    const quizCompleted = sessionStore.continueToNext()
+    if (quizCompleted) {
+      router.push({ name: 'results' })
+    }
+  }
+
   function goToPrevious() {
     sessionStore.previousQuestion()
   }
@@ -128,10 +145,18 @@ export function useQuiz() {
     hasTimer,
     canSkip,
     remainingSkips,
+    hasFeedbackEnabled,
+    isAnswerVerified,
+    verifiedAnswerCorrect,
+    shouldShowFeedback,
+    canSkipCurrentQuestion,
+    isCurrentQuestionVerified,
     initializeQuiz,
     selectAnswer,
     skipQuestion,
     handleTimerExpiry,
+    verifyAnswer,
+    continueToNext,
     submitAndNext,
     goToPrevious,
     restartQuiz,

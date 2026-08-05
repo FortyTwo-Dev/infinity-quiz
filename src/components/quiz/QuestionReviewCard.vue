@@ -93,7 +93,7 @@ const getOptionClass = (optionIndex: number) => {
 
 .question-review-card.status-correct {
   border-color: var(--color-success);
-  background: var(--color-success-light);
+  background: var(--color-bg-secondary);
 }
 
 .question-review-card.status-incorrect {
@@ -176,17 +176,35 @@ const getOptionClass = (optionIndex: number) => {
 .option--correct {
   border-color: var(--color-success);
   background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.option--correct .option-text {
+  color: var(--color-success-dark);
 }
 
 .option--incorrect {
   border-color: var(--color-danger);
   background: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.option--incorrect .option-text {
+  color: var(--color-danger);
 }
 
 .option-letter {
   font-weight: bold;
   color: var(--color-text-secondary);
   min-width: 24px;
+}
+
+.option--correct .option-letter {
+  color: var(--color-success-dark);
+}
+
+.option--incorrect .option-letter {
+  color: var(--color-danger);
 }
 
 .option-text {

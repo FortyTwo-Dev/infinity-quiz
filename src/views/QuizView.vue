@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useQuiz } from '../composables/useQuiz'
 import Button from '../components/common/Button.vue'
 import ProgressBar from '../components/common/ProgressBar.vue'
+import FeedbackCard from '../components/quiz/FeedbackCard.vue'
+import { PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
 const {
   currentQuiz,
@@ -17,13 +19,53 @@ const {
   hasTimer,
   canSkip,
   remainingSkips,
+  hasFeedbackEnabled,
+  isAnswerVerified,
+  verifiedAnswerCorrect,
+  shouldShowFeedback,
+  canSkipCurrentQuestion,
+  isCurrentQuestionVerified,
   selectAnswer,
   skipQuestion,
+  verifyAnswer,
+  continueToNext,
   submitAndNext,
   goToPrevious,
   backToQuizList,
   getCurrentAnswer,
 } = useQuiz()
+
+// Check if an option is the correct answer
+const isCorrectAnswer = (originalIndex: number): boolean => {
+  const question = currentQuestion.value
+  if (!question) return false
+  return originalIndex === question.correctAnswerIndex
+}
+
+// Check if an option was selected by the user
+const isOptionSelected = (originalIndex: number): boolean => {
+  const currentAnswer = getCurrentAnswer()
+  return currentAnswer === originalIndex
+}
+
+// Get the feedback status for styling an option
+const getOptionFeedbackClass = (originalIndex: number) => {
+  if (!isAnswerVerified.value) return {}
+
+  const isSelected = isOptionSelected(originalIndex)
+  const isCorrect = isCorrectAnswer(originalIndex)
+
+  if (isSelected && isCorrect) {
+    return { 'option-button--correct': true }
+  }
+  if (isSelected && !isCorrect) {
+    return { 'option-button--incorrect': true }
+  }
+  if (!isSelected && isCorrect) {
+    return { 'option-button--correct': true }
+  }
+  return {}
+}
 
 const formattedTime = computed(() => {
   if (timeLeft.value === null) return null
@@ -35,12 +77,6 @@ const formattedTime = computed(() => {
 const isTimeLow = computed(() => {
   return timeLeft.value !== null && timeLeft.value <= 30 && timeLeft.value > 0
 })
-
-// Helper to check if an option is selected
-const isOptionSelected = (originalIndex: number): boolean => {
-  const currentAnswer = getCurrentAnswer()
-  return currentAnswer === originalIndex
-}
 </script>
 
 <template>
@@ -64,17 +100,48 @@ const isOptionSelected = (originalIndex: number): boolean => {
 
     <div v-if="currentQuestion" class="question-container">
       <h2>{{ currentQuestion.text }}</h2>
+
       <div class="options">
         <Button
           v-for="(item, displayIndex) in currentQuestionOptions"
           :key="displayIndex"
           variant="secondary"
           size="medium"
-          :class="{ 'option-button--selected': isOptionSelected(item.originalIndex) }"
+          :class="{
+            'option-button--selected': isOptionSelected(item.originalIndex),
+            ...getOptionFeedbackClass(item.originalIndex),
+          }"
           class="option-button"
+          :disabled="isCurrentQuestionVerified"
           @click="selectAnswer(item.originalIndex)"
         >
-          {{ item.option }}
+          <span
+            class="option-icon"
+            v-if="
+              (isAnswerVerified && isCorrectAnswer(item.originalIndex)) ||
+              (isAnswerVerified &&
+                isOptionSelected(item.originalIndex) &&
+                !isCorrectAnswer(item.originalIndex))
+            "
+          >
+            <PhCheckCircle
+              v-if="isAnswerVerified && isCorrectAnswer(item.originalIndex)"
+              :size="20"
+              weight="fill"
+            />
+            <PhXCircle
+              v-else-if="
+                isAnswerVerified &&
+                isOptionSelected(item.originalIndex) &&
+                !isCorrectAnswer(item.originalIndex)
+              "
+              :size="20"
+              weight="fill"
+              class="incorrect-icon"
+            />
+            <span v-else class="icon-placeholder"></span>
+          </span>
+          <span class="option-text">{{ item.option }}</span>
         </Button>
       </div>
 
@@ -85,12 +152,33 @@ const isOptionSelected = (originalIndex: number): boolean => {
         <Button
           v-if="canSkip"
           variant="outline"
+          :disabled="!canSkipCurrentQuestion"
           @click="skipQuestion"
         >
           Sauter{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
         </Button>
-        <Button variant="primary" :disabled="getCurrentAnswer() === null" @click="submitAndNext">
-          {{ hasNextQuestion ? 'Suivant' : 'Terminer' }}
+        <Button
+          variant="primary"
+          :disabled="
+            hasFeedbackEnabled
+              ? getCurrentAnswer() === null && !isCurrentQuestionVerified
+              : getCurrentAnswer() === null
+          "
+          @click="
+            hasFeedbackEnabled && !isCurrentQuestionVerified
+              ? verifyAnswer()
+              : hasFeedbackEnabled
+                ? continueToNext()
+                : submitAndNext()
+          "
+        >
+          {{
+            hasFeedbackEnabled && !isCurrentQuestionVerified && getCurrentAnswer() !== null
+              ? 'Vérifier'
+              : hasNextQuestion
+                ? 'Suivant'
+                : 'Terminer'
+          }}
         </Button>
       </div>
     </div>
@@ -98,11 +186,16 @@ const isOptionSelected = (originalIndex: number): boolean => {
     <div v-else class="no-question">
       <p>Aucune question disponible</p>
     </div>
+
+    <FeedbackCard v-if="shouldShowFeedback" />
   </div>
 </template>
 
 <style scoped>
 .quiz-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
   max-width: 800px;
   margin: 0 auto;
   padding: var(--space-md);
@@ -177,7 +270,6 @@ const isOptionSelected = (originalIndex: number): boolean => {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-xl);
-  text-align: center;
 }
 
 .question-container h2 {
@@ -197,21 +289,66 @@ const isOptionSelected = (originalIndex: number): boolean => {
 
 .option-button {
   width: 100%;
-  text-align: left;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-md);
   transition: all var(--transition-normal);
+  display: flex;
+  gap: var(--space-sm);
 }
 
-.option-button:hover {
+.option-button:hover:not(.option-button--correct):not(.option-button--incorrect) {
   border-color: var(--color-primary);
   background: var(--color-primary-light);
 }
 
-.option-button--selected {
+.option-button--selected:not(.option-button--correct):not(.option-button--incorrect) {
   border-color: var(--color-primary);
   background: var(--color-primary-light);
   font-weight: bold;
+}
+
+.option-button--correct {
+  border-color: var(--color-success) !important;
+  background: var(--color-success-light) !important;
+  color: var(--color-success-dark) !important;
+}
+
+.option-button--incorrect {
+  border-color: var(--color-warning) !important;
+  background: var(--color-warning-light) !important;
+  color: var(--color-warning-dark) !important;
+}
+
+.option-button:disabled {
+  cursor: not-allowed;
+}
+
+.option-icon {
+  min-width: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-placeholder {
+  display: block;
+  width: 24px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.option-text {
+  text-align: center;
+}
+
+.correct-icon {
+  color: var(--color-success);
+}
+
+.incorrect-icon {
+  color: var(--color-warning);
 }
 
 .navigation {

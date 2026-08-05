@@ -10,11 +10,16 @@ export const generateThemeCSS = (theme: ThemeTokens): string => {
   --color-primary-light: ${colors.primaryLight};
   --color-secondary: ${colors.secondary};
   --color-success: ${colors.success};
+  --color-success-light: #bbf7d0;
+  --color-success-dark: #166534;
   --color-warning: ${colors.warning};
+  --color-warning-light: #fef3c7;
+  --color-warning-dark: #92400e;
   --color-danger: ${colors.danger};
   --color-info: ${colors.info};
   --color-bg: ${colors.background};
   --color-bg-card: ${colors.backgroundCard};
+  --color-bg-secondary: ${colors.backgroundCard};
   --color-text: ${colors.text};
   --color-text-secondary: ${colors.textSecondary};
   --color-text-inverse: ${colors.textInverse};
