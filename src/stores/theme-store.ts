@@ -86,9 +86,9 @@ export const useThemeStore = defineStore('theme', () => {
     customizations: Partial<Omit<ThemeTokens, 'name'>>,
   ): ThemeTokens => {
     return {
-      name,
       ...lightTheme,
       ...customizations,
+      name,
     }
   }
 
