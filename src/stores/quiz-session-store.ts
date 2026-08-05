@@ -28,6 +28,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     const quiz = currentQuiz.value
     if (!quiz || currentQuestionIndex.value >= quiz.questions.length) return null
     const question = quiz.questions[currentQuestionIndex.value]
+    if (!question) return null
     return shuffleQuestionAnswers(question)
   })
 
