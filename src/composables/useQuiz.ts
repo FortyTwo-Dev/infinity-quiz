@@ -36,9 +36,9 @@ export function useQuiz() {
     const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
 
     if (shouldShuffle) {
-      return shuffle(options).map((option, shuffledIndex) => ({
+      return shuffle(options).map((option) => ({
         option,
-        originalIndex: question.options.findIndex(o => o === option),
+        originalIndex: question.options.indexOf(option),
       }))
     }
 
