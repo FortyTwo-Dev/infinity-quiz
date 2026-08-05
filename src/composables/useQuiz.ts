@@ -61,7 +61,17 @@ export function useQuiz() {
   }
 
   function skipQuestion() {
-    sessionStore.skipQuestion()
+    const quizCompleted = sessionStore.skipQuestion()
+    if (quizCompleted) {
+      router.push({ name: 'results' })
+    }
+  }
+
+  function handleTimerExpiry() {
+    const quizCompleted = sessionStore.handleTimerExpiry()
+    if (quizCompleted) {
+      router.push({ name: 'results' })
+    }
   }
 
   function submitAndNext() {
@@ -95,6 +105,13 @@ export function useQuiz() {
 
   watch(() => quizId.value, initializeQuiz, { immediate: true })
 
+  // Handle timer expiry navigation
+  watch(timeLeft, (newTimeLeft) => {
+    if (newTimeLeft === 0) {
+      handleTimerExpiry()
+    }
+  })
+
   return {
     quizId,
     currentQuiz,
@@ -114,6 +131,7 @@ export function useQuiz() {
     initializeQuiz,
     selectAnswer,
     skipQuestion,
+    handleTimerExpiry,
     submitAndNext,
     goToPrevious,
     restartQuiz,

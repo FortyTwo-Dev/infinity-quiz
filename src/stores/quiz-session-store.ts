@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
 import { shuffle } from '../utils/array-utils'
-import type { Quiz } from '../types/quiz'
+import type { Quiz } from '@/types'
 
 export const useQuizSessionStore = defineStore('quizSession', () => {
   // State
@@ -66,13 +66,13 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
 
   const canSkip = computed(() => {
     const quiz = currentQuiz.value
-    if (!quiz?.maxSkips) return true // Unlimited skips
+    if (!quiz?.maxSkips) return true
     return skippedCount.value < quiz.maxSkips
   })
 
   const remainingSkips = computed(() => {
     const quiz = currentQuiz.value
-    if (!quiz?.maxSkips) return null // Unlimited
+    if (!quiz?.maxSkips) return null
     return quiz.maxSkips - skippedCount.value
   })
 
@@ -82,7 +82,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     const currentQuestion = quiz.questions[currentQuestionIndex.value]
     if (!currentQuestion) return null
 
-    // Question-level time limit takes priority over quiz-level
     if (currentQuestion.timeLimit !== undefined) {
       return currentQuestion.timeLimit
     }
@@ -90,7 +89,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   })
 
   // Helper functions
-
   const clearTimer = () => {
     if (timerInterval.value) {
       clearInterval(timerInterval.value)
@@ -112,18 +110,18 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     }, 1000)
   }
 
-  const handleTimerExpiry = () => {
-    // Mark current answer as empty (null = not answered = wrong)
+  const handleTimerExpiry = (): boolean => {
     const question = currentQuestion.value
     if (question) {
       selectedAnswers.value[question.id] = null
     }
 
-    // Move to next question or complete quiz
     if (hasNextQuestion.value) {
       nextQuestion()
+      return false
     } else {
       completeQuiz()
+      return true
     }
   }
 
@@ -141,7 +139,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = 0
     isCompleted.value = false
 
-    // Shuffle questions if enabled
     if (originalQuiz.shuffleQuestions) {
       shuffledQuiz.value = {
         ...originalQuiz,
@@ -151,7 +148,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
       shuffledQuiz.value = null
     }
 
-    // Start timer if quiz or first question has time limit
     const quiz = shuffledQuiz.value ?? originalQuiz
     const timeLimit = quiz.timeLimit ?? quiz.questions[0]?.timeLimit
     if (timeLimit !== undefined && timeLimit > 0) {
@@ -163,25 +159,23 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     const question = currentQuestion.value
     if (!question) return
     selectedAnswers.value[question.id] = answerIndex
-    // Remove from skipped if it was previously skipped
     skippedQuestions.value.delete(question.id)
   }
 
-  const skipQuestion = () => {
+  const skipQuestion = (): boolean => {
     const question = currentQuestion.value
-    if (!question) return
-    if (!canSkip.value) return
+    if (!question) return false
+    if (!canSkip.value) return false
 
-    // Mark as skipped (null answer = wrong)
     selectedAnswers.value[question.id] = null
     skippedQuestions.value.add(question.id)
 
-    // Move to next question
     if (hasNextQuestion.value) {
       nextQuestion()
+      return false
     } else {
       completeQuiz()
-      router.push({ name: 'results' })
+      return true
     }
   }
 
@@ -197,7 +191,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
           newScore += 1
         }
       }
-      // null answers are counted as wrong (not incrementing score)
     }
     score.value = newScore
   }
@@ -207,7 +200,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     clearTimer()
     currentQuestionIndex.value += 1
 
-    // Start timer for new question if it has a time limit
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
       startTimer(timeLimit)
@@ -219,7 +211,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     clearTimer()
     currentQuestionIndex.value -= 1
 
-    // Start timer for previous question if it has a time limit
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
       startTimer(timeLimit)
@@ -231,7 +222,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     clearTimer()
     currentQuestionIndex.value = index
 
-    // Start timer for new question if it has a time limit
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
       startTimer(timeLimit)
@@ -243,11 +233,10 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     calculateScore()
     isCompleted.value = true
 
-    // Save result to history
     const historyStore = useQuizHistoryStore()
     const quiz = currentQuiz.value
     if (quiz) {
-      const passed = score.value >= quiz.questions.length * 0.7 // 70% to pass
+      const passed = score.value >= quiz.questions.length * 0.7
       historyStore.addResult(quiz.id, score.value, quiz.questions.length, passed)
     }
   }
@@ -262,7 +251,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = 0
     isCompleted.value = false
 
-    // Re-shuffle questions on restart
     const quizStore = useQuizStore()
     const originalQuiz = quizStore.getQuizById(currentQuizId.value)
     if (originalQuiz?.shuffleQuestions) {
@@ -272,7 +260,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
       }
     }
 
-    // Restart timer for first question if it has a time limit
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
       startTimer(timeLimit)
@@ -329,6 +316,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectQuiz,
     selectAnswer,
     skipQuestion,
+    handleTimerExpiry,
     calculateScore,
     nextQuestion,
     previousQuestion,
