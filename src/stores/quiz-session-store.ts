@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
 import { shuffle } from '../utils/array-utils'
-import type { Quiz } from '../types/quiz'
+import type { Quiz, Question } from '../types/quiz'
 
 export const useQuizSessionStore = defineStore('quizSession', () => {
   // State
@@ -14,6 +14,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const timeLeft = ref<number | null>(null)
   const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
   const shuffledQuiz = ref<Quiz | null>(null)
+  const shuffledQuestions = ref<Map<string, Question>>(new Map())
 
   // Getters
   const currentQuiz = computed(() => {
@@ -26,7 +27,8 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const currentQuestion = computed(() => {
     const quiz = currentQuiz.value
     if (!quiz || currentQuestionIndex.value >= quiz.questions.length) return null
-    return quiz.questions[currentQuestionIndex.value]
+    const question = quiz.questions[currentQuestionIndex.value]
+    return shuffleQuestionAnswers(question)
   })
 
   const totalQuestions = computed(() => {
@@ -71,6 +73,36 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   })
 
   // Helper functions
+  const shuffleQuestionAnswers = (question: Question): Question => {
+    // Check if we already have a shuffled version of this question
+    const cached = shuffledQuestions.value.get(question.id)
+    if (cached) return cached
+
+    // Check if this question should have its answers shuffled
+    const quiz = currentQuiz.value
+    const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
+
+    if (!shouldShuffle) {
+      shuffledQuestions.value.set(question.id, question)
+      return question
+    }
+
+    // Shuffle options and recalculate correctAnswerIndex
+    const shuffledOptions = shuffle([...question.options])
+    const originalCorrectIndex = question.correctAnswerIndex
+    const correctOption = question.options[originalCorrectIndex]
+    const newCorrectIndex = shuffledOptions.findIndex(opt => opt === correctOption)
+
+    const shuffledQuestion = {
+      ...question,
+      options: shuffledOptions,
+      correctAnswerIndex: newCorrectIndex,
+    }
+
+    shuffledQuestions.value.set(question.id, shuffledQuestion)
+    return shuffledQuestion
+  }
+
   const clearTimer = () => {
     if (timerInterval.value) {
       clearInterval(timerInterval.value)
@@ -119,6 +151,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectedAnswers.value = {}
     score.value = 0
     isCompleted.value = false
+    shuffledQuestions.value = new Map()
 
     // Shuffle questions if enabled
     if (originalQuiz.shuffleQuestions) {
@@ -219,6 +252,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectedAnswers.value = {}
     score.value = 0
     isCompleted.value = false
+    shuffledQuestions.value = new Map()
 
     // Re-shuffle questions on restart
     const quizStore = useQuizStore()
@@ -245,6 +279,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = 0
     isCompleted.value = false
     shuffledQuiz.value = null
+    shuffledQuestions.value = new Map()
   }
 
   const getAnswerForCurrentQuestion = (): number | null => {
