@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { withDefaults } from 'vue'
-
 interface Props {
   variant?: 'default' | 'elevated' | 'outlined'
   padding?: 'none' | 'small' | 'medium' | 'large'
