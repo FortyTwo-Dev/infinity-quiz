@@ -43,7 +43,7 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [x] **Progress Bar**: Visual indicator of quiz completion percentage
 - [x] **Question Shuffling**: Randomize question order
 - [x] **Answer Shuffling**: Randomize answer order for each question
-- [ ] **Skip Question**: Allow users to skip and return later
+- [x] **Skip Question**: Allow users to skip and return later
 - [ ] **Review Mode**: Review all questions and answers at the end
 - [ ] **Correct Answer Highlight**: Show correct answer after selection
 - [ ] **Feedback**: Immediate feedback on answer selection
