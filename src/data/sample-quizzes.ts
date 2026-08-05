@@ -82,6 +82,60 @@ export const SAMPLE_QUIZZES: Quiz[] = [
       },
     ],
   },
+  {
+    id: 'quiz-4',
+    title: 'Speed Quiz - capitales',
+    description: 'Répondez rapidement ! 30 secondes pour tout le quiz',
+    timeLimit: 30,
+    questions: [
+      {
+        id: 'q4-1',
+        text: 'Quelle est la capitale du Japon ?',
+        options: ['Pékin', 'Tokyo', 'Séoul', 'Bangkok'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q4-2',
+        text: 'Quelle est la capitale du Brésil ?',
+        options: ['Rio de Janeiro', 'São Paulo', 'Brasília', 'Salvador'],
+        correctAnswerIndex: 2,
+      },
+      {
+        id: 'q4-3',
+        text: 'Quelle est la capitale du Canada ?',
+        options: ['Toronto', 'Montréal', 'Ottawa', 'Vancouver'],
+        correctAnswerIndex: 2,
+      },
+    ],
+  },
+  {
+    id: 'quiz-5',
+    title: 'Défi Temps - questions individuelles',
+    description: 'Chaque question a son propre temps limite',
+    questions: [
+      {
+        id: 'q5-1',
+        text: '2 + 2 ?',
+        options: ['3', '4', '5', '6'],
+        correctAnswerIndex: 1,
+        timeLimit: 5, // 5 secondes par question
+      },
+      {
+        id: 'q5-2',
+        text: '5 × 5 ?',
+        options: ['20', '25', '30', '15'],
+        correctAnswerIndex: 1,
+        timeLimit: 10,
+      },
+      {
+        id: 'q5-3',
+        text: '100 - 50 ?',
+        options: ['40', '50', '60', '30'],
+        correctAnswerIndex: 1,
+        timeLimit: 7,
+      },
+    ],
+  },
 ]
 
 export function hasInitializedQuizzes(quizzes: Quiz[]): boolean {
