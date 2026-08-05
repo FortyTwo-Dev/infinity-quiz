@@ -136,6 +136,38 @@ export const SAMPLE_QUIZZES: Quiz[] = [
       },
     ],
   },
+  {
+    id: 'quiz-6',
+    title: 'Quiz Aléatoire - Capitales',
+    description: 'Les questions seront mélangées à chaque fois !',
+    shuffleQuestions: true,
+    questions: [
+      {
+        id: 'q6-1',
+        text: 'Quelle est la capitale de la France ?',
+        options: ['Londres', 'Paris', 'Berlin', 'Madrid'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q6-2',
+        text: 'Quelle est la capitale de l\'Espagne ?',
+        options: ['Lisbonne', 'Madrid', 'Rome', 'Athènes'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q6-3',
+        text: 'Quelle est la capitale de l\'Italie ?',
+        options: ['Rome', 'Milan', 'Venise', 'Naples'],
+        correctAnswerIndex: 0,
+      },
+      {
+        id: 'q6-4',
+        text: 'Quelle est la capitale de l\'Allemagne ?',
+        options: ['Vienne', 'Berlin', 'Bruxelles', 'Amsterdam'],
+        correctAnswerIndex: 1,
+      },
+    ],
+  },
 ]
 
 export function hasInitializedQuizzes(quizzes: Quiz[]): boolean {

@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from './'
+import { shuffle } from '../utils/array-utils'
+import type { Quiz } from '../types/quiz'
 
 export const useQuizSessionStore = defineStore('quizSession', () => {
   // State
@@ -11,33 +13,30 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const isCompleted = ref<boolean>(false)
   const timeLeft = ref<number | null>(null)
   const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
+  const shuffledQuiz = ref<Quiz | null>(null)
 
   // Getters
   const currentQuiz = computed(() => {
+    if (shuffledQuiz.value) return shuffledQuiz.value
     const quizStore = useQuizStore()
     if (!currentQuizId.value) return null
     return quizStore.getQuizById(currentQuizId.value) ?? null
   })
 
   const currentQuestion = computed(() => {
-    const quizStore = useQuizStore()
-    if (!currentQuizId.value) return null
-    const quiz = quizStore.getQuizById(currentQuizId.value)
+    const quiz = currentQuiz.value
     if (!quiz || currentQuestionIndex.value >= quiz.questions.length) return null
     return quiz.questions[currentQuestionIndex.value]
   })
 
   const totalQuestions = computed(() => {
-    const quizStore = useQuizStore()
-    if (!currentQuizId.value) return 0
-    const quiz = quizStore.getQuizById(currentQuizId.value)
-    return quiz?.questions.length ?? 0
+    const quiz = currentQuiz.value
+    if (!quiz) return 0
+    return quiz.questions.length
   })
 
   const progress = computed(() => {
-    const quizStore = useQuizStore()
-    if (!currentQuizId.value) return 0
-    const quiz = quizStore.getQuizById(currentQuizId.value)
+    const quiz = currentQuiz.value
     if (!quiz) return 0
     const total = quiz.questions.length
     if (total === 0) return 0
@@ -45,9 +44,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   })
 
   const hasNextQuestion = computed(() => {
-    const quizStore = useQuizStore()
-    if (!currentQuizId.value) return false
-    const quiz = quizStore.getQuizById(currentQuizId.value)
+    const quiz = currentQuiz.value
     if (!quiz) return false
     return currentQuestionIndex.value < quiz.questions.length - 1
   })
@@ -61,9 +58,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   })
 
   const getCurrentQuestionTimeLimit = computed(() => {
-    const quizStore = useQuizStore()
-    if (!currentQuizId.value) return null
-    const quiz = quizStore.getQuizById(currentQuizId.value)
+    const quiz = currentQuiz.value
     if (!quiz) return null
     const currentQuestion = quiz.questions[currentQuestionIndex.value]
     if (!currentQuestion) return null
@@ -115,8 +110,8 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   // Actions
   const selectQuiz = (quizId: string) => {
     const quizStore = useQuizStore()
-    const quiz = quizStore.getQuizById(quizId)
-    if (!quiz) return
+    const originalQuiz = quizStore.getQuizById(quizId)
+    if (!originalQuiz) return
 
     clearTimer()
     currentQuizId.value = quizId
@@ -125,7 +120,18 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = 0
     isCompleted.value = false
 
+    // Shuffle questions if enabled
+    if (originalQuiz.shuffleQuestions) {
+      shuffledQuiz.value = {
+        ...originalQuiz,
+        questions: shuffle([...originalQuiz.questions]),
+      }
+    } else {
+      shuffledQuiz.value = null
+    }
+
     // Start timer if quiz or first question has time limit
+    const quiz = shuffledQuiz.value ?? originalQuiz
     const timeLimit = quiz.timeLimit ?? quiz.questions[0]?.timeLimit
     if (timeLimit !== undefined && timeLimit > 0) {
       startTimer(timeLimit)
@@ -214,6 +220,16 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = 0
     isCompleted.value = false
 
+    // Re-shuffle questions on restart
+    const quizStore = useQuizStore()
+    const originalQuiz = quizStore.getQuizById(currentQuizId.value)
+    if (originalQuiz?.shuffleQuestions) {
+      shuffledQuiz.value = {
+        ...originalQuiz,
+        questions: shuffle([...originalQuiz.questions]),
+      }
+    }
+
     // Restart timer for first question if it has a time limit
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -228,6 +244,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectedAnswers.value = {}
     score.value = 0
     isCompleted.value = false
+    shuffledQuiz.value = null
   }
 
   const getAnswerForCurrentQuestion = (): number | null => {

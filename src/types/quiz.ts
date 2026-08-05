@@ -12,6 +12,7 @@ export interface Quiz {
   description: string
   questions: Question[]
   timeLimit?: number // Time limit in seconds for the entire quiz (applies to questions without individual timeLimit)
+  shuffleQuestions?: boolean // Whether to shuffle the order of questions
 }
 
 export interface QuizState {
