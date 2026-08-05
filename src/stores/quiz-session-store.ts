@@ -9,6 +9,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const currentQuizId = ref<string | null>(null)
   const currentQuestionIndex = ref<number>(0)
   const selectedAnswers = ref<Record<string, number | null>>({})
+  const skippedQuestions = ref<Set<string>>(new Set())
   const score = ref<number>(0)
   const isCompleted = ref<boolean>(false)
   const timeLeft = ref<number | null>(null)
@@ -57,6 +58,22 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
 
   const hasTimer = computed(() => {
     return timeLeft.value !== null
+  })
+
+  const skippedCount = computed(() => {
+    return skippedQuestions.value.size
+  })
+
+  const canSkip = computed(() => {
+    const quiz = currentQuiz.value
+    if (!quiz?.maxSkips) return true // Unlimited skips
+    return skippedCount.value < quiz.maxSkips
+  })
+
+  const remainingSkips = computed(() => {
+    const quiz = currentQuiz.value
+    if (!quiz?.maxSkips) return null // Unlimited
+    return quiz.maxSkips - skippedCount.value
   })
 
   const getCurrentQuestionTimeLimit = computed(() => {
@@ -120,6 +137,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuizId.value = quizId
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
+    skippedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
 
@@ -145,6 +163,25 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     const question = currentQuestion.value
     if (!question) return
     selectedAnswers.value[question.id] = answerIndex
+    // Remove from skipped if it was previously skipped
+    skippedQuestions.value.delete(question.id)
+  }
+
+  const skipQuestion = () => {
+    const question = currentQuestion.value
+    if (!question) return
+    if (!canSkip.value) return
+
+    // Mark as skipped (null answer = wrong)
+    selectedAnswers.value[question.id] = null
+    skippedQuestions.value.add(question.id)
+
+    // Move to next question
+    if (hasNextQuestion.value) {
+      nextQuestion()
+    } else {
+      completeQuiz()
+    }
   }
 
   const calculateScore = () => {
@@ -220,6 +257,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     clearTimer()
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
+    skippedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
 
@@ -245,6 +283,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuizId.value = null
     currentQuestionIndex.value = 0
     selectedAnswers.value = {}
+    skippedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
     shuffledQuiz.value = null
@@ -265,6 +304,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     currentQuizId,
     currentQuestionIndex,
     selectedAnswers,
+    skippedQuestions,
     score,
     isCompleted,
     timeLeft,
@@ -278,12 +318,16 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     hasPreviousQuestion,
     hasTimer,
     getCurrentQuestionTimeLimit,
+    skippedCount,
+    canSkip,
+    remainingSkips,
 
     // Actions
     clearTimer,
     startTimer,
     selectQuiz,
     selectAnswer,
+    skipQuestion,
     calculateScore,
     nextQuestion,
     previousQuestion,

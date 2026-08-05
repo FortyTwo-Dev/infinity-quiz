@@ -15,7 +15,10 @@ const {
   hasPreviousQuestion,
   timeLeft,
   hasTimer,
+  canSkip,
+  remainingSkips,
   selectAnswer,
+  skipQuestion,
   submitAndNext,
   goToPrevious,
   backToQuizList,
@@ -78,6 +81,13 @@ const isOptionSelected = (originalIndex: number): boolean => {
       <div class="navigation">
         <Button variant="secondary" :disabled="!hasPreviousQuestion" @click="goToPrevious">
           Précédent
+        </Button>
+        <Button
+          v-if="canSkip"
+          variant="outline"
+          @click="skipQuestion"
+        >
+          Sauter{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
         </Button>
         <Button variant="primary" :disabled="getCurrentAnswer() === null" @click="submitAndNext">
           {{ hasNextQuestion ? 'Suivant' : 'Terminer' }}

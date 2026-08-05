@@ -26,6 +26,8 @@ export function useQuiz() {
   const isCompleted = computed(() => sessionStore.isCompleted)
   const timeLeft = computed(() => sessionStore.timeLeft)
   const hasTimer = computed(() => sessionStore.hasTimer)
+  const canSkip = computed(() => sessionStore.canSkip)
+  const remainingSkips = computed(() => sessionStore.remainingSkips)
 
   const currentQuestionOptions = computed<QuestionOption[]>(() => {
     const question = currentQuestion.value
@@ -103,8 +105,11 @@ export function useQuiz() {
     isCompleted,
     timeLeft,
     hasTimer,
+    canSkip,
+    remainingSkips,
     initializeQuiz,
     selectAnswer,
+    skipQuestion,
     submitAndNext,
     goToPrevious,
     restartQuiz,

@@ -222,6 +222,44 @@ export const SAMPLE_QUIZZES: Quiz[] = [
       },
     ],
   },
+  {
+    id: 'quiz-9',
+    title: 'Quiz avec limite de sauts',
+    description: 'Vous pouvez sauter jusqu\'à 2 questions dans ce quiz',
+    maxSkips: 2,
+    questions: [
+      {
+        id: 'q9-1',
+        text: 'Quelle est la capitale de la Belgique ?',
+        options: ['Bruxelles', 'Amsterdam', 'Luxembourg', 'Paris'],
+        correctAnswerIndex: 0,
+      },
+      {
+        id: 'q9-2',
+        text: 'Quel est le plus long fleuve de France ?',
+        options: ['La Seine', 'La Loire', 'Le Rhône', 'La Garonne'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q9-3',
+        text: 'Quel animal est le symbole de la paix ?',
+        options: ['Lion', 'Colombe', 'Aigle', 'Serpent'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q9-4',
+        text: 'En quelle année a commencé la Seconde Guerre mondiale ?',
+        options: ['1914', '1939', '1945', '1941'],
+        correctAnswerIndex: 1,
+      },
+      {
+        id: 'q9-5',
+        text: 'Quel gaz les plantes absorbent-elles lors de la photosynthèse ?',
+        options: ['Oxygène', 'Azote', 'Dioxyde de carbone', 'Hydrogène'],
+        correctAnswerIndex: 2,
+      },
+    ],
+  },
 ]
 
 export function hasInitializedQuizzes(quizzes: Quiz[]): boolean {
