@@ -1,6 +1,6 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuizSessionStore } from '../stores'
+import { useQuizSessionStore, useQuizVerificationStore } from '../stores'
 import { shuffle } from '../utils/array-utils'
 
 export interface QuestionOption {
@@ -12,6 +12,7 @@ export function useQuiz() {
   const route = useRoute()
   const router = useRouter()
   const sessionStore = useQuizSessionStore()
+  const verificationStore = useQuizVerificationStore()
 
   const quizId = computed(() => route.params.quizId as string | undefined)
 
@@ -29,11 +30,11 @@ export function useQuiz() {
   const canSkip = computed(() => sessionStore.canSkip)
   const remainingSkips = computed(() => sessionStore.remainingSkips)
   const hasFeedbackEnabled = computed(() => sessionStore.hasFeedbackEnabled)
-  const isAnswerVerified = computed(() => sessionStore.isAnswerVerified)
-  const verifiedAnswerCorrect = computed(() => sessionStore.verifiedAnswerCorrect)
-  const shouldShowFeedback = computed(() => sessionStore.shouldShowFeedback)
-  const canSkipCurrentQuestion = computed(() => sessionStore.canSkipCurrentQuestion)
-  const isCurrentQuestionVerified = computed(() => sessionStore.isCurrentQuestionVerified)
+  const isAnswerVerified = computed(() => verificationStore.isAnswerVerified)
+  const verifiedAnswerCorrect = computed(() => verificationStore.verifiedAnswerCorrect)
+  const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
+  const canSkipCurrentQuestion = computed(() => verificationStore.canSkipCurrentQuestion)
+  const isCurrentQuestionVerified = computed(() => verificationStore.isCurrentQuestionVerified)
 
   const currentQuestionOptions = computed<QuestionOption[]>(() => {
     const question = currentQuestion.value
@@ -90,11 +91,11 @@ export function useQuiz() {
   }
 
   function verifyAnswer() {
-    return sessionStore.verifyAnswer()
+    return verificationStore.verifyAnswer()
   }
 
   function continueToNext() {
-    const quizCompleted = sessionStore.continueToNext()
+    const quizCompleted = verificationStore.continueToNext()
     if (quizCompleted) {
       router.push({ name: 'results' })
     }
@@ -121,13 +122,6 @@ export function useQuiz() {
   }
 
   watch(() => quizId.value, initializeQuiz, { immediate: true })
-
-  // Handle timer expiry navigation
-  watch(timeLeft, (newTimeLeft) => {
-    if (newTimeLeft === 0) {
-      handleTimerExpiry()
-    }
-  })
 
   return {
     quizId,
