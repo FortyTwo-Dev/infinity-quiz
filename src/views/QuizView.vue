@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { useQuiz } from '../composables/useQuiz'
+import { useRouter } from 'vue-router'
 import Button from '../components/common/Button.vue'
 import ProgressBar from '../components/common/ProgressBar.vue'
 import FeedbackCard from '../components/quiz/FeedbackCard.vue'
@@ -25,6 +26,7 @@ const {
   shouldShowFeedback,
   canSkipCurrentQuestion,
   isCurrentQuestionVerified,
+  isCompleted,
   selectAnswer,
   skipQuestion,
   verifyAnswer,
@@ -34,6 +36,15 @@ const {
   backToQuizList,
   getCurrentAnswer,
 } = useQuiz()
+
+const router = useRouter()
+
+// Auto-navigate to results when quiz is completed (e.g., timer expiry on last question)
+watch(isCompleted, (completed) => {
+  if (completed) {
+    router.push({ name: 'results' })
+  }
+}, { immediate: true })
 
 // Check if an option is the correct answer
 const isCorrectAnswer = (originalIndex: number): boolean => {
