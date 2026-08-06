@@ -28,7 +28,7 @@ export const useQuizVerificationStore = defineStore(
     const isCurrentQuestionVerified = computed(() => {
       const question = sessionStore.currentQuestion
       if (!question) return false
-      return sessionStore.verifiedQuestions?.value?.has(question.id) ?? false
+      return sessionStore.$state.verifiedQuestions?.has(question.id) ?? false
     })
 
     const canSkipCurrentQuestion = computed(() => {
@@ -45,7 +45,7 @@ export const useQuizVerificationStore = defineStore(
 
       isAnswerVerified.value = true
       verifiedAnswerCorrect.value = userAnswer === question.correctAnswerIndex
-      sessionStore.verifiedQuestions?.value?.add(question.id)
+      sessionStore.$state.verifiedQuestions?.add(question.id)
       return verifiedAnswerCorrect.value
     }
 
@@ -68,7 +68,7 @@ export const useQuizVerificationStore = defineStore(
         verifiedAnswerCorrect.value = null
         return
       }
-      const wasVerified = sessionStore.verifiedQuestions?.value?.has(question.id) ?? false
+      const wasVerified = sessionStore.$state.verifiedQuestions?.has(question.id) ?? false
       isAnswerVerified.value = wasVerified
       if (wasVerified) {
         const userAnswer = sessionStore.getAnswerForCurrentQuestion()

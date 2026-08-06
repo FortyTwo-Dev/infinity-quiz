@@ -338,6 +338,7 @@ export const useQuizSessionStore = defineStore(
     currentQuestionIndex,
     selectedAnswers,
     skippedQuestions,
+    verifiedQuestions,
     score,
     isCompleted,
     timeLeft,
