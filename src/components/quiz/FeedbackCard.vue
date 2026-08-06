@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useQuizSessionStore } from '../../stores'
+import { useQuizSessionStore, useQuizVerificationStore } from '../../stores'
 import { PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
 const sessionStore = useQuizSessionStore()
+const verificationStore = useQuizVerificationStore()
 
 const currentQuestion = computed(() => sessionStore.currentQuestion)
-const verifiedAnswerCorrect = computed(() => sessionStore.verifiedAnswerCorrect)
+const verifiedAnswerCorrect = computed(() => verificationStore.verifiedAnswerCorrect)
 
 // Get the correct answer text and explanation
 const correctAnswerText = computed(() => {
@@ -35,11 +36,13 @@ const userAnswerText = computed(() => {
   if (!question || answerIndex === null) return ''
   return question.options[answerIndex]
 })
+
+const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
 </script>
 
 <template>
   <Transition name="fade">
-    <div v-if="sessionStore.shouldShowFeedback" class="feedback-card">
+    <div v-if="shouldShowFeedback" class="feedback-card">
       <div class="feedback-content">
         <div class="feedback-header">
           <span class="feedback-icon">
