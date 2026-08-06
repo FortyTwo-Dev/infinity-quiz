@@ -1,10 +1,17 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { useQuizStore, useQuizHistoryStore } from './'
-import { shuffle } from '../utils/array-utils'
+import { useQuizStore } from './quiz-store'
+import { useQuizHistoryStore } from './quiz-history-store'
+import { useQuizTimerStore } from './quiz-timer-store'
+import { shuffle } from '../../utils/array-utils'
 import type { Quiz, QuestionResult } from '@/types'
 
-export const useQuizSessionStore = defineStore('quizSession', () => {
+export const useQuizSessionStore = defineStore(
+  'quizSession',
+  () => {
+    // Stores
+    const timerStore = useQuizTimerStore()
+
   // State
   const currentQuizId = ref<string | null>(null)
   const currentQuestionIndex = ref<number>(0)
@@ -13,11 +20,10 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
   const verifiedQuestions = ref<Set<string>>(new Set())
   const score = ref<number>(0)
   const isCompleted = ref<boolean>(false)
-  const timeLeft = ref<number | null>(null)
-  const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
   const shuffledQuiz = ref<Quiz | null>(null)
-  const isAnswerVerified = ref<boolean>(false)
-  const verifiedAnswerCorrect = ref<boolean | null>(null)
+
+  // Alias for timeLeft from timerStore
+  const timeLeft = computed(() => timerStore.timeLeft)
 
   // Getters
   const currentQuiz = computed(() => {
@@ -93,19 +99,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     return quiz.feedbackEnabled === true
   })
 
-  const shouldShowFeedback = computed(() => {
-    return isAnswerVerified.value && hasFeedbackEnabled.value
-  })
-
-  const shouldShowVerifyButton = computed(() => {
-    const answer = getAnswerForCurrentQuestion()
-    return hasFeedbackEnabled.value && answer !== null && !isAnswerVerified.value
-  })
-
-  const shouldShowContinueButton = computed(() => {
-    return isAnswerVerified.value && hasFeedbackEnabled.value
-  })
-
   const isCurrentQuestionVerified = computed(() => {
     const question = currentQuestion.value
     if (!question) return false
@@ -143,28 +136,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     return quiz.timeLimit ?? null
   })
 
-  // Helper functions
-  const clearTimer = () => {
-    if (timerInterval.value) {
-      clearInterval(timerInterval.value)
-      timerInterval.value = null
-    }
-    timeLeft.value = null
-  }
-
-  const startTimer = (duration: number) => {
-    clearTimer()
-    timeLeft.value = duration
-    timerInterval.value = setInterval(() => {
-      if (timeLeft.value === null) return
-      timeLeft.value--
-      if (timeLeft.value <= 0) {
-        clearTimer()
-        handleTimerExpiry()
-      }
-    }, 1000)
-  }
-
+  // Timer expiry handler
   const handleTimerExpiry = (): boolean => {
     const question = currentQuestion.value
     if (question) {
@@ -178,6 +150,15 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
       completeQuiz()
       return true
     }
+  }
+
+  // Timer helper functions (using timerStore)
+  const clearTimer = () => {
+    timerStore.clearTimer()
+  }
+
+  const startTimer = (duration: number) => {
+    timerStore.startTimer(duration, handleTimerExpiry)
   }
 
   // Actions
@@ -194,8 +175,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
-    isAnswerVerified.value = false
-    verifiedAnswerCorrect.value = null
 
     if (originalQuiz.shuffleQuestions) {
       shuffledQuiz.value = {
@@ -224,34 +203,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
 
     selectedAnswers.value[question.id] = answerIndex
     skippedQuestions.value.delete(question.id)
-    // Reset verification state when selecting a new answer
-    isAnswerVerified.value = false
-    verifiedAnswerCorrect.value = null
-  }
-
-  const verifyAnswer = (): boolean => {
-    const question = currentQuestion.value
-    if (!question) return false
-
-    const userAnswer = selectedAnswers.value[question.id]
-    if (userAnswer === undefined || userAnswer === null) return false
-
-    isAnswerVerified.value = true
-    verifiedAnswerCorrect.value = userAnswer === question.correctAnswerIndex
-    verifiedQuestions.value.add(question.id)
-    return verifiedAnswerCorrect.value
-  }
-
-  const continueToNext = (): boolean => {
-    isAnswerVerified.value = false
-    verifiedAnswerCorrect.value = null
-
-    if (!hasNextQuestion.value) {
-      completeQuiz()
-      return true
-    }
-    nextQuestion()
-    return false
   }
 
   const skipQuestion = (): boolean => {
@@ -287,28 +238,10 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score.value = newScore
   }
 
-  const updateVerificationState = () => {
-    const question = currentQuestion.value
-    if (!question) {
-      isAnswerVerified.value = false
-      verifiedAnswerCorrect.value = null
-      return
-    }
-    const wasVerified = verifiedQuestions.value.has(question.id)
-    isAnswerVerified.value = wasVerified
-    if (wasVerified) {
-      const userAnswer = selectedAnswers.value[question.id]
-      verifiedAnswerCorrect.value = userAnswer === question.correctAnswerIndex
-    } else {
-      verifiedAnswerCorrect.value = null
-    }
-  }
-
   const nextQuestion = () => {
     if (!hasNextQuestion.value) return
     clearTimer()
     currentQuestionIndex.value += 1
-    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -320,7 +253,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     if (!hasPreviousQuestion.value) return
     clearTimer()
     currentQuestionIndex.value -= 1
-    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -332,7 +264,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     if (index < 0 || index >= totalQuestions.value) return
     clearTimer()
     currentQuestionIndex.value = index
-    updateVerificationState()
 
     const timeLimit = getCurrentQuestionTimeLimit.value
     if (timeLimit !== null && timeLimit > 0) {
@@ -363,8 +294,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
-    isAnswerVerified.value = false
-    verifiedAnswerCorrect.value = null
 
     const quizStore = useQuizStore()
     const originalQuiz = quizStore.getQuizById(currentQuizId.value)
@@ -390,8 +319,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     verifiedQuestions.value = new Set()
     score.value = 0
     isCompleted.value = false
-    isAnswerVerified.value = false
-    verifiedAnswerCorrect.value = null
     shuffledQuiz.value = null
   }
 
@@ -415,8 +342,7 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     score,
     isCompleted,
     timeLeft,
-    isAnswerVerified,
-    verifiedAnswerCorrect,
+    shuffledQuiz,
 
     // Getters
     currentQuiz,
@@ -434,9 +360,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     canReview,
     hasFeedbackEnabled,
     isCurrentQuestionVerified,
-    shouldShowFeedback,
-    shouldShowVerifyButton,
-    shouldShowContinueButton,
     getQuestionResults,
 
     // Actions
@@ -446,9 +369,6 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     selectAnswer,
     skipQuestion,
     handleTimerExpiry,
-    updateVerificationState,
-    verifyAnswer,
-    continueToNext,
     calculateScore,
     nextQuestion,
     previousQuestion,
@@ -459,4 +379,19 @@ export const useQuizSessionStore = defineStore('quizSession', () => {
     getAnswerForCurrentQuestion,
     getAnswerForQuestion,
   }
-})
+},
+  {
+    persist: {
+      key: 'infinity-quiz-session',
+      pick: [
+        'currentQuizId',
+        'currentQuestionIndex',
+        'selectedAnswers',
+        'skippedQuestions',
+        'score',
+        'isCompleted',
+        'shuffledQuiz',
+      ],
+    },
+  }
+)

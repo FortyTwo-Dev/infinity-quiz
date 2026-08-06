@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useQuizSessionStore } from '../../stores/quiz-session-store'
-import { useQuizStore } from '../../stores'
+import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
+import { useQuizStore } from '../../stores/quiz/quiz-store'
 import type { Quiz } from '../../types/quiz'
 
 describe('useQuizSessionStore', () => {
@@ -413,6 +413,74 @@ describe('useQuizSessionStore', () => {
       expect(sessionStore.selectedAnswers).toEqual({})
       expect(sessionStore.score).toBe(0)
       expect(sessionStore.isCompleted).toBe(false)
+    })
+
+    it('handleTimerExpiry should move to next question when not on last question', () => {
+      const quizStore = useQuizStore()
+      const sessionStore = useQuizSessionStore()
+
+      const quiz: Quiz = {
+        id: 'test-quiz',
+        title: 'Test Quiz',
+        description: 'Test Description',
+        questions: [
+          { id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 },
+          { id: 'q2', text: 'Q2', options: ['B'], correctAnswerIndex: 0 },
+        ],
+      }
+      quizStore.addQuiz(quiz)
+      sessionStore.selectQuiz('test-quiz')
+
+      expect(sessionStore.currentQuestionIndex).toBe(0)
+      const result = sessionStore.handleTimerExpiry()
+      expect(result).toBe(false)
+      expect(sessionStore.currentQuestionIndex).toBe(1)
+    })
+
+    it('handleTimerExpiry should complete quiz when on last question', () => {
+      const quizStore = useQuizStore()
+      const sessionStore = useQuizSessionStore()
+
+      const quiz: Quiz = {
+        id: 'test-quiz',
+        title: 'Test Quiz',
+        description: 'Test Description',
+        questions: [
+          { id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 },
+          { id: 'q2', text: 'Q2', options: ['B'], correctAnswerIndex: 0 },
+        ],
+      }
+      quizStore.addQuiz(quiz)
+      sessionStore.selectQuiz('test-quiz')
+      sessionStore.currentQuestionIndex = 1 // Go to last question
+
+      expect(sessionStore.isCompleted).toBe(false)
+      const result = sessionStore.handleTimerExpiry()
+      expect(result).toBe(true)
+      expect(sessionStore.isCompleted).toBe(true)
+      expect(sessionStore.currentQuestionIndex).toBe(1)
+    })
+
+    it('handleTimerExpiry should nullify current question answer', () => {
+      const quizStore = useQuizStore()
+      const sessionStore = useQuizSessionStore()
+
+      const quiz: Quiz = {
+        id: 'test-quiz',
+        title: 'Test Quiz',
+        description: 'Test Description',
+        questions: [
+          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q2', text: 'Q2', options: ['C', 'D'], correctAnswerIndex: 0 },
+        ],
+      }
+      quizStore.addQuiz(quiz)
+      sessionStore.selectQuiz('test-quiz')
+      sessionStore.selectAnswer(0) // Select answer for q1
+
+      expect(sessionStore.getAnswerForQuestion('q1')).toBe(0)
+      sessionStore.handleTimerExpiry()
+      expect(sessionStore.getAnswerForQuestion('q1')).toBeNull()
     })
   })
 })

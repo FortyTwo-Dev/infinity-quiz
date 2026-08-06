@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useQuizStore } from '../../stores/quiz-store'
+import { useQuizStore } from '../../stores/quiz/quiz-store'
 import type { Quiz } from '../../types/quiz'
 
 describe('useQuizStore', () => {
