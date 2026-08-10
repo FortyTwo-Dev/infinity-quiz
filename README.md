@@ -4,12 +4,19 @@
 
 ## Features
 
-### Current (MVP)
+### Current (Phase 2 - Enhanced Quiz Experience)
 - Quiz list with local storage
 - Quiz selection and question navigation
 - Multiple choice questions
 - Score tracking and results screen
 - Restart and back to list functionality
+- Timer with optional time limit per quiz
+- Progress bar for completion percentage
+- Question and answer shuffling
+- Skip question functionality
+- Review mode at quiz end
+- Correct answer highlighting
+- Immediate feedback on selection
 
 ### Roadmap
 See [doc/2 - Roadmap.md](./doc/2%20-%20Roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
@@ -88,31 +95,46 @@ bun format
 
 ```
 src/
-├── assets/                    # Static assets
+├── assets/                   # Static assets
+│   └── styles/               # CSS variables and global styles
 ├── components/               # Reusable Vue components
-│   ├── common/               # Generic components (Button, Card, etc.)
-│   └── quiz/                 # Quiz-specific components
+│   ├── common/               # Generic components (Button, Card, ProgressBar, etc.)
+│   └── quiz/                 # Quiz-specific components (FeedbackCard, QuestionReviewCard)
 ├── composables/              # Vue composables
+│   ├── useFeedback.ts        # Feedback messages and levels
+│   ├── useQuiz.ts            # Quiz session logic
+│   ├── useResults.ts         # Results screen logic
+│   ├── useScore.ts           # Score calculation utilities
+│   └── useTimer.ts           # Timer functionality
 ├── constants/                # Application constants
 ├── data/                     # Sample data and fixtures
+├── __tests__/                # Unit tests
+│   ├── composables/          # Composable tests
+│   ├── stores/               # Store tests
+│   └── utils/                # Utility tests
 ├── router/                   # Vue Router configuration
 ├── stores/                   # Pinia stores
+│   └── quiz/                 # Quiz-related stores
+│       ├── quiz-store.ts         # Quiz CRUD operations
+│       ├── quiz-session-store.ts # Quiz session management
+│       ├── quiz-timer-store.ts   # Timer store
+│       └── quiz-verification-store.ts # Answer verification
 ├── types/                    # TypeScript type definitions
 ├── utils/                    # Utility functions
 ├── views/                    # Page-level components (routes)
+│   ├── QuizListView.vue      # Quiz selection
+│   ├── QuizView.vue          # Quiz taking interface
+│   └── ResultsView.vue       # Results display
 ├── App.vue                   # Root component
 └── main.ts                   # Application entry point
-
- tests/
-├── composables/              # Composable tests
-├── stores/                   # Store tests
-└── utils/                    # Utility tests
 
 doc/
 ├── 1 - Stack.md              # Technical stack documentation
 ├── 2 - Roadmap.md            # Development roadmap
 ├── 3 - Guidelines.md         # Coding standards and architecture
-└── 4 - Git-Commits.md       # Git commit conventions
+├── 4 - Git-Commits.md        # Git commit conventions
+├── 5 - Contributing.md       # Contribution guidelines
+└── 6 - Quiz JSON Format.md   # Quiz data format specification
 ```
 
 ## Documentation
@@ -125,20 +147,18 @@ doc/
 ## IDE Setup
 
 ### Recommended
-- [VS Code](https://code.visualstudio.com/)
-- [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 ### Browser DevTools
-- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) (Chrome/Edge)
+- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
 - Enable Custom Object Formatter in DevTools settings
 
 ## Type Support for `.vue` Imports in TS
 
 TypeScript cannot handle type information for `.vue` imports by default. We use:
+- `src/vite-env.d.ts` with `declare module '*.vue'` for type declarations
 - `vue-tsc` for type checking from the CLI
-- [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) in VS Code for IDE support
 
 ## Customize Configuration
 
