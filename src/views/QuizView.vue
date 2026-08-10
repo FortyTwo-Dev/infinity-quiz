@@ -22,7 +22,6 @@ const {
   remainingSkips,
   hasFeedbackEnabled,
   isAnswerVerified,
-  verifiedAnswerCorrect,
   shouldShowFeedback,
   canSkipCurrentQuestion,
   isCurrentQuestionVerified,

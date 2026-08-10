@@ -29,4 +29,11 @@ export default defineConfigWithVueTs(
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 
   skipFormatting,
+
+  {
+    files: ['src/components/common/Button.vue', 'src/components/common/Card.vue'],
+    rules: {
+      'vue/multi-word-component-names': 'off',
+    },
+  },
 )

@@ -136,7 +136,12 @@ describe('array-utils', () => {
 
   describe('flatten', () => {
     it('should flatten nested arrays', () => {
-      expect(flatten([[1, 2], [3, 4]])).toEqual([1, 2, 3, 4])
+      expect(
+        flatten([
+          [1, 2],
+          [3, 4],
+        ]),
+      ).toEqual([1, 2, 3, 4])
     })
 
     it('should handle empty arrays', () => {

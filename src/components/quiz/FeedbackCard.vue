@@ -46,7 +46,12 @@ const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
       <div class="feedback-content">
         <div class="feedback-header">
           <span class="feedback-icon">
-            <PhCheckCircle v-if="verifiedAnswerCorrect" :size="24" weight="fill" class="correct-icon" />
+            <PhCheckCircle
+              v-if="verifiedAnswerCorrect"
+              :size="24"
+              weight="fill"
+              class="correct-icon"
+            />
             <PhXCircle v-else :size="24" weight="fill" class="incorrect-icon" />
           </span>
           <span class="feedback-title">
@@ -55,9 +60,7 @@ const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
         </div>
 
         <div class="feedback-body">
-          <p class="correct-answer">
-            <strong>Réponse correcte :</strong> {{ correctAnswerText }}
-          </p>
+          <p class="correct-answer"><strong>Réponse correcte :</strong> {{ correctAnswerText }}</p>
           <p v-if="explanation" class="explanation">{{ explanation }}</p>
           <p v-if="!verifiedAnswerCorrect && userAnswerText" class="user-answer">
             <em>Vous avez choisi : {{ userAnswerText }}</em>
@@ -71,7 +74,9 @@ const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .fade-enter-from,

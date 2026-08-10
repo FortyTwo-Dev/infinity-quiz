@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { ref } from 'vue'
-import { useFeedback, getFeedbackLevel, getFeedback, FEEDBACK_MESSAGES } from '../../composables/useFeedback'
+import {
+  useFeedback,
+  getFeedbackLevel,
+  getFeedback,
+  FEEDBACK_MESSAGES,
+} from '../../composables/useFeedback'
 
 describe('useFeedback', () => {
   describe('getFeedbackLevel', () => {
@@ -76,10 +81,10 @@ describe('useFeedback', () => {
     })
 
     it.each([
-      [100, true],  // excellent
-      [70, true],   // good
-      [40, false],  // average
-      [20, false],  // poor
+      [100, true], // excellent
+      [70, true], // good
+      [40, false], // average
+      [20, false], // poor
     ])('isPositive should return %s for percentage %i', (percentage, expected) => {
       const percentageRef = ref(percentage)
       const { isPositive } = useFeedback(percentageRef)

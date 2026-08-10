@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
-import { useQuizTimerStore } from '../../stores/quiz/quiz-timer-store'
 import type { Quiz } from '../../types/quiz'
 
 describe('Quiz Timer Integration', () => {
@@ -19,7 +18,6 @@ describe('Quiz Timer Integration', () => {
     it('should move to next question when timer expires and there are more questions', () => {
       const quizStore = useQuizStore()
       const sessionStore = useQuizSessionStore()
-      const timerStore = useQuizTimerStore()
 
       const quiz: Quiz = {
         id: 'test-quiz',

@@ -223,9 +223,7 @@ describe('useQuizSessionStore', () => {
         id: 'test-quiz',
         title: 'Test Quiz',
         description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }],
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
@@ -241,9 +239,7 @@ describe('useQuizSessionStore', () => {
         id: 'test-quiz',
         title: 'Test Quiz',
         description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }],
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
@@ -305,9 +301,7 @@ describe('useQuizSessionStore', () => {
         id: 'test-quiz',
         title: 'Test Quiz',
         description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 },
-        ],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 }],
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
@@ -353,9 +347,7 @@ describe('useQuizSessionStore', () => {
         id: 'test-quiz',
         title: 'Test Quiz',
         description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }],
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
@@ -375,9 +367,7 @@ describe('useQuizSessionStore', () => {
         id: 'test-quiz',
         title: 'Test Quiz',
         description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 },
-        ],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A'], correctAnswerIndex: 0 }],
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')

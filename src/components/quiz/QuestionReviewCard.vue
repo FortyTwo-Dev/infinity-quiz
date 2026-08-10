@@ -76,7 +76,10 @@ const getOptionClass = (optionIndex: number) => {
 
     <div v-if="showFeedback && !isSkipped && !isCorrect" class="feedback">
       <PhCheckCircle :size="16" weight="fill" class="feedback-icon" />
-      <p>La bonne réponse était : <strong>{{ question.options[question.correctAnswerIndex] }}</strong></p>
+      <p>
+        La bonne réponse était :
+        <strong>{{ question.options[question.correctAnswerIndex] }}</strong>
+      </p>
     </div>
   </div>
 </template>
