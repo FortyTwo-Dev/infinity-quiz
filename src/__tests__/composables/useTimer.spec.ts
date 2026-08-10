@@ -93,7 +93,7 @@ describe('useTimer', () => {
   })
 
   it('should not start timer if already running', () => {
-    const { timeLeft, isRunning, start } = useTimer(10)
+    const { isRunning, start } = useTimer(10)
 
     start()
     expect(isRunning.value).toBe(true)
