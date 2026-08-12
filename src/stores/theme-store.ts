@@ -6,7 +6,8 @@ import type { ThemeTokens, ThemeName } from '@/types/theme'
 
 export const useThemeStore = defineStore('theme', () => {
   // State - initialisé depuis localStorage
-  const initialTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') || 'light' : 'light'
+  const initialTheme =
+    typeof window !== 'undefined' ? localStorage.getItem('theme') || 'light' : 'light'
   const currentThemeName = ref<ThemeName>(initialTheme)
   const customThemes = ref<Map<string, ThemeTokens>>(new Map())
   const styleElement = ref<HTMLStyleElement | null>(null)

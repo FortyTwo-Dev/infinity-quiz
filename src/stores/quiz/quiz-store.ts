@@ -54,5 +54,5 @@ export const useQuizStore = defineStore(
       key: 'infinity-quiz-quizzes',
       pick: ['quizzes'],
     },
-  }
+  },
 )

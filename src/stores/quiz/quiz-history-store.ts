@@ -66,5 +66,5 @@ export const useQuizHistoryStore = defineStore(
       key: 'infinity-quiz-history',
       pick: ['results'],
     },
-  }
+  },
 )

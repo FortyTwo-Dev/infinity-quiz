@@ -39,11 +39,15 @@ const {
 const router = useRouter()
 
 // Auto-navigate to results when quiz is completed (e.g., timer expiry on last question)
-watch(isCompleted, (completed) => {
-  if (completed) {
-    router.push({ name: 'results' })
-  }
-}, { immediate: true })
+watch(
+  isCompleted,
+  (completed) => {
+    if (completed) {
+      router.push({ name: 'results' })
+    }
+  },
+  { immediate: true },
+)
 
 // Check if an option is the correct answer
 const isCorrectAnswer = (originalIndex: number): boolean => {

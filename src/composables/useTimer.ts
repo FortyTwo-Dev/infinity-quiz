@@ -1,4 +1,4 @@
-import { ref, computed, onUnmounted, type Ref } from 'vue'
+import { ref, computed, onUnmounted, getCurrentInstance, type Ref } from 'vue'
 
 export interface TimerResult {
   timeLeft: Ref<number>
@@ -40,9 +40,11 @@ export function useTimer(initialTime: number): TimerResult {
     timeLeft.value = newTime ?? initialTime
   }
 
-  onUnmounted(() => {
-    stop()
-  })
+  if (getCurrentInstance()) {
+    onUnmounted(() => {
+      stop()
+    })
+  }
 
   return {
     timeLeft,
