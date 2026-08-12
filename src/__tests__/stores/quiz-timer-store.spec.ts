@@ -27,7 +27,7 @@ describe('useQuizTimerStore', () => {
   describe('actions', () => {
     it('startTimer should set timeLeft to duration', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback = vi.fn<() => void>()
+      const mockCallback = vi.fn<() => boolean>()
 
       timerStore.startTimer(10, mockCallback)
 
@@ -36,7 +36,7 @@ describe('useQuizTimerStore', () => {
 
     it('startTimer should call onExpiry callback when timer reaches 0', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback = vi.fn<() => void>(() => true)
+      const mockCallback = vi.fn<() => boolean>(() => true)
 
       timerStore.startTimer(2, mockCallback)
 
@@ -56,7 +56,7 @@ describe('useQuizTimerStore', () => {
 
     it('clearTimer should reset timeLeft to null', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback = vi.fn<() => void>()
+      const mockCallback = vi.fn<() => boolean>()
 
       timerStore.startTimer(10, mockCallback)
       expect(timerStore.timeLeft).toBe(10)
@@ -67,7 +67,7 @@ describe('useQuizTimerStore', () => {
 
     it('clearTimer should stop the interval', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback = vi.fn<() => void>()
+      const mockCallback = vi.fn<() => boolean>()
 
       timerStore.startTimer(10, mockCallback)
       const initialTimerCount = vi.getTimerCount()
@@ -82,7 +82,7 @@ describe('useQuizTimerStore', () => {
 
     it('startTimer should not call callback if timer is cleared before expiry', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback = vi.fn<() => void>()
+      const mockCallback = vi.fn<() => boolean>()
 
       timerStore.startTimer(5, mockCallback)
       vi.advanceTimersByTime(2000)
@@ -95,8 +95,8 @@ describe('useQuizTimerStore', () => {
 
     it('startTimer should replace existing timer', () => {
       const timerStore = useQuizTimerStore()
-      const mockCallback1 = vi.fn<() => void>()
-      const mockCallback2 = vi.fn<() => void>()
+      const mockCallback1 = vi.fn<() => boolean>()
+      const mockCallback2 = vi.fn<() => boolean>()
 
       timerStore.startTimer(2, mockCallback1)
       timerStore.startTimer(2, mockCallback2)

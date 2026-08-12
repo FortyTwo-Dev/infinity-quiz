@@ -5,7 +5,18 @@ import { PhEye, PhEyeClosed } from '@phosphor-icons/vue'
 import Button from '../components/common/Button.vue'
 import QuestionReviewCard from '../components/quiz/QuestionReviewCard.vue'
 
-const { currentQuiz, score, totalQuestions, percentage, formattedScore, feedback, canReview, questionResults, restartQuiz, backToQuizList } = useResults()
+const {
+  currentQuiz,
+  score,
+  totalQuestions,
+  percentage,
+  formattedScore,
+  feedback,
+  canReview,
+  questionResults,
+  restartQuiz,
+  backToQuizList,
+} = useResults()
 
 const showReview = ref(false)
 
@@ -51,7 +62,7 @@ function toggleReview() {
         <h3>Revue des questions</h3>
         <div class="review-cards">
           <QuestionReviewCard
-            v-for="(result) in questionResults"
+            v-for="result in questionResults"
             :key="result.question.id"
             :question-result="result"
             :show-feedback="true"
