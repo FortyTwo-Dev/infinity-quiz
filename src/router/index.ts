@@ -19,6 +19,28 @@ const router = createRouter({
       name: 'results',
       component: () => import('@/views/ResultsView.vue'),
     },
+    // Phase 3 - Quiz Management Routes
+    {
+      path: '/manage',
+      name: 'quiz-management',
+      component: () => import('@/views/QuizManagementView.vue'),
+    },
+    {
+      path: '/create',
+      name: 'quiz-create',
+      component: () => import('@/views/QuizFormView.vue'),
+    },
+    {
+      path: '/edit/:quizId',
+      name: 'quiz-edit',
+      component: () => import('@/views/QuizFormView.vue'),
+      props: true,
+    },
+    {
+      path: '/import-export',
+      name: 'quiz-import-export',
+      component: () => import('@/views/QuizImportExportView.vue'),
+    },
   ],
 })
 
