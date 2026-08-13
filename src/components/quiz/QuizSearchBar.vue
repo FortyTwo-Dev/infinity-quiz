@@ -229,7 +229,7 @@ const getTagLabel = (tag: string | null): string => {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: var(--space-xs);
+  margin: var(--space-xs) 0 0;
   padding: var(--space-xs) 0;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -239,7 +239,6 @@ const getTagLabel = (tag: string | null): string => {
   overflow-y: auto;
   z-index: 1000;
   list-style: none;
-  margin: 0;
 }
 
 .dropdown-item {
