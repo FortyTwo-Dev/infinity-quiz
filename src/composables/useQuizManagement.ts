@@ -54,7 +54,7 @@ export function useQuizManagement() {
 
     // Filter by tag
     if (selectedTag.value) {
-      result = result.filter((q) => q.tags && q.tags.includes(selectedTag.value!))
+      result = result.filter((q) => q.tags?.includes(selectedTag.value!))
     }
 
     return result

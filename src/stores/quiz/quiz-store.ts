@@ -23,7 +23,7 @@ export const useQuizStore = defineStore(
       quizzes.value.forEach((q) => {
         if (q.category) categories.add(q.category)
       })
-      return Array.from(categories).sort()
+      return Array.from(categories).sort((a, b) => a.localeCompare(b))
     })
 
     const getAllTags = computed(() => {
@@ -31,7 +31,7 @@ export const useQuizStore = defineStore(
       quizzes.value.forEach((q) => {
         if (q.tags) q.tags.forEach((tag) => tags.add(tag))
       })
-      return Array.from(tags).sort()
+      return Array.from(tags).sort((a, b) => a.localeCompare(b))
     })
 
     const searchQuizzes = computed(() => (searchTerm: string) => {
@@ -40,13 +40,13 @@ export const useQuizStore = defineStore(
         (q) =>
           q.title.toLowerCase().includes(term) ||
           q.description.toLowerCase().includes(term) ||
-          (q.category && q.category.toLowerCase().includes(term)) ||
-          (q.tags && q.tags.some((tag) => tag.toLowerCase().includes(term)))
+          q.category?.toLowerCase().includes(term) ||
+          q.tags?.some((tag) => tag.toLowerCase().includes(term))
       )
     })
 
     const filterQuizzesByTag = computed(() => (tag: string) => {
-      return quizzes.value.filter((q) => q.tags && q.tags.includes(tag))
+      return quizzes.value.filter((q) => q.tags?.includes(tag))
     })
 
     // Actions
