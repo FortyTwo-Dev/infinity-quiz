@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Button from '../common/Button.vue'
 import Card from '../common/Card.vue'
-import type { QuizFormState } from '../../composables/useQuizForm'
+import type { QuizFormState, FormQuestion } from '../../composables/useQuizForm'
 
 interface Props {
   form: QuizFormState
@@ -18,7 +18,7 @@ interface Emits {
   (e: 'removeOption', questionIndex: number, optionIndex: number): void
   (e: 'addTag', tag: string): void
   (e: 'removeTag', tag: string): void
-  (e: 'submit'): void
+  (e: 'submit', event?: Event): void
   (e: 'saveAndContinue'): void
   (e: 'saveAndCreateNew'): void
   (e: 'cancel'): void
@@ -76,39 +76,45 @@ const handleFeedbackChange = (e: Event) => {
 }
 
 // Question handlers
+const getQuestionWithUpdates = (
+  question: FormQuestion,
+  updates: Partial<FormQuestion>
+): FormQuestion => {
+  return { ...question, ...updates }
+}
+
 const handleQuestionTextChange = (questionIndex: number, value: string) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  updatedQuestions[questionIndex] = getQuestionWithUpdates(updatedQuestions[questionIndex], {
     text: value,
-  }
+  })
   updateForm({ questions: updatedQuestions })
 }
 
 const handleOptionChange = (questionIndex: number, optionIndex: number, value: string) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  const question = updatedQuestions[questionIndex]
+  if (question && question.options) {
+    const newOptions = [...question.options]
+    newOptions[optionIndex] = value
+    updatedQuestions[questionIndex] = getQuestionWithUpdates(question, { options: newOptions })
+    updateForm({ questions: updatedQuestions })
   }
-  updatedQuestions[questionIndex].options[optionIndex] = value
-  updateForm({ questions: updatedQuestions })
 }
 
 const handleCorrectAnswerChange = (questionIndex: number, value: number) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  updatedQuestions[questionIndex] = getQuestionWithUpdates(updatedQuestions[questionIndex], {
     correctAnswerIndex: value,
-  }
+  })
   updateForm({ questions: updatedQuestions })
 }
 
 const handleQuestionTimeLimitChange = (questionIndex: number, value: string) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  updatedQuestions[questionIndex] = getQuestionWithUpdates(updatedQuestions[questionIndex], {
     timeLimit: value ? Number(value) : undefined,
-  }
+  })
   updateForm({ questions: updatedQuestions })
 }
 
@@ -117,19 +123,17 @@ const handleQuestionShuffleAnswersChange = (
   value: boolean
 ) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  updatedQuestions[questionIndex] = getQuestionWithUpdates(updatedQuestions[questionIndex], {
     shuffleAnswers: value,
-  }
+  })
   updateForm({ questions: updatedQuestions })
 }
 
 const handleExplanationChange = (questionIndex: number, value: string) => {
   const updatedQuestions = [...props.form.questions]
-  updatedQuestions[questionIndex] = {
-    ...updatedQuestions[questionIndex],
+  updatedQuestions[questionIndex] = getQuestionWithUpdates(updatedQuestions[questionIndex], {
     explanation: value,
-  }
+  })
   updateForm({ questions: updatedQuestions })
 }
 
