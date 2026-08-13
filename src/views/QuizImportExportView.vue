@@ -218,6 +218,7 @@ const hasQuizzes = computed(() => quizzes.value.length > 0)
             <h3>À partir de texte JSON</h3>
             <div class="json-input-container">
               <textarea
+                id="json-input"
                 v-model="state.jsonData"
                 placeholder="Collez votre JSON ici..."
                 rows="6"
@@ -225,6 +226,7 @@ const hasQuizzes = computed(() => quizzes.value.length > 0)
                   'input-error': state.error && !state.jsonData,
                   'input-success': isJsonValid,
                 }"
+                aria-label="JSON des quiz à importer"
               />
               <div class="preview-line">
                 <span :class="{ 'valid': isJsonValid, 'invalid': state.error }">

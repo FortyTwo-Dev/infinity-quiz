@@ -70,11 +70,13 @@ const getTagLabel = (tag: string | null): string => {
   <div class="quiz-search-bar">
     <div class="search-input-wrapper">
       <input
+        id="search-input"
         type="text"
         :value="localSearchTerm"
         @input="handleSearchChange"
         placeholder="Rechercher des quiz..."
         class="search-input"
+        aria-label="Rechercher des quiz"
       />
       <span class="search-icon">🔍</span>
     </div>

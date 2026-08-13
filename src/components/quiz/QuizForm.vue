@@ -238,11 +238,13 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
           </div>
           <div class="tag-input-container">
             <input
+              id="new-tag-input"
               type="text"
               :value="newTagInput"
               @input="handleNewTagInput"
               @keydown="handleNewTagKeyDown"
               placeholder="Ajouter un tag"
+              aria-label="Ajouter un tag"
             />
             <Button type="button" size="small" @click="handleAddTagFromInput">
               Ajouter
@@ -269,6 +271,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
       <div class="checkbox-group">
         <label class="checkbox-label">
           <input
+            id="shuffle-questions"
             type="checkbox"
             :checked="form.shuffleQuestions"
             @change="handleShuffleQuestionsChange"
@@ -278,6 +281,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
 
         <label class="checkbox-label">
           <input
+            id="shuffle-answers"
             type="checkbox"
             :checked="form.shuffleAnswers"
             @change="handleShuffleAnswersChange"
@@ -287,6 +291,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
 
         <label class="checkbox-label">
           <input
+            id="enable-review-mode"
             type="checkbox"
             :checked="form.enableReviewMode"
             @change="handleReviewModeChange"
@@ -296,6 +301,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
 
         <label class="checkbox-label">
           <input
+            id="feedback-enabled"
             type="checkbox"
             :checked="form.feedbackEnabled"
             @change="handleFeedbackChange"
@@ -396,12 +402,14 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
                 class="option-item"
               >
                 <input
+                  :id="`option-correct-${questionIndex}-${optionIndex}`"
                   type="radio"
                   :name="`correct-${questionIndex}`"
                   :checked="question.correctAnswerIndex === optionIndex"
                   @change="() => handleCorrectAnswerChange(questionIndex, optionIndex)"
                 />
                 <input
+                  :id="`option-text-${questionIndex}-${optionIndex}`"
                   type="text"
                   :value="option"
                   @input="(e) => handleOptionChange(questionIndex, optionIndex, (e.target as HTMLInputElement).value)"
@@ -463,6 +471,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
 
             <label class="checkbox-label inline">
               <input
+                :id="`question-shuffle-${questionIndex}`"
                 type="checkbox"
                 :checked="question.shuffleAnswers ?? form.shuffleAnswers"
                 @change="(e) => handleQuestionShuffleAnswersChange(questionIndex, (e.target as HTMLInputElement).checked)"
