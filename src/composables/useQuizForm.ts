@@ -193,7 +193,7 @@ export function useQuizForm(quizId?: string) {
   }
 
   const addTag = (tag: string) => {
-    if (tag && !form.value.tags.includes(tag)) {
+    if (tag?.length && !form.value.tags.includes(tag)) {
       form.value.tags.push(tag)
     }
   }
