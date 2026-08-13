@@ -19,6 +19,8 @@ export interface Quiz {
   maxSkips?: number // Maximum number of questions that can be skipped (undefined = unlimited)
   enableReviewMode?: boolean // Whether to enable review mode after quiz completion
   feedbackEnabled?: boolean // Whether to show immediate feedback after answer selection
+  category?: string // Quiz category for organization
+  tags?: string[] // Additional tags for filtering and search
 }
 
 export interface QuestionResult {

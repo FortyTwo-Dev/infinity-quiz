@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useQuizList } from '../composables/useQuizList'
 import { useQuizHistoryStore } from '../stores'
+import Button from '../components/common/Button.vue'
 import Card from '../components/common/Card.vue'
-import { PhTrophy, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
+import { PhTrophy, PhCheckCircle, PhXCircle, PhGear } from '@phosphor-icons/vue'
 
+const router = useRouter()
 const { quizzes, startQuiz } = useQuizList()
 const historyStore = useQuizHistoryStore()
+
+function goToManagement() {
+  router.push({ name: 'quiz-management' })
+}
 
 function getResult(quizId: string) {
   return historyStore.getLatestResultByQuizId(quizId)
@@ -29,8 +36,16 @@ function getResultScore(quizId: string) {
 
 <template>
   <div class="quiz-list-view">
-    <h1>Infinity Quiz</h1>
-    <p>Choisissez un quiz pour commencer</p>
+    <div class="header">
+      <div class="title">
+        <h1>Infinity Quiz</h1>
+        <p>Choisissez un quiz pour commencer</p>
+      </div>
+      <Button variant="secondary" @click="goToManagement">
+        <PhGear :size="20" />
+        Gérer les quiz
+      </Button>
+    </div>
 
     <div class="quiz-list">
       <Card
@@ -73,14 +88,25 @@ function getResultScore(quizId: string) {
   text-align: center;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xl);
+}
+
+.title {
+  text-align: left;
+}
+
 .quiz-list-view h1 {
   color: var(--color-text);
-  margin-bottom: var(--space-sm);
+  margin: 0 0 var(--space-sm) 0;
 }
 
 .quiz-list-view p {
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-xl);
+  margin: 0;
 }
 
 .quiz-list {
