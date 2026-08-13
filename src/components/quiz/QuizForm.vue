@@ -223,7 +223,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
       </div>
 
       <div class="form-group">
-        <label>Tags</label>
+        <label for="new-tag-input">Tags</label>
         <div class="tags-container">
           <div class="tags-list">
             <span
@@ -394,8 +394,9 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
           </div>
 
           <div class="form-group">
-            <label>Options *</label>
-            <div class="options-list">
+            <fieldset>
+              <legend>Options *</legend>
+              <div class="options-list">
               <div
                 v-for="(option, optionIndex) in question.options"
                 :key="optionIndex"
@@ -427,6 +428,7 @@ const handleRemoveOption = (questionIndex: number, optionIndex: number) => {
                 </Button>
               </div>
             </div>
+            </fieldset>
             <span
               v-if="errors[`question-${questionIndex}-options`]"
               class="error-message"
