@@ -190,7 +190,7 @@ const getCategoryColor = (category: string | undefined): string => {
         <h3>Aucun quiz trouvé</h3>
         <p v-if="searchTerm || selectedCategory || selectedTag">
           Aucun quiz ne correspond à vos critères de recherche.
-          <button class="clear-link" @click="clearFilters">Effacer les filtres</button>
+          <button type="button" class="clear-link" @click="clearFilters">Effacer les filtres</button>
         </p>
         <p v-else>Aucun quiz disponible. Créez-en un nouveau !</p>
       </div>
