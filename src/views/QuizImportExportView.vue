@@ -189,12 +189,14 @@ const hasQuizzes = computed(() => quizzes.value.length > 0)
             <h3>À partir d'un fichier</h3>
             <div class="file-upload">
               <input
+                id="fileInput"
                 ref="fileInput"
                 type="file"
                 accept=".json"
                 @change="handleFileSelect"
                 class="file-input"
                 hidden
+                aria-label="Sélectionner un fichier JSON"
               />
               <Button
                 type="button"
