@@ -66,7 +66,13 @@ const handleKeydown = (e: KeyboardEvent) => {
     class="modal-backdrop"
     @click="handleBackdropClick"
   >
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" @keydown="handleKeydown">
+    <dialog
+      class="modal"
+      open
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      @keydown="handleKeydown"
+    >
       <div class="modal-header">
         <h2 id="modal-title">{{ title || 'Confirmer la suppression' }}</h2>
       </div>
@@ -89,7 +95,7 @@ const handleKeydown = (e: KeyboardEvent) => {
           {{ confirmText || 'Supprimer' }}
         </Button>
       </div>
-    </div>
+    </dialog>
   </div>
 </template>
 
