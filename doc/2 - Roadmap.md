@@ -53,13 +53,13 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 ## Phase 3: Quiz Management
 
 ### Features
-- [ ] **Create Quiz**: Form to create new quizzes
-- [ ] **Edit Quiz**: Modify existing quizzes
-- [ ] **Delete Quiz**: Remove quizzes
-- [ ] **Duplicate Quiz**: Copy existing quiz for modification
-- [ ] **Quiz Categories**: Organize quizzes by category/tags
-- [ ] **Search Quizzes**: Filter quizzes by title or category
-- [ ] **Import/Export**: JSON import/export for sharing quizzes
+- [x] **Create Quiz**: Form to create new quizzes
+- [x] **Edit Quiz**: Modify existing quizzes
+- [x] **Delete Quiz**: Remove quizzes
+- [x] **Duplicate Quiz**: Copy existing quiz for modification
+- [x] **Quiz Categories**: Organize quizzes by category/tags
+- [x] **Search Quizzes**: Filter quizzes by title or category
+- [x] **Import/Export**: JSON import/export for sharing quizzes
 
 ---
 
@@ -69,7 +69,7 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [ ] **Difficulty Levels**: Easy/Medium/Hard questions
 - [ ] **Question Types**: Support for true/false, multiple correct answers, open-ended
 - [ ] **Hints**: Optional hints for questions
-- [ ] **Explanations**: Show explanation after answering
+- [x] **Explanations**: Show explanation after answering
 - [ ] **Image Support**: Add images to questions
 - [ ] **Markdown Support**: Rich text formatting for questions and answers
 - [ ] **Custom Themes**: Light/dark mode and color customization
