@@ -2,15 +2,16 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore } from './quiz-store'
 import { useQuizHistoryStore } from './quiz-history-store'
-import { useQuizTimerStore } from './quiz-timer-store'
 import { shuffle } from '../../utils/array-utils'
-import type { Quiz, QuestionResult } from '@/types'
+import type { Quiz, QuestionResult } from '../../types/quiz'
 
 export const useQuizSessionStore = defineStore(
   'quizSession',
   () => {
-    // Stores
-    const timerStore = useQuizTimerStore()
+    // Timer state (migrated from quiz-timer-store)
+    const timeLeft = ref<number | null>(null)
+    const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
+    const onExpiryCallback = ref<(() => boolean) | null>(null)
 
     // State
     const currentQuizId = ref<string | null>(null)
@@ -21,9 +22,6 @@ export const useQuizSessionStore = defineStore(
     const score = ref<number>(0)
     const isCompleted = ref<boolean>(false)
     const shuffledQuiz = ref<Quiz | null>(null)
-
-    // Alias for timeLeft from timerStore
-    const timeLeft = computed(() => timerStore.timeLeft)
 
     // Getters
     const currentQuiz = computed(() => {
@@ -136,7 +134,7 @@ export const useQuizSessionStore = defineStore(
       return quiz.timeLimit ?? null
     })
 
-    // Timer expiry handler
+    // Timer expiry handler for quiz session
     const handleTimerExpiry = (): boolean => {
       const question = currentQuestion.value
       if (question) {
@@ -152,13 +150,31 @@ export const useQuizSessionStore = defineStore(
       }
     }
 
-    // Timer helper functions (using timerStore)
+    // Timer actions (migrated from quiz-timer-store)
     const clearTimer = () => {
-      timerStore.clearTimer()
+      if (timerInterval.value) {
+        clearInterval(timerInterval.value)
+        timerInterval.value = null
+      }
+      timeLeft.value = null
     }
 
     const startTimer = (duration: number) => {
-      timerStore.startTimer(duration, handleTimerExpiry)
+      clearTimer()
+      timeLeft.value = duration
+      onExpiryCallback.value = handleTimerExpiry
+      timerInterval.value = setInterval(() => {
+        if (timeLeft.value === null) return
+        timeLeft.value--
+        if (timeLeft.value <= 0) {
+          const callback = onExpiryCallback.value
+          clearTimer()
+          onExpiryCallback.value = null
+          if (callback) {
+            callback()
+          }
+        }
+      }, 1000)
     }
 
     // Actions
