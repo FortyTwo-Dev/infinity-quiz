@@ -65,10 +65,8 @@ const handleKeydown = (e: KeyboardEvent) => {
     v-if="isOpen"
     class="modal-backdrop"
     @click="handleBackdropClick"
-    @keydown="handleKeydown"
-    tabindex="0"
   >
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" @keydown="handleKeydown">
       <div class="modal-header">
         <h2 id="modal-title">{{ title || 'Confirmer la suppression' }}</h2>
       </div>
