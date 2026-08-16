@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuizStore } from '../stores'
 import type { Quiz, Question } from '../types/quiz'
+import { validateQuestion as validateQuestionUtil, validateQuizFormState, type QuestionValidationResult, type FormValidationResult } from '../utils/validation'
 
 export interface FormQuestion {
   id: string
@@ -94,68 +95,18 @@ export function useQuizForm(quizId?: string) {
   const errors = ref<Record<string, string>>({})
 
   const validate = (): boolean => {
-    errors.value = {}
-
-    if (!form.value.title.trim()) {
-      errors.value.title = "Le titre est requis"
-    }
-
-    if (!form.value.description.trim()) {
-      errors.value.description = "La description est requise"
-    }
-
-    if (form.value.questions.length === 0) {
-      errors.value.questions = "Au moins une question est requise"
-    }
-
-    form.value.questions.forEach((q: FormQuestion, index) => {
-      if (!q.text.trim()) {
-        errors.value[`question-${index}-text`] = `Le texte de la question ${index + 1} est requis`
-      }
-
-      if (q.options.length < 2) {
-        errors.value[`question-${index}-options`] = `La question ${index + 1} doit avoir au moins 2 options`
-      }
-
-      if (q.correctAnswerIndex < 0 || q.correctAnswerIndex >= q.options.length) {
-        errors.value[`question-${index}-correctAnswer`] = `L'index de la bonne réponse pour la question ${index + 1} est invalide`
-      }
-
-      q.options.forEach((option, optionIndex) => {
-        if (!option.trim()) {
-          errors.value[`question-${index}-option-${optionIndex}`] = `L'option ${optionIndex + 1} de la question ${index + 1} est requise`
-        }
-      })
-    })
-
-    return Object.keys(errors.value).length === 0
+    const result: FormValidationResult = validateQuizFormState(form.value)
+    errors.value = result.errors
+    return result.valid
   }
 
   const validateQuestion = (questionIndex: number): boolean => {
     const q: FormQuestion | undefined = form.value.questions[questionIndex]
-    const questionErrors: Record<string, string> = {}
-
-    if (!q?.text.trim()) {
-      questionErrors.text = "Le texte de la question est requis"
+    if (!q) {
+      return false
     }
-
-    if (!q || q.options.length < 2) {
-      questionErrors.options = "Au moins 2 options sont requises"
-    }
-
-    if (q && (q.correctAnswerIndex < 0 || q.correctAnswerIndex >= q.options.length)) {
-      questionErrors.correctAnswerIndex = "L'index de la bonne réponse est invalide"
-    }
-
-    if (q) {
-      q.options.forEach((option, optionIndex) => {
-        if (!option.trim()) {
-          questionErrors[`option-${optionIndex}`] = `L'option ${optionIndex + 1} est requise`
-        }
-      })
-    }
-
-    return Object.keys(questionErrors).length === 0
+    const result: QuestionValidationResult = validateQuestionUtil(q, questionIndex)
+    return result.valid
   }
 
   // Question management

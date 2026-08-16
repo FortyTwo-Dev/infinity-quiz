@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { useQuizStore } from '../stores'
+import { validateQuizJSON } from '../utils/validation'
 
 export interface ImportExportState {
   jsonData: string
@@ -128,28 +129,8 @@ export function useQuizImportExport() {
   }
 
   const validateJSON = (jsonData: string): boolean => {
-    try {
-      const parsed = JSON.parse(jsonData)
-      if (Array.isArray(parsed)) {
-        return parsed.every((q: unknown) =>
-          typeof q === 'object' &&
-          q !== null &&
-          'id' in q &&
-          'title' in q &&
-          'questions' in q
-        )
-      } else {
-        return (
-          typeof parsed === 'object' &&
-          parsed !== null &&
-          'id' in parsed &&
-          'title' in parsed &&
-          'questions' in parsed
-        )
-      }
-    } catch {
-      return false
-    }
+    const result = validateQuizJSON(jsonData)
+    return result.valid
   }
 
   const clearMessages = () => {

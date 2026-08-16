@@ -63,6 +63,12 @@
 | [npm-run-all2](https://github.com/mysticatea/npm-run-all2) | ^9.0.2 | Run multiple npm scripts in parallel or sequential |
 | [jiti](https://github.com/unjs/jiti) | ^2.7.0 | Runtime TypeScript transpiler |
 
+## Validation
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [Zod](https://zod.dev/) | ^4.4.3 | Type-safe schema validation for quiz data structures |
+
 ## Icons
 
 | Tool | Version | Purpose |
