@@ -1,32 +1,47 @@
-/**
- * Fisher-Yates shuffle algorithm.
- * Note: Math.random() is safe here as this is used for non-cryptographic purposes
- * (shuffling quiz questions). For cryptographic use cases, use crypto.getRandomValues().
- */
-export function shuffle<T>(array: T[]): T[] {
+import { createRandom } from './random'
+
+export function shuffle<T>(array: T[], seed?: string | number): T[] {
   const shuffled = [...array]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i]!, shuffled[j]!] = [shuffled[j]!, shuffled[i]!]
+
+  if (seed !== undefined) {
+    const random = createRandom(seed)
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(random() * (i + 1))
+      const temp = shuffled[i]!
+      shuffled[i] = shuffled[j]!
+      shuffled[j] = temp
+    }
+  } else {
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = shuffled[i]!
+      shuffled[i] = shuffled[j]!
+      shuffled[j] = temp
+    }
   }
+
   return shuffled
 }
 
-/**
- * Returns a random element from the array.
- * Note: Math.random() is safe here as this is used for non-cryptographic purposes.
- */
-export function randomElement<T>(array: T[]): T | undefined {
+export function randomElement<T>(array: T[], seed?: string | number): T | undefined {
   if (array.length === 0) return undefined
-  const index = Math.floor(Math.random() * array.length)
+
+  let index: number
+  if (seed !== undefined) {
+    const random = createRandom(seed)
+    index = Math.floor(random() * array.length)
+  } else {
+    index = Math.floor(Math.random() * array.length)
+  }
+
   return array[index]
 }
 
-export function randomElements<T>(array: T[], count: number): T[] {
+export function randomElements<T>(array: T[], count: number, seed?: string | number): T[] {
   if (count <= 0) return []
   if (count >= array.length) return [...array]
 
-  const shuffled = shuffle(array)
+  const shuffled = shuffle(array, seed)
   return shuffled.slice(0, count)
 }
 
