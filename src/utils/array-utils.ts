@@ -12,6 +12,7 @@ export function shuffle<T>(array: T[], seed?: string | number): T[] {
       shuffled[j] = temp
     }
   } else {
+    // Math.random() is safe for non-cryptographic use (shuffling)
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       const temp = shuffled[i]!
@@ -31,6 +32,7 @@ export function randomElement<T>(array: T[], seed?: string | number): T | undefi
     const random = createRandom(seed)
     index = Math.floor(random() * array.length)
   } else {
+    // Math.random() is safe for non-cryptographic use (shuffling)
     index = Math.floor(Math.random() * array.length)
   }
 
