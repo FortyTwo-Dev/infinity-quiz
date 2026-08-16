@@ -1,9 +1,15 @@
 import { computed, type ComputedRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { generateSeed } from '../utils/id'
+import { validate as uuidValidate, version as uuidVersion } from 'uuid'
 
 export interface UseSeededRandomReturn {
   seed: ComputedRef<string>
+}
+
+function isValidSeed(seed: string): boolean {
+  if (!seed || seed.length === 0) return false
+  return uuidValidate(seed) && uuidVersion(seed) === 4
 }
 
 export function useSeededRandom(): UseSeededRandomReturn {
@@ -21,14 +27,6 @@ export function useSeededRandom(): UseSeededRandomReturn {
     updateUrlWithSeed(newSeed)
     return newSeed
   })
-
-  function isValidSeed(seed: string): boolean {
-    if (!seed || seed.length === 0) return false
-
-    const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-
-    return uuidV4Regex.test(seed) || seed.length > 0
-  }
 
   function updateUrlWithSeed(seedValue: string): void {
     router.replace({
