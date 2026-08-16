@@ -8,7 +8,7 @@ import type { Quiz, QuestionResult } from '../../types/quiz'
 export const useQuizSessionStore = defineStore(
   'quizSession',
   () => {
-    // Timer state (migrated from quiz-timer-store)
+    // Timer state
     const timeLeft = ref<number | null>(null)
     const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
     const onExpiryCallback = ref<(() => boolean) | null>(null)
@@ -22,6 +22,7 @@ export const useQuizSessionStore = defineStore(
     const score = ref<number>(0)
     const isCompleted = ref<boolean>(false)
     const shuffledQuiz = ref<Quiz | null>(null)
+    const quizSeed = ref<string | null>(null)
 
     // Getters
     const currentQuiz = computed(() => {
@@ -178,7 +179,7 @@ export const useQuizSessionStore = defineStore(
     }
 
     // Actions
-    const selectQuiz = (quizId: string) => {
+    const selectQuiz = (quizId: string, seed?: string) => {
       const quizStore = useQuizStore()
       const originalQuiz = quizStore.getQuizById(quizId)
       if (!originalQuiz) return
@@ -191,11 +192,12 @@ export const useQuizSessionStore = defineStore(
       verifiedQuestions.value = new Set()
       score.value = 0
       isCompleted.value = false
+      quizSeed.value = seed ?? null
 
       if (originalQuiz.shuffleQuestions) {
         shuffledQuiz.value = {
           ...originalQuiz,
-          questions: shuffle([...originalQuiz.questions]),
+          questions: shuffle([...originalQuiz.questions], seed),
         }
       } else {
         shuffledQuiz.value = null
@@ -316,7 +318,7 @@ export const useQuizSessionStore = defineStore(
       if (originalQuiz?.shuffleQuestions) {
         shuffledQuiz.value = {
           ...originalQuiz,
-          questions: shuffle([...originalQuiz.questions]),
+          questions: shuffle([...originalQuiz.questions], quizSeed.value ?? undefined),
         }
       }
 
@@ -336,6 +338,7 @@ export const useQuizSessionStore = defineStore(
       score.value = 0
       isCompleted.value = false
       shuffledQuiz.value = null
+      quizSeed.value = null
     }
 
     const getAnswerForCurrentQuestion = (): number | null => {
@@ -359,6 +362,7 @@ export const useQuizSessionStore = defineStore(
       isCompleted,
       timeLeft,
       shuffledQuiz,
+      quizSeed,
 
       // Getters
       currentQuiz,
@@ -407,6 +411,7 @@ export const useQuizSessionStore = defineStore(
         'score',
         'isCompleted',
         'shuffledQuiz',
+        'quizSeed',
       ],
     },
   },

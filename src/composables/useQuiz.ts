@@ -1,7 +1,8 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuizSessionStore, useQuizVerificationStore } from '../stores'
-import { shuffle } from '../utils/array-utils'
+import { useSeededRandom } from './useSeededRandom'
+import { indexedSeededShuffle } from '../utils/random'
 
 export interface QuestionOption {
   option: string
@@ -13,6 +14,7 @@ export function useQuiz() {
   const router = useRouter()
   const sessionStore = useQuizSessionStore()
   const verificationStore = useQuizVerificationStore()
+  const { seed } = useSeededRandom()
 
   const quizId = computed(() => route.params.quizId as string | undefined)
 
@@ -45,10 +47,12 @@ export function useQuiz() {
     const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
 
     if (shouldShuffle) {
-      return shuffle(options).map((option) => ({
-        option,
-        originalIndex: question.options.indexOf(option),
-      }))
+      return indexedSeededShuffle(options, seed.value, currentQuestionIndex.value).map(
+        (option) => ({
+          option,
+          originalIndex: question.options.indexOf(option),
+        }),
+      )
     }
 
     return options.map((option, index) => ({
@@ -59,7 +63,7 @@ export function useQuiz() {
 
   function initializeQuiz() {
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
-      sessionStore.selectQuiz(quizId.value)
+      sessionStore.selectQuiz(quizId.value, seed.value)
     }
   }
 
@@ -145,6 +149,7 @@ export function useQuiz() {
     shouldShowFeedback,
     canSkipCurrentQuestion,
     isCurrentQuestionVerified,
+    seed,
     initializeQuiz,
     selectAnswer,
     skipQuestion,

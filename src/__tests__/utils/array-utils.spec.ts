@@ -38,6 +38,41 @@ describe('array-utils', () => {
     it('should work with single element', () => {
       expect(shuffle([1])).toEqual([1])
     })
+
+    it('should produce deterministic result with UUID seed', () => {
+      const original = [1, 2, 3, 4, 5]
+      const uuidSeed = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'
+      const result1 = shuffle(original, uuidSeed)
+      const result2 = shuffle(original, uuidSeed)
+      expect(result1).toEqual(result2)
+    })
+
+    it('should produce different result with different UUID seed', () => {
+      const original = [1, 2, 3, 4, 5]
+      const result1 = shuffle(original, 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa')
+      const result2 = shuffle(original, 'bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb')
+      expect(result1).not.toEqual(result2)
+    })
+
+    it('should preserve all elements when using UUID seed', () => {
+      const original = [1, 2, 3, 4, 5]
+      const result = shuffle(original, 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa')
+      expect(result.sort()).toEqual(original.sort())
+    })
+
+    it('should not mutate original array when using UUID seed', () => {
+      const original = [1, 2, 3]
+      const originalCopy = [...original]
+      shuffle(original, 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa')
+      expect(original).toEqual(originalCopy)
+    })
+
+    it('should work with numeric seed', () => {
+      const original = [1, 2, 3]
+      const result1 = shuffle(original, 12345)
+      const result2 = shuffle(original, 12345)
+      expect(result1).toEqual(result2)
+    })
   })
 
   describe('randomElement', () => {
@@ -52,6 +87,20 @@ describe('array-utils', () => {
     it('should return an element from the array', () => {
       const arr = [1, 2, 3, 4, 5]
       const element = randomElement(arr)
+      expect(arr).toContain(element)
+    })
+
+    it('should return same element with same UUID seed', () => {
+      const arr = [1, 2, 3, 4, 5]
+      const uuidSeed = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'
+      const element1 = randomElement(arr, uuidSeed)
+      const element2 = randomElement(arr, uuidSeed)
+      expect(element1).toBe(element2)
+    })
+
+    it('should return element from array when using UUID seed', () => {
+      const arr = [1, 2, 3, 4, 5]
+      const element = randomElement(arr, 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa')
       expect(arr).toContain(element)
     })
   })
@@ -88,6 +137,21 @@ describe('array-utils', () => {
 
     it('should return empty array for negative count', () => {
       expect(randomElements([1, 2, 3], -1)).toEqual([])
+    })
+
+    it('should produce deterministic result with UUID seed', () => {
+      const arr = [1, 2, 3, 4, 5]
+      const uuidSeed = 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa'
+      const result1 = randomElements(arr, 3, uuidSeed)
+      const result2 = randomElements(arr, 3, uuidSeed)
+      expect(result1).toEqual(result2)
+    })
+
+    it('should return correct number of elements with UUID seed', () => {
+      const arr = [1, 2, 3, 4, 5]
+      const result = randomElements(arr, 3, 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa')
+      expect(result).toHaveLength(3)
+      result.forEach((el) => expect(arr).toContain(el))
     })
   })
 
