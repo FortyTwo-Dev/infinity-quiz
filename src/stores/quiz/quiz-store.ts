@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Quiz } from '../../types/quiz'
 import { SAMPLE_QUIZZES, hasInitializedQuizzes } from '../../data/sample-quizzes'
+import { parseAndValidateQuizJSON } from '../../utils/validation'
 
 export const useQuizStore = defineStore(
   'quiz',
@@ -101,32 +102,27 @@ export const useQuizStore = defineStore(
     }
 
     const importQuiz = (quizData: string): boolean => {
-      try {
-        const parsedQuiz: Quiz = JSON.parse(quizData)
-        // Validate required fields
-        if (!parsedQuiz.id || !parsedQuiz.title || !parsedQuiz.questions) {
-          return false
-        }
-        addQuiz(parsedQuiz)
-        return true
-      } catch {
+      const parsedQuiz = parseAndValidateQuizJSON(quizData)
+      if (parsedQuiz === null) {
         return false
       }
+      if (Array.isArray(parsedQuiz)) {
+        return false
+      }
+      addQuiz(parsedQuiz)
+      return true
     }
 
     const importQuizzes = (quizzesData: string): boolean => {
-      try {
-        const parsedQuizzes: Quiz[] = JSON.parse(quizzesData)
-        // Validate all quizzes have required fields
-        const isValid = parsedQuizzes.every(
-          (q) => q.id && q.title && q.questions
-        )
-        if (!isValid) return false
-        quizzes.value.push(...parsedQuizzes)
-        return true
-      } catch {
+      const parsedQuizzes = parseAndValidateQuizJSON(quizzesData)
+      if (parsedQuizzes === null) {
         return false
       }
+      if (!Array.isArray(parsedQuizzes)) {
+        return false
+      }
+      quizzes.value.push(...parsedQuizzes)
+      return true
     }
 
     return {

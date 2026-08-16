@@ -17,8 +17,8 @@ export const QuestionSchema = z.object({
   .superRefine((q, ctx) => {
     if (q.correctAnswerIndex >= q.options.length) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "L'index de la bonne réponse est invalide",
+        code: "custom",
+        message: "correctAnswerIndex must be less than options length",
         path: ['correctAnswerIndex'],
       })
     }
@@ -122,26 +122,11 @@ export function validateQuestion(
   for (const issue of result.error.issues) {
     const path = issue.path.join('-')
     const key = prefix + path
-
-    // Map Zod error codes to custom messages with question index
-    let message = issue.message ?? 'Champ invalide'
-    if (index !== undefined) {
-      const questionNum = index + 1
-      if (path === 'text') message = `Le texte de la question ${questionNum} est requis`
-      else if (path === 'options') message = `La question ${questionNum} doit avoir au moins 2 options`
-      else if (path.startsWith('options-')) {
-        const parts = path.split('-')
-        const optionIndex = parts.length > 1 ? parseInt(parts[1] as string) : 0
-        message = `L'option ${optionIndex + 1} de la question ${questionNum} est requise`
-      }
-      else if (path === 'correctAnswerIndex') message = `L'index de la bonne réponse pour la question ${questionNum} est invalide`
-    }
-
-    errors[key] = message
+    errors[key] = issue.message
   }
 
   return {
-    valid: Object.keys(errors).length === 0,
+    valid: false,
     errors,
   }
 }
@@ -156,44 +141,20 @@ export function validateQuizJSON(jsonData: string): ValidationResult {
     if (Array.isArray(parsed)) {
       const result = z.array(QuizSchema).min(1).safeParse(parsed)
       if (!result.success) {
-        const errors: string[] = []
-
-        const hasEmptyArrayError = result.error.issues.some(
-          (issue) => issue.code === z.ZodIssueCode.too_small && issue.origin === 'array'
-        )
-
-        if (hasEmptyArrayError) {
-          errors.push('Le tableau de quiz ne peut pas être vide')
-        } else {
-          const invalidIndices: number[] = []
-          for (const issue of result.error.issues) {
-            if (issue.code === z.ZodIssueCode.invalid_type) {
-              invalidIndices.push((issue.path[0] as number) + 1)
-            }
-          }
-
-          if (invalidIndices.length > 0) {
-            errors.push(`Quiz invalides aux positions: ${invalidIndices.join(', ')}. Chaque quiz doit avoir id, title, description et questions valides.`)
-          } else {
-            errors.push('Structure de quiz invalide dans le tableau')
-          }
-        }
-
+        const errors: string[] = result.error.issues.map(issue => issue.message)
         return { valid: false, errors }
       }
       return { valid: true, errors: [] }
     } else {
       const result = QuizSchema.safeParse(parsed)
       if (!result.success) {
-        return {
-          valid: false,
-          errors: ['Quiz invalide. Doit contenir id (string), title (string), description (string) et questions (tableau de questions valides).'],
-        }
+        const errors: string[] = result.error.issues.map(issue => issue.message)
+        return { valid: false, errors }
       }
       return { valid: true, errors: [] }
     }
   } catch {
-    return { valid: false, errors: ['JSON invalide'] }
+    return { valid: false, errors: ['Invalid JSON'] }
   }
 }
 
@@ -206,8 +167,7 @@ export function parseAndValidateQuizJSON(jsonData: string): Quiz | Quiz[] | null
     const parsed = JSON.parse(jsonData)
 
     if (Array.isArray(parsed)) {
-      if (parsed.length === 0) return null
-      const result = z.array(ImportQuizSchema).safeParse(parsed)
+      const result = z.array(ImportQuizSchema).min(1).safeParse(parsed)
       return result.success ? result.data as unknown as Quiz[] : null
     } else {
       const result = ImportQuizSchema.safeParse(parsed)
@@ -220,20 +180,18 @@ export function parseAndValidateQuizJSON(jsonData: string): Quiz | Quiz[] | null
 
 /**
  * Vérifie la structure de base pour l'import
+ * Utilise ImportQuizSchema qui vérifie déjà que id est une string non vide
  */
 export function hasRequiredQuizFields(value: unknown): boolean {
-  if (!ImportQuizSchema.safeParse(value).success) return false
-  const quiz = value as Record<string, unknown>
-  return typeof quiz.id === 'string' && quiz.id.trim() !== ''
+  return ImportQuizSchema.safeParse(value).success
 }
 
 /**
  * Valide la structure de base d'un quiz (pour import rapide)
+ * Utilise ImportQuizSchema qui vérifie déjà que id est une string non vide
  */
 export function isValidQuizStructure(value: unknown): boolean {
-  if (!ImportQuizSchema.safeParse(value).success) return false
-  const quiz = value as Record<string, unknown>
-  return typeof quiz.id === 'string' && quiz.id.trim() !== ''
+  return ImportQuizSchema.safeParse(value).success
 }
 
 /**
@@ -246,6 +204,38 @@ export function isValidQuizArrayStructure(value: unknown): boolean {
 /**
  * Valide l'état d'un formulaire de quiz
  */
+/**
+ * Schema Zod pour une question partielle (sans validation de correctAnswerIndex)
+ * Utilisé pour les formulaires où les questions peuvent être incomplètes
+ */
+export const PartialQuestionSchema = z.object({
+  id: z.string().min(1),
+  text: z.string().min(1),
+  options: z.array(z.string().min(1)).min(2),
+  correctAnswerIndex: z.number().int().nonnegative(),
+  timeLimit: z.number().optional(),
+  shuffleAnswers: z.boolean().optional(),
+  explanation: z.string().optional(),
+}).partial()
+
+/**
+ * Schema Zod pour la validation de l'état du formulaire de quiz
+ * Utilise les messages par défaut de Zod
+ */
+export const QuizFormStateSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  category: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  questions: z.array(PartialQuestionSchema).min(1),
+  timeLimit: z.number().optional(),
+  shuffleQuestions: z.boolean().optional(),
+  shuffleAnswers: z.boolean().optional(),
+  maxSkips: z.number().optional(),
+  enableReviewMode: z.boolean().optional(),
+  feedbackEnabled: z.boolean().optional(),
+})
+
 export interface QuizFormState {
   title: string
   description: string
@@ -260,29 +250,36 @@ export interface FormValidationResult {
 }
 
 export function validateQuizFormState(form: QuizFormState): FormValidationResult {
-  const errors: Record<string, string> = {}
+  const result = QuizFormStateSchema.safeParse(form)
 
-  if (!form.title?.trim()) {
-    errors.title = "Le titre est requis"
-  }
-
-  if (!form.description?.trim()) {
-    errors.description = "La description est requise"
-  }
-
-  if (!form.questions?.length) {
-    errors.questions = "Au moins une question est requise"
-  } else {
+  if (result.success) {
+    // Si le formulaire est valide, on valide aussi chaque question individuellement
+    // car QuestionSchema.partial() permet des questions incomplètes
+    const errors: Record<string, string> = {}
     form.questions.forEach((q, index) => {
-      const result = validateQuestion(q, index)
-      if (!result.valid) {
-        Object.assign(errors, result.errors)
+      const qResult = QuestionSchema.safeParse(q)
+      if (!qResult.success) {
+        for (const issue of qResult.error.issues) {
+          const path = `question-${index}-${issue.path.join('-')}`
+          errors[path] = issue.message
+        }
       }
     })
+    return {
+      valid: Object.keys(errors).length === 0,
+      errors,
+    }
+  }
+
+  // Conversion des erreurs Zod en Record<string, string>
+  const errors: Record<string, string> = {}
+  for (const issue of result.error.issues) {
+    const path = issue.path.join('-')
+    errors[path] = issue.message
   }
 
   return {
-    valid: Object.keys(errors).length === 0,
+    valid: false,
     errors,
   }
 }
