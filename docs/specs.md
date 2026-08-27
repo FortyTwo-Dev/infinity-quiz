@@ -68,6 +68,16 @@
 | Tool | Version | Purpose |
 |------|---------|---------|
 | [Zod](https://zod.dev/) | ^4.4.3 | Type-safe schema validation for quiz data structures |
+| [@vee-validate/zod](https://vee-validate.logaretm.com/v4/integrations/zod.html) | ^4.x | Form validation with Zod integration for Vue.js |
+
+
+## Styling
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [Tailwind CSS](https://tailwindcss.com/) | ^4.3.3 | Utility-first CSS framework |
+| [@tailwindcss/vite](https://github.com/tailwindlabs/tailwindcss-vite) | ^4.3.3 | Tailwind CSS Vite plugin |
+| [daisyUI](https://daisyui.com/) | ^5.7.22 | Tailwind CSS component library |
 
 ## Icons
 
