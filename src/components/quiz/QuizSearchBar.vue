@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import Button from '../common/Button.vue'
+import { DButton } from '@/components/daisy-ui'
 
 interface Props {
   searchTerm: string
@@ -29,7 +29,7 @@ watch(
   () => props.searchTerm,
   (value) => {
     localSearchTerm.value = value
-  }
+  },
 )
 
 watch(localSearchTerm, (value) => {
@@ -67,33 +67,39 @@ const getTagLabel = (tag: string | null): string => {
 </script>
 
 <template>
-  <div class="quiz-search-bar">
-    <div class="search-input-wrapper">
+  <div class="flex flex-wrap gap-4 items-center mb-6">
+    <div class="relative flex-1 min-w-[200px]">
       <input
         id="search-input"
         type="text"
         :value="localSearchTerm"
         @input="handleSearchChange"
         placeholder="Rechercher des quiz..."
-        class="search-input"
+        class="input input-bordered w-full pl-9"
         aria-label="Rechercher des quiz"
       />
-      <span class="search-icon">🔍</span>
+      <span
+        class="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/60 pointer-events-none"
+        >🔍</span
+      >
     </div>
 
-    <div class="filters">
-      <div class="dropdown" @click.stop>
+    <div class="flex gap-2 items-center">
+      <div class="relative" @click.stop>
         <button
           type="button"
-          class="dropdown-toggle"
+          class="btn btn-ghost btn-sm flex items-center gap-1"
           @click="showCategoryDropdown = !showCategoryDropdown"
         >
           {{ getCategoryLabel(selectedCategory) }}
-          <span class="dropdown-arrow">{{ showCategoryDropdown ? '▲' : '▼' }}</span>
+          <span class="text-xs text-base-content/60">{{ showCategoryDropdown ? '▲' : '▼' }}</span>
         </button>
-        <ul v-if="showCategoryDropdown" class="dropdown-menu">
+        <ul
+          v-if="showCategoryDropdown"
+          class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
+        >
           <li
-            class="dropdown-item"
+            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(null)"
           >
             Toutes les catégories
@@ -101,7 +107,7 @@ const getTagLabel = (tag: string | null): string => {
           <li
             v-for="category in categories"
             :key="category"
-            class="dropdown-item"
+            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(category)"
           >
             {{ category }}
@@ -109,23 +115,29 @@ const getTagLabel = (tag: string | null): string => {
         </ul>
       </div>
 
-      <div class="dropdown" @click.stop>
+      <div class="relative" @click.stop>
         <button
           type="button"
-          class="dropdown-toggle"
+          class="btn btn-ghost btn-sm flex items-center gap-1"
           @click="showTagDropdown = !showTagDropdown"
         >
           {{ getTagLabel(selectedTag) }}
-          <span class="dropdown-arrow">{{ showTagDropdown ? '▲' : '▼' }}</span>
+          <span class="text-xs text-base-content/60">{{ showTagDropdown ? '▲' : '▼' }}</span>
         </button>
-        <ul v-if="showTagDropdown" class="dropdown-menu">
-          <li class="dropdown-item" @click="handleTagSelect(null)">
+        <ul
+          v-if="showTagDropdown"
+          class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
+        >
+          <li
+            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
+            @click="handleTagSelect(null)"
+          >
             Tous les tags
           </li>
           <li
             v-for="tag in tags"
             :key="tag"
-            class="dropdown-item"
+            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleTagSelect(tag)"
           >
             {{ tag }}
@@ -133,124 +145,15 @@ const getTagLabel = (tag: string | null): string => {
         </ul>
       </div>
 
-      <Button
+      <DButton
         type="button"
         variant="secondary"
-        size="small"
+        size="sm"
         @click="handleClear"
         :disabled="!localSearchTerm && !selectedCategory && !selectedTag"
       >
         Effacer
-      </Button>
+      </DButton>
     </div>
   </div>
 </template>
-
-<style scoped>
-.quiz-search-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  align-items: center;
-  margin-bottom: var(--space-lg);
-}
-
-.search-input-wrapper {
-  position: relative;
-  flex: 1;
-  min-width: 200px;
-}
-
-.search-input {
-  width: 100%;
-  padding: var(--space-sm) var(--space-sm) var(--space-sm) 36px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: inherit;
-  font-size: 0.95rem;
-  transition: all 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-alpha);
-}
-
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-secondary);
-  pointer-events: none;
-}
-
-.filters {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-}
-
-.dropdown {
-  position: relative;
-}
-
-.dropdown-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: inherit;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.dropdown-toggle:hover {
-  border-color: var(--color-primary);
-  background: var(--color-bg-hover);
-}
-
-.dropdown-arrow {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin: var(--space-xs) 0 0;
-  padding: var(--space-xs) 0;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  list-style: none;
-}
-
-.dropdown-item {
-  padding: var(--space-sm) var(--space-md);
-  color: var(--color-text);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.dropdown-item:hover {
-  background: var(--color-bg-hover);
-  color: var(--color-primary);
-}
-</style>
