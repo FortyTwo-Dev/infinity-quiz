@@ -283,39 +283,87 @@ export const useQuizSessionStore = defineStore(
     const nextQuestion = () => {
       if (!hasNextQuestion.value) return
 
-      clearTimer()
-      currentQuestionIndex.value += 1
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
 
-      // Restart timer with the current question's time limit (either question-specific or inherited from quiz)
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value += 1
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value += 1
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
     const previousQuestion = () => {
       if (!hasPreviousQuestion.value) return
 
-      clearTimer()
-      currentQuestionIndex.value -= 1
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
 
-      // Restart timer with the current question's time limit (either question-specific or inherited from quiz)
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value -= 1
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value -= 1
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
     const goToQuestion = (index: number) => {
       if (index < 0 || index >= totalQuestions.value) return
 
-      clearTimer()
-      currentQuestionIndex.value = index
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
 
-      // Restart timer with the current question's time limit (either question-specific or inherited from quiz)
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value = index
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value = index
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
