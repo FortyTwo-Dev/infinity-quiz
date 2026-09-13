@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
 import { DButton, DCardActions, DCardTitle } from '@/components/daisy-ui'
-import { DInput, DInputFile, DTextarea } from '@/components/daisy-ui'
+import { DInputFile, DTextarea } from '@/components/daisy-ui'
 import { useQuizImportExport } from '@/composables'
 import { PhUpload, PhTrash } from '@phosphor-icons/vue'
 
@@ -60,7 +60,6 @@ const isJsonValid = computed(() => {
         <PhUpload :size="24" />
         Importer
       </DCardTitle>
-
       <DCard>
         <DCardBody>
           <DCardTitle tag="h3" size="lg">À partir d'un fichier</DCardTitle>
