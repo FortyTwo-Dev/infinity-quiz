@@ -75,13 +75,9 @@ const getTagLabel = (tag: string | null): string => {
         :value="localSearchTerm"
         @input="handleSearchChange"
         placeholder="Rechercher des quiz..."
-        class="input input-bordered w-full pl-9"
+        class="input input-bordered w-full"
         aria-label="Rechercher des quiz"
       />
-      <span
-        class="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/60 pointer-events-none"
-        >🔍</span
-      >
     </div>
 
     <div class="flex gap-2 items-center">
