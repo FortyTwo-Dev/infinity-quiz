@@ -23,6 +23,9 @@ export { DInput, DInputFile } from './input'
 // Textarea
 export { DTextarea } from './textarea'
 
+// Select
+export { DSelect, DSelectOption } from './select'
+
 // Label
 export { DLabel } from './label'
 
