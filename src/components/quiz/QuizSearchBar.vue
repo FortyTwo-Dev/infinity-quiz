@@ -81,11 +81,13 @@ const getTagLabel = (tag: string | null): string => {
     </div>
 
     <div class="flex gap-2 items-center">
-      <div class="relative" @click.stop tabindex="0" @keydown.enter.stop="showCategoryDropdown = !showCategoryDropdown" @keydown.space.stop="showCategoryDropdown = !showCategoryDropdown">
+      <div class="relative" @click.stop>
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
           @click="showCategoryDropdown = !showCategoryDropdown"
+          @keydown.enter.stop="showCategoryDropdown = !showCategoryDropdown"
+          @keydown.space.stop="showCategoryDropdown = !showCategoryDropdown"
         >
           {{ getCategoryLabel(selectedCategory) }}
           <span class="text-xs text-base-content/60">{{ showCategoryDropdown ? '▲' : '▼' }}</span>
@@ -115,11 +117,13 @@ const getTagLabel = (tag: string | null): string => {
         </ul>
       </div>
 
-      <div class="relative" @click.stop tabindex="0" @keydown.enter.stop="showTagDropdown = !showTagDropdown" @keydown.space.stop="showTagDropdown = !showTagDropdown">
+      <div class="relative" @click.stop>
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
           @click="showTagDropdown = !showTagDropdown"
+          @keydown.enter.stop="showTagDropdown = !showTagDropdown"
+          @keydown.space.stop="showTagDropdown = !showTagDropdown"
         >
           {{ getTagLabel(selectedTag) }}
           <span class="text-xs text-base-content/60">{{ showTagDropdown ? '▲' : '▼' }}</span>
