@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
-import { DButton, DCardActions, DCardTitle, DLabel } from '@/components/daisy-ui'
-import { DSelect, DSelectOption } from '@/components/daisy-ui'
+import { DButton, DCardActions, DCardTitle, DLabel, DSelect, DSelectOption } from '@/components/daisy-ui'
 import { useQuizStore } from '../../stores'
 import { PhDownload, PhCopy } from '@phosphor-icons/vue'
 

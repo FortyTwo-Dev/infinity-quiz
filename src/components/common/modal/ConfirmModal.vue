@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, type ComponentRef } from 'vue'
-import { DModal, DModalBox, DModalActions, DModalBackdrop } from '@/components/daisy-ui'
-import { DButton } from '@/components/daisy-ui'
+import { DModal, DModalBox, DModalActions, DModalBackdrop, DButton } from '@/components/daisy-ui'
 import type { ButtonVariant } from '@/components/daisy-ui/types'
 
 interface Props {
