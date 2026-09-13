@@ -6,7 +6,6 @@ import {
   PhPlus,
   PhGear,
   PhArrowSquareIn,
-  PhFlask,
 } from '@phosphor-icons/vue'
 
 interface NavItem {
@@ -27,11 +26,6 @@ const managementNavItems: NavItem[] = [
 ]
 
 const otherNavItems: NavItem[] = [{ label: 'Results', routeName: 'results', icon: PhTrophy }]
-
-// Dev only - show test-ui in development
-const devNavItems: NavItem[] = import.meta.env.DEV
-  ? [{ label: 'Test UI', routeName: 'test-ui', icon: PhFlask }]
-  : []
 </script>
 
 <template>
@@ -79,16 +73,6 @@ const devNavItems: NavItem[] = import.meta.env.DEV
         <router-link
           :to="{ name: item.routeName }"
           class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          :data-tip="item.label"
-        >
-          <component :is="item.icon" class="inline-block" size="20" weight="fill" />
-          <span class="is-drawer-close:hidden">{{ item.label }}</span>
-        </router-link>
-      </li>
-      <li v-for="item in devNavItems" :key="item.routeName">
-        <router-link
-          :to="{ name: item.routeName }"
-          class="is-drawer-close:tooltip is-drawer-close:tooltip-right text-warning"
           :data-tip="item.label"
         >
           <component :is="item.icon" class="inline-block" size="20" weight="fill" />
