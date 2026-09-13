@@ -11,6 +11,12 @@ const props = withDefaults(defineProps<Props>(), {
   position: 'middle',
 })
 
+const positionClasses: Record<Position, string> = {
+  top: 'modal-top',
+  middle: 'modal-middle',
+  bottom: 'modal-bottom',
+}
+
 const dialog = ref<HTMLDialogElement | null>(null)
 
 function open() {
@@ -29,12 +35,7 @@ defineExpose({
 
 <template>
   <Teleport to="body">
-    <dialog
-      :id="props.id"
-      ref="dialog"
-      class="modal"
-      :class="`modal-${props.position}`"
-    >
+    <dialog :id="props.id" ref="dialog" class="modal" :class="positionClasses[props.position]">
       <slot />
     </dialog>
   </Teleport>
