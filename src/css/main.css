@@ -1,0 +1,296 @@
+@import 'tailwindcss';
+@plugin "daisyui";
+
+@source inline("status-{success,error,warning,info,neutral,secondary}");
+
+/* DaisyUI drawer state variants */
+@source inline("is-drawer-{open,close}");
+
+/* Custom daisyUI Themes */
+@plugin "daisyui/theme" {
+  name: 'infinity-blue-dark';
+  default: false;
+  prefersdark: true;
+  color-scheme: 'dark';
+  --color-base-100: oklch(14% 0.005 285.823);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(0% 0 0);
+  --color-base-content: oklch(92% 0.004 286.32);
+  --color-primary: oklch(54% 0.245 262.881);
+  --color-primary-content: oklch(100% 0 0);
+  --color-secondary: oklch(92% 0.013 255.508);
+  --color-secondary-content: oklch(27% 0.006 286.033);
+  --color-accent: oklch(92% 0.013 255.508);
+  --color-accent-content: oklch(27% 0.006 286.033);
+  --color-neutral: oklch(27% 0.006 286.033);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(68% 0.169 237.323);
+  --color-info-content: oklch(0% 0 0);
+  --color-success: oklch(72% 0.219 149.579);
+  --color-success-content: oklch(0% 0 0);
+  --color-warning: oklch(76% 0.188 70.08);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(63% 0.237 25.331);
+  --color-error-content: oklch(0% 0 0);
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+  --size-selector: 0.28125rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Light Theme */
+@plugin "daisyui/theme" {
+  name: 'infinity-blue-light';
+  default: false;
+  prefersdark: false;
+  color-scheme: 'light';
+
+  /* Background Colors */
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(100% 0 0);
+  --color-base-300: oklch(98% 0 0);
+  --color-base-content: oklch(0% 0 0);
+
+  /* Primary Colors */
+  --color-primary: oklch(54% 0.245 262.881);
+  --color-primary-content: oklch(100% 0 0);
+
+  /* Secondary Colors */
+  --color-secondary: oklch(68% 0.169 237.323);
+  --color-secondary-content: oklch(0% 0 0);
+
+  /* Accent Colors */
+  --color-accent: oklch(45% 0.24 277.023);
+  --color-accent-content: oklch(100% 0 0);
+
+  /* Neutral Colors */
+  --color-neutral: oklch(14% 0.005 285.823);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+
+  /* Semantic Colors */
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(79% 0.209 151.711);
+  --color-success-content: oklch(37% 0.077 168.94);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(70% 0.191 22.216);
+  --color-error-content: oklch(27% 0.105 12.094);
+
+  /* Border Radius */
+  --radius-selector: 0.25rem;
+  --radius-field: 0rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Light Theme - Yellow */
+@plugin "daisyui/theme" {
+  name: 'infinity-yellow-light';
+  default: false;
+  prefersdark: false;
+  color-scheme: 'light';
+
+  /* Background Colors */
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(100% 0 0);
+  --color-base-300: oklch(98% 0 0);
+  --color-base-content: oklch(0% 0 0);
+
+  /* Primary Colors - Yellow */
+  --color-primary: oklch(85% 0.2 100);
+  --color-primary-content: oklch(0% 0 0);
+
+  /* Secondary Colors */
+  --color-secondary: oklch(68% 0.169 237.323);
+  --color-secondary-content: oklch(0% 0 0);
+
+  /* Accent Colors */
+  --color-accent: oklch(45% 0.24 277.023);
+  --color-accent-content: oklch(100% 0 0);
+
+  /* Neutral Colors */
+  --color-neutral: oklch(14% 0.005 285.823);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+
+  /* Semantic Colors */
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(79% 0.209 151.711);
+  --color-success-content: oklch(37% 0.077 168.94);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(70% 0.191 22.216);
+  --color-error-content: oklch(27% 0.105 12.094);
+
+  /* Border Radius */
+  --radius-selector: 0.25rem;
+  --radius-field: 0rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Dark Theme - Yellow */
+@plugin "daisyui/theme" {
+  name: 'infinity-yellow-dark';
+  default: false;
+  prefersdark: true;
+  color-scheme: 'dark';
+
+  --color-base-100: oklch(14% 0.005 285.823);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(0% 0 0);
+  --color-base-content: oklch(92% 0.004 286.32);
+
+  /* Primary Colors - Yellow */
+  --color-primary: oklch(75% 0.2 100);
+  --color-primary-content: oklch(0% 0 0);
+
+  --color-secondary: oklch(74% 0.16 232.661);
+  --color-secondary-content: oklch(0% 0 0);
+  --color-accent: oklch(45% 0.24 277.023);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(27% 0.006 286.033);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(68% 0.169 237.323);
+  --color-info-content: oklch(0% 0 0);
+  --color-success: oklch(72% 0.219 149.579);
+  --color-success-content: oklch(0% 0 0);
+  --color-warning: oklch(76% 0.188 70.08);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(63% 0.237 25.331);
+  --color-error-content: oklch(0% 0 0);
+
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+  --size-selector: 0.28125rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Light Theme - Red */
+@plugin "daisyui/theme" {
+  name: 'infinity-red-light';
+  default: false;
+  prefersdark: false;
+  color-scheme: 'light';
+
+  /* Background Colors */
+  --color-base-100: oklch(100% 0 0);
+  --color-base-200: oklch(100% 0 0);
+  --color-base-300: oklch(98% 0 0);
+  --color-base-content: oklch(0% 0 0);
+
+  /* Primary Colors - Red */
+  --color-primary: oklch(65% 0.25 25);
+  --color-primary-content: oklch(100% 0 0);
+
+  /* Secondary Colors */
+  --color-secondary: oklch(68% 0.169 237.323);
+  --color-secondary-content: oklch(0% 0 0);
+
+  /* Accent Colors */
+  --color-accent: oklch(45% 0.24 277.023);
+  --color-accent-content: oklch(100% 0 0);
+
+  /* Neutral Colors */
+  --color-neutral: oklch(14% 0.005 285.823);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+
+  /* Semantic Colors */
+  --color-info: oklch(74% 0.16 232.661);
+  --color-info-content: oklch(29% 0.066 243.157);
+  --color-success: oklch(79% 0.209 151.711);
+  --color-success-content: oklch(37% 0.077 168.94);
+  --color-warning: oklch(82% 0.189 84.429);
+  --color-warning-content: oklch(41% 0.112 45.904);
+  --color-error: oklch(70% 0.191 22.216);
+  --color-error-content: oklch(27% 0.105 12.094);
+
+  /* Border Radius */
+  --radius-selector: 0.25rem;
+  --radius-field: 0rem;
+  --radius-box: 0.25rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Dark Theme - Red */
+@plugin "daisyui/theme" {
+  name: 'infinity-red-dark';
+  default: false;
+  prefersdark: true;
+  color-scheme: 'dark';
+
+  --color-base-100: oklch(14% 0.005 285.823);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(0% 0 0);
+  --color-base-content: oklch(92% 0.004 286.32);
+
+  /* Primary Colors - Red */
+  --color-primary: oklch(55% 0.25 25);
+  --color-primary-content: oklch(0% 0 0);
+
+  --color-secondary: oklch(74% 0.16 232.661);
+  --color-secondary-content: oklch(0% 0 0);
+  --color-accent: oklch(45% 0.24 277.023);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(27% 0.006 286.033);
+  --color-neutral-content: oklch(92% 0.004 286.32);
+  --color-info: oklch(68% 0.169 237.323);
+  --color-info-content: oklch(0% 0 0);
+  --color-success: oklch(72% 0.219 149.579);
+  --color-success-content: oklch(0% 0 0);
+  --color-warning: oklch(76% 0.188 70.08);
+  --color-warning-content: oklch(0% 0 0);
+  --color-error: oklch(63% 0.237 25.331);
+  --color-error-content: oklch(0% 0 0);
+
+  --radius-selector: 0rem;
+  --radius-field: 0rem;
+  --radius-box: 0rem;
+  --size-selector: 0.28125rem;
+  --size-field: 0.25rem;
+  --border: 2px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Font - SpaceGrotesk */
+@font-face {
+  font-family: 'SpaceGrotesk';
+  src: url('/src/assets/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Base fallback variables */
+:root {
+  /* Typography */
+  --font-family: 'SpaceGrotesk', sans-serif;
+  --font-family-fallback: system-ui, -apple-system, sans-serif;
+}
+
+/* Apply font to entire app */
+* {
+  font-family: var(--font-family), var(--font-family-fallback);
+}
