@@ -81,7 +81,7 @@ const getTagLabel = (tag: string | null): string => {
     </div>
 
     <div class="flex gap-2 items-center">
-      <div class="relative" @click.stop>
+      <div class="relative" @click.stop tabindex="0" @keydown.enter.stop="showCategoryDropdown = !showCategoryDropdown" @keydown.space.stop="showCategoryDropdown = !showCategoryDropdown">
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
@@ -95,23 +95,29 @@ const getTagLabel = (tag: string | null): string => {
           class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
         >
           <li
+            tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(null)"
+            @keydown.enter="handleCategorySelect(null)"
+            @keydown.space="handleCategorySelect(null)"
           >
             Toutes les catégories
           </li>
           <li
             v-for="category in categories"
             :key="category"
+            tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(category)"
+            @keydown.enter="handleCategorySelect(category)"
+            @keydown.space="handleCategorySelect(category)"
           >
             {{ category }}
           </li>
         </ul>
       </div>
 
-      <div class="relative" @click.stop>
+      <div class="relative" @click.stop tabindex="0" @keydown.enter.stop="showTagDropdown = !showTagDropdown" @keydown.space.stop="showTagDropdown = !showTagDropdown">
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
@@ -125,16 +131,22 @@ const getTagLabel = (tag: string | null): string => {
           class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
         >
           <li
+            tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleTagSelect(null)"
+            @keydown.enter="handleTagSelect(null)"
+            @keydown.space="handleTagSelect(null)"
           >
             Tous les tags
           </li>
           <li
             v-for="tag in tags"
             :key="tag"
+            tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleTagSelect(tag)"
+            @keydown.enter="handleTagSelect(tag)"
+            @keydown.space="handleTagSelect(tag)"
           >
             {{ tag }}
           </li>

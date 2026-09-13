@@ -49,7 +49,7 @@ function toggleVariant() {
   <div class="flex items-center gap-3">
     <!-- Dropdown pour choisir le thème de base -->
     <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-sm">
+      <div tabindex="0" role="button" class="btn btn-sm" @keydown.enter="$event.target.click()" @keydown.space="$event.target.click()">
         {{ currentTheme }}
         <svg
           width="12"
