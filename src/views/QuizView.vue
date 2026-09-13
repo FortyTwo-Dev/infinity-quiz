@@ -59,11 +59,11 @@ watch(
       <h1 class="text-base-content mb-2 text-xl font-bold">{{ currentQuiz.title }}</h1>
       <p class="text-base-content/70 mb-4">{{ currentQuiz.description }}</p>
       <div class="flex flex-col gap-2 mt-4">
+        <AppTimer v-if="hasTimer" :time-left="timeLeft" :time-limit="timeLeft" />
         <DProgress :value="progress" :max="100" class="h-2" />
         <span class="text-base-content/70 text-sm"
           >Question {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}</span
         >
-        <AppTimer v-if="hasTimer" :time-left="timeLeft" :time-limit="timeLeft" />
       </div>
     </div>
 
