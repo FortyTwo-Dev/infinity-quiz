@@ -28,6 +28,26 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
+const variantClasses: Record<ColorVariant, string> = {
+  primary: 'textarea-primary',
+  secondary: 'textarea-secondary',
+  accent: 'textarea-accent',
+  neutral: 'textarea-neutral',
+  success: 'textarea-success',
+  warning: 'textarea-warning',
+  error: 'textarea-error',
+  info: 'textarea-info',
+  ghost: 'textarea-ghost',
+}
+
+const sizeClasses: Record<Size, string> = {
+  xs: 'textarea-xs',
+  sm: 'textarea-sm',
+  md: 'textarea-md',
+  lg: 'textarea-lg',
+  xl: 'textarea-xl',
+}
+
 function handleInput(event: Event) {
   const target = event.target as HTMLTextAreaElement
   emit('update:modelValue', target.value)
@@ -41,20 +61,8 @@ function handleInput(event: Event) {
     :class="[
       'textarea',
       'w-full',
-      { 'textarea-neutral': props.variant === 'neutral' },
-      { 'textarea-primary': props.variant === 'primary' },
-      { 'textarea-secondary': props.variant === 'secondary' },
-      { 'textarea-accent': props.variant === 'accent' },
-      { 'textarea-ghost': props.variant === 'ghost' },
-      { 'textarea-info': props.variant === 'info' },
-      { 'textarea-success': props.variant === 'success' },
-      { 'textarea-warning': props.variant === 'warning' },
-      { 'textarea-error': props.variant === 'error' },
-      { 'textarea-xs': props.size === 'xs' },
-      { 'textarea-sm': props.size === 'sm' },
-      { 'textarea-md': props.size === 'md' },
-      { 'textarea-lg': props.size === 'lg' },
-      { 'textarea-xl': props.size === 'xl' },
+      variantClasses[props.variant],
+      sizeClasses[props.size],
     ]"
     :placeholder="props.placeholder"
     :disabled="props.disabled"
