@@ -16,13 +16,20 @@ const props = withDefaults(defineProps<Props>(), {
   side: false,
   dash: false,
 })
+
+const cardSizeClasses: Record<CardSize, string> = {
+  sm: 'card-sm',
+  md: 'card-md',
+  lg: 'card-lg',
+  xl: 'card-xl',
+}
 </script>
 
 <template>
   <div
     :class="[
       'card',
-      `card-${props.size}`,
+      cardSizeClasses[props.size],
       { 'card-border': props.border },
       { 'card-compact': props.compact },
       { 'card-side': props.side },
