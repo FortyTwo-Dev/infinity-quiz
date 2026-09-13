@@ -146,29 +146,19 @@ export const useQuizSessionStore = defineStore(
       // - Per-question timer: question has timeLimit defined
       // - Global timer: quiz has timeLimit defined and current question doesn't have its own
       // - No timer: neither quiz nor question has timeLimit (shouldn't happen, but handle gracefully)
-      if (question?.timeLimit !== undefined) {
-        // Per-question timer: move to next question
-        if (hasNextQuestion.value) {
-          nextQuestion()
-          return false
-        } else {
-          completeQuiz()
-          return true
-        }
-      } else if (quiz?.timeLimit !== undefined) {
+      if (quiz?.timeLimit !== undefined && question?.timeLimit === undefined) {
         // Global timer: complete the quiz
         completeQuiz()
         return true
-      } else {
-        // No timer defined - fallback to original behavior (move to next or complete)
-        if (hasNextQuestion.value) {
-          nextQuestion()
-          return false
-        } else {
-          completeQuiz()
-          return true
-        }
       }
+
+      // Per-question timer or no timer: check if there's a next question
+      if (hasNextQuestion.value) {
+        nextQuestion()
+        return false
+      }
+      completeQuiz()
+      return true
     }
 
     // Timer actions

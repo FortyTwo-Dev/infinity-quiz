@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
 import { DButton, DCardActions, DCardTitle, DInputFile, DTextarea } from '@/components/daisy-ui'
 import { useQuizImportExport } from '@/composables'
