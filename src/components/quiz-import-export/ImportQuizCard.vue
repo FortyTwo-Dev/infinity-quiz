@@ -6,9 +6,7 @@ import { DInputFile, DTextarea } from '@/components/daisy-ui'
 import { useQuizImportExport } from '@/composables'
 import { PhUpload, PhTrash } from '@phosphor-icons/vue'
 
-const { state, validateJSON, clearMessages } = useQuizImportExport()
-
-const fileInput = ref<HTMLInputElement | null>(null)
+const { state, validateJSON, clearMessages, importFromFile } = useQuizImportExport()
 
 interface Emits {
   (e: 'import'): void
@@ -62,20 +60,21 @@ const isJsonValid = computed(() => {
       </DCardTitle>
       <DCard>
         <DCardBody>
-          <DCardTitle tag="h3" size="lg">À partir d'un fichier</DCardTitle>
+          <DCardTitle tag="h3" size="lg" class="w-full">À partir d'un fichier</DCardTitle>
           <DInputFile
             id="fileInput"
             ref="fileInput"
             accept=".json"
             @change="handleFileSelect"
-            hidden
             aria-label="Sélectionner un fichier JSON"
+            class="w-full"
           />
-          <DButton type="button" variant="primary" @click="() => fileInput?.click()">
-            <PhUpload :size="18" />
-            Sélectionner un fichier
-          </DButton>
-          <span class="text-base-content/70 text-sm">ou glissez-déposez un fichier JSON ici</span>
+          <DCardActions justify="start">
+            <DButton type="button" variant="primary" @click="() => fileInput?.click()">
+              <PhUpload :size="18" />
+              Import
+            </DButton>
+          </DCardActions>
         </DCardBody>
       </DCard>
 
@@ -115,7 +114,7 @@ const isJsonValid = computed(() => {
               :loading="state.isImporting"
             >
               <PhUpload :size="18" />
-              Importer
+              Import
             </DButton>
           </DCardActions>
         </DCardBody>
