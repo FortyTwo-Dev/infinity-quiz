@@ -42,7 +42,7 @@ export const useQuizStore = defineStore(
           q.title.toLowerCase().includes(term) ||
           q.description.toLowerCase().includes(term) ||
           q.category?.toLowerCase().includes(term) ||
-          q.tags?.some((tag) => tag.toLowerCase().includes(term))
+          q.tags?.some((tag) => tag.toLowerCase().includes(term)),
       )
     })
 
