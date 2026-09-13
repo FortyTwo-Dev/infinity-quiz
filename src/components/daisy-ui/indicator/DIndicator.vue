@@ -16,10 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   <div class="indicator">
     <span
       class="indicator-item"
-      :class="[
-        `indicator-${props.position}`,
-        `indicator-${props.align}`,
-      ]"
+      :class="[`indicator-${props.position}`, `indicator-${props.align}`]"
     >
       <slot name="indicator" />
     </span>
