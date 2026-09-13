@@ -21,11 +21,7 @@ const sizeClasses: Record<TextSize, string> = {
 </script>
 
 <template>
-  <component
-    :is="props.tag"
-    class="card-title"
-    :class="sizeClasses[props.size]"
-  >
+  <component :is="props.tag" class="card-title" :class="sizeClasses[props.size]">
     <slot />
   </component>
 </template>
