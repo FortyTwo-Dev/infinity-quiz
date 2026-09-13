@@ -56,7 +56,6 @@ function showQuizInfo(quizId: string) {
 
 function getStatus(quizId: string): 'success' | 'neutral' | 'error' | 'warning' {
   const result = historyStore.getLatestResultByQuizId(quizId)
-  console.log(historyStore.getResultByQuizId(quizId))
   if (!result) return 'neutral'
   if (result.passed) return 'success'
   if (result.score > 0) return 'warning'
