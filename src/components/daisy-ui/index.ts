@@ -18,7 +18,7 @@ export { DProgress } from './progress'
 export { DModal, DModalBox, DModalBackdrop, DModalActions } from './modal'
 
 // Input
-export { DInput } from './input'
+export { DInput, DInputFile } from './input'
 
 // Textarea
 export { DTextarea } from './textarea'
