@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  createRandom,
-  seededShuffle,
-  indexedSeededShuffle,
-} from '../../utils/random'
+import { createRandom, seededShuffle, indexedSeededShuffle } from '../../utils/random'
 
 describe('random utilities', () => {
   describe('createRandom', () => {
