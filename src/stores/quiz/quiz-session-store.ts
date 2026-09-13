@@ -87,8 +87,6 @@ export const useQuizSessionStore = defineStore(
     const canReview = computed(() => {
       const quiz = currentQuiz.value
       if (!quiz) return false
-      // Review mode is enabled if quiz has enableReviewMode set to true
-      // Default to true if not specified (backward compatibility)
       return quiz.enableReviewMode !== false
     })
 
@@ -151,7 +149,7 @@ export const useQuizSessionStore = defineStore(
       }
     }
 
-    // Timer actions (migrated from quiz-timer-store)
+    // Timer actions
     const clearTimer = () => {
       if (timerInterval.value) {
         clearInterval(timerInterval.value)
@@ -220,7 +218,9 @@ export const useQuizSessionStore = defineStore(
       }
 
       selectedAnswers.value[question.id] = answerIndex
-      skippedQuestions.value.delete(question.id)
+      const newSet = new Set(skippedQuestions.value)
+      newSet.delete(question.id)
+      skippedQuestions.value = newSet
     }
 
     const skipQuestion = (): boolean => {
@@ -229,7 +229,9 @@ export const useQuizSessionStore = defineStore(
       if (!canSkipCurrentQuestion.value) return false
 
       selectedAnswers.value[question.id] = null
-      skippedQuestions.value.add(question.id)
+      const newSet = new Set(skippedQuestions.value)
+      newSet.add(question.id)
+      skippedQuestions.value = newSet
 
       if (hasNextQuestion.value) {
         nextQuestion()
