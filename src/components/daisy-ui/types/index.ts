@@ -19,17 +19,35 @@ export type Position = 'top' | 'middle' | 'bottom'
 export type IndicatorAlign = 'start' | 'center' | 'end'
 
 // Color variants - Shared across components
-export type ColorVariant = 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'warning' | 'error' | 'info' | 'ghost'
+export type ColorVariant =
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'neutral'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | 'ghost'
 
 // Button specific types
 export type ButtonVariant = ColorVariant | 'link' | 'outline'
 export type ButtonType = 'button' | 'submit' | 'reset'
 
 // Progress specific types - uses subset of ColorVariant (no ghost)
-export type ProgressColor = 'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
+export type ProgressColor =
+  'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
 
 // Checkbox specific types - uses subset of ColorVariant (no ghost)
-export type CheckboxVariant = 'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'warning' | 'info' | 'error'
+export type CheckboxVariant =
+  'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'warning' | 'info' | 'error'
 
 // Label specific types
 export type LabelVariant = 'input' | 'select' | 'floating-label'
+
+// Card specific types
+export type CardSize = 'sm' | 'md' | 'lg' | 'xl'
+export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
+
+// Steps specific types
+export type Direction = 'horizontal' | 'vertical'
