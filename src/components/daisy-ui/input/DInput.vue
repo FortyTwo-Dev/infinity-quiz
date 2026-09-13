@@ -9,7 +9,33 @@ interface Props {
   ghost?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  type: 'text',
+  color: undefined,
+  size: undefined,
+  ghost: false,
+})
+
+const colorClasses: Record<InputColor, string> = {
+  primary: 'input-primary',
+  secondary: 'input-secondary',
+  accent: 'input-accent',
+  neutral: 'input-neutral',
+  success: 'input-success',
+  warning: 'input-warning',
+  error: 'input-error',
+  info: 'input-info',
+  ghost: 'input-ghost',
+}
+
+const sizeClasses: Record<InputSize, string> = {
+  xs: 'input-xs',
+  sm: 'input-sm',
+  md: 'input-md',
+  lg: 'input-lg',
+  xl: 'input-xl',
+}
 
 interface Emits {
   (e: 'update:modelValue', value: string | number): void
@@ -33,8 +59,8 @@ function handleInput(event: Event) {
   <input
     class="input"
     :class="[
-      props.color ? `input-${props.color}` : '',
-      props.size ? `input-${props.size}` : '',
+      props.color ? colorClasses[props.color] : '',
+      props.size ? sizeClasses[props.size] : '',
       { 'input-ghost': props.ghost },
     ]"
     :type="props.type"
