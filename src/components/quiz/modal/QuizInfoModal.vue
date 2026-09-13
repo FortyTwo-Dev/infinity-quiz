@@ -125,7 +125,7 @@ defineExpose({
       </div>
 
       <DModalActions>
-        <button class="btn btn-neutral" @click="close">Close</button>
+        <button type="button" class="btn btn-neutral" @click="close">Close</button>
       </DModalActions>
     </DModalBox>
   </DModal>

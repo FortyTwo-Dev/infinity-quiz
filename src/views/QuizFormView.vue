@@ -15,7 +15,7 @@ const handleGoBack = () => {
       <p class="text-lg text-base-content/70 mb-8">
         Le formulaire de création/modification de quiz est en cours de refactorisation.
       </p>
-      <button @click="handleGoBack" class="btn btn-primary">Retour à la gestion des quiz</button>
+      <button type="button" @click="handleGoBack" class="btn btn-primary">Retour à la gestion des quiz</button>
     </div>
   </div>
 </template>

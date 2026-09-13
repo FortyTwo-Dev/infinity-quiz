@@ -64,6 +64,7 @@ function toggleVariant() {
       <ul tabindex="-1" class="dropdown-content z-1 p-2 shadow-2xl bg-base-300 rounded-box w-40">
         <li v-for="theme in themes" :key="theme">
           <button
+            type="button"
             class="btn btn-sm btn-block justify-start"
             :class="currentTheme === theme ? 'btn-primary' : 'btn-ghost'"
             @click="currentTheme = theme"

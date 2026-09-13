@@ -66,6 +66,7 @@ onUnmounted(() => {
           <span>{{ notification.message }}</span>
           <div class="shrink-0 ml-2">
             <button
+              type="button"
               @click.stop="notificationStore.removeNotification(notification.id)"
               class="btn btn-sm btn-ghost btn-circle"
               aria-label="Fermer"

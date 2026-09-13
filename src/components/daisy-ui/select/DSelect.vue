@@ -52,7 +52,7 @@ function handleChange(event: Event) {
 
   if (value === '') {
     emit('update:modelValue', null)
-  } else if (!isNaN(Number(value))) {
+  } else if (!Number.isNaN(Number(value))) {
     emit('update:modelValue', Number(value))
   } else {
     emit('update:modelValue', value)
