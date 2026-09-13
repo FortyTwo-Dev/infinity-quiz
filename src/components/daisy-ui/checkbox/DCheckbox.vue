@@ -67,11 +67,7 @@ watch(
     type="checkbox"
     :checked="props.modelValue"
     @change="handleChange"
-    :class="[
-      'checkbox',
-      sizeClasses[props.size],
-      variantClasses[props.variant],
-    ]"
+    :class="['checkbox', sizeClasses[props.size], variantClasses[props.variant]]"
     :disabled="props.disabled"
   />
 </template>

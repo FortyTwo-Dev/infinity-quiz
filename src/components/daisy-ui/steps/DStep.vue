@@ -21,11 +21,11 @@ const colorClasses = {
   ghost: 'step step-ghost',
 } as const
 
-const stepClasses = computed(() => (
+const stepClasses = computed(() =>
   props.color && props.color in colorClasses
     ? colorClasses[props.color as keyof typeof colorClasses]
-    : 'step'
-))
+    : 'step',
+)
 </script>
 
 <template>

@@ -58,12 +58,7 @@ function handleInput(event: Event) {
   <textarea
     :value="props.modelValue"
     @input="handleInput"
-    :class="[
-      'textarea',
-      'w-full',
-      variantClasses[props.variant],
-      sizeClasses[props.size],
-    ]"
+    :class="['textarea', 'w-full', variantClasses[props.variant], sizeClasses[props.size]]"
     :placeholder="props.placeholder"
     :disabled="props.disabled"
     :readonly="props.readonly"

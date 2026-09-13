@@ -48,4 +48,3 @@ const verticalClasses: Record<VerticalPosition, string> = {
     <slot />
   </div>
 </template>
-

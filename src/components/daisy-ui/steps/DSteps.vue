@@ -7,7 +7,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  direction: 'horizontal'
+  direction: 'horizontal',
 })
 
 const directionClasses = {
