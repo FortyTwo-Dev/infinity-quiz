@@ -5,20 +5,21 @@ import type { Quiz, Question } from '../types/quiz'
 // Schemas Zod
 // ============================================================================
 
-export const QuestionSchema = z.object({
-  id: z.string().min(1),
-  text: z.string().min(1),
-  options: z.array(z.string().min(1)).min(2),
-  correctAnswerIndex: z.number().int().nonnegative(),
-  timeLimit: z.number().optional(),
-  shuffleAnswers: z.boolean().optional(),
-  explanation: z.string().optional(),
-})
+export const QuestionSchema = z
+  .object({
+    id: z.string().min(1),
+    text: z.string().min(1),
+    options: z.array(z.string().min(1)).min(2),
+    correctAnswerIndex: z.number().int().nonnegative(),
+    timeLimit: z.number().optional(),
+    shuffleAnswers: z.boolean().optional(),
+    explanation: z.string().optional(),
+  })
   .superRefine((q, ctx) => {
     if (q.correctAnswerIndex >= q.options.length) {
       ctx.addIssue({
-        code: "custom",
-        message: "correctAnswerIndex must be less than options length",
+        code: 'custom',
+        message: 'correctAnswerIndex must be less than options length',
         path: ['correctAnswerIndex'],
       })
     }
@@ -108,7 +109,7 @@ export interface QuestionValidationResult {
  */
 export function validateQuestion(
   question: Partial<Question>,
-  index?: number
+  index?: number,
 ): QuestionValidationResult {
   const result = QuestionSchema.safeParse(question)
 
@@ -141,14 +142,14 @@ export function validateQuizJSON(jsonData: string): ValidationResult {
     if (Array.isArray(parsed)) {
       const result = z.array(QuizSchema).min(1).safeParse(parsed)
       if (!result.success) {
-        const errors: string[] = result.error.issues.map(issue => issue.message)
+        const errors: string[] = result.error.issues.map((issue) => issue.message)
         return { valid: false, errors }
       }
       return { valid: true, errors: [] }
     } else {
       const result = QuizSchema.safeParse(parsed)
       if (!result.success) {
-        const errors: string[] = result.error.issues.map(issue => issue.message)
+        const errors: string[] = result.error.issues.map((issue) => issue.message)
         return { valid: false, errors }
       }
       return { valid: true, errors: [] }
@@ -168,10 +169,10 @@ export function parseAndValidateQuizJSON(jsonData: string): Quiz | Quiz[] | null
 
     if (Array.isArray(parsed)) {
       const result = z.array(ImportQuizSchema).min(1).safeParse(parsed)
-      return result.success ? result.data as unknown as Quiz[] : null
+      return result.success ? (result.data as unknown as Quiz[]) : null
     } else {
       const result = ImportQuizSchema.safeParse(parsed)
-      return result.success ? result.data as unknown as Quiz : null
+      return result.success ? (result.data as unknown as Quiz) : null
     }
   } catch {
     return null
@@ -208,15 +209,17 @@ export function isValidQuizArrayStructure(value: unknown): boolean {
  * Schema Zod pour une question partielle (sans validation de correctAnswerIndex)
  * Utilisé pour les formulaires où les questions peuvent être incomplètes
  */
-export const PartialQuestionSchema = z.object({
-  id: z.string().min(1),
-  text: z.string().min(1),
-  options: z.array(z.string().min(1)).min(2),
-  correctAnswerIndex: z.number().int().nonnegative(),
-  timeLimit: z.number().optional(),
-  shuffleAnswers: z.boolean().optional(),
-  explanation: z.string().optional(),
-}).partial()
+export const PartialQuestionSchema = z
+  .object({
+    id: z.string().min(1),
+    text: z.string().min(1),
+    options: z.array(z.string().min(1)).min(2),
+    correctAnswerIndex: z.number().int().nonnegative(),
+    timeLimit: z.number().optional(),
+    shuffleAnswers: z.boolean().optional(),
+    explanation: z.string().optional(),
+  })
+  .partial()
 
 /**
  * Schema Zod pour la validation de l'état du formulaire de quiz

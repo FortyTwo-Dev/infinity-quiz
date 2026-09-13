@@ -18,11 +18,7 @@ export function seededShuffle<T>(array: T[], seed: string | number): T[] {
   return shuffled
 }
 
-export function indexedSeededShuffle<T>(
-  array: T[],
-  baseSeed: string | number,
-  index: number,
-): T[] {
+export function indexedSeededShuffle<T>(array: T[], baseSeed: string | number, index: number): T[] {
   const elementSeed = `${baseSeed}-${index}`
   return seededShuffle(array, elementSeed)
 }

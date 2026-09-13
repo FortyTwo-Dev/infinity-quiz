@@ -13,6 +13,7 @@ export function useQuizList() {
 
   return {
     quizzes: quizStore.quizzes,
+    getQuizById: quizStore.getQuizById,
     startQuiz,
   }
 }

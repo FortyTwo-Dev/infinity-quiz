@@ -87,8 +87,6 @@ export const useQuizSessionStore = defineStore(
     const canReview = computed(() => {
       const quiz = currentQuiz.value
       if (!quiz) return false
-      // Review mode is enabled if quiz has enableReviewMode set to true
-      // Default to true if not specified (backward compatibility)
       return quiz.enableReviewMode !== false
     })
 
@@ -138,20 +136,32 @@ export const useQuizSessionStore = defineStore(
     // Timer expiry handler for quiz session
     const handleTimerExpiry = (): boolean => {
       const question = currentQuestion.value
+      const quiz = currentQuiz.value
+
       if (question) {
         selectedAnswers.value[question.id] = null
       }
 
-      if (hasNextQuestion.value) {
-        nextQuestion()
-        return false
-      } else {
+      // Determine timer type:
+      // - Per-question timer: question has timeLimit defined
+      // - Global timer: quiz has timeLimit defined and current question doesn't have its own
+      // - No timer: neither quiz nor question has timeLimit (shouldn't happen, but handle gracefully)
+      if (quiz?.timeLimit !== undefined && question?.timeLimit === undefined) {
+        // Global timer: complete the quiz
         completeQuiz()
         return true
       }
+
+      // Per-question timer or no timer: check if there's a next question
+      if (hasNextQuestion.value) {
+        nextQuestion()
+        return false
+      }
+      completeQuiz()
+      return true
     }
 
-    // Timer actions (migrated from quiz-timer-store)
+    // Timer actions
     const clearTimer = () => {
       if (timerInterval.value) {
         clearInterval(timerInterval.value)
@@ -220,7 +230,9 @@ export const useQuizSessionStore = defineStore(
       }
 
       selectedAnswers.value[question.id] = answerIndex
-      skippedQuestions.value.delete(question.id)
+      const newSet = new Set(skippedQuestions.value)
+      newSet.delete(question.id)
+      skippedQuestions.value = newSet
     }
 
     const skipQuestion = (): boolean => {
@@ -229,7 +241,9 @@ export const useQuizSessionStore = defineStore(
       if (!canSkipCurrentQuestion.value) return false
 
       selectedAnswers.value[question.id] = null
-      skippedQuestions.value.add(question.id)
+      const newSet = new Set(skippedQuestions.value)
+      newSet.add(question.id)
+      skippedQuestions.value = newSet
 
       if (hasNextQuestion.value) {
         nextQuestion()
@@ -258,34 +272,88 @@ export const useQuizSessionStore = defineStore(
 
     const nextQuestion = () => {
       if (!hasNextQuestion.value) return
-      clearTimer()
-      currentQuestionIndex.value += 1
 
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
+
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value += 1
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value += 1
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
     const previousQuestion = () => {
       if (!hasPreviousQuestion.value) return
-      clearTimer()
-      currentQuestionIndex.value -= 1
 
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
+
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value -= 1
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value -= 1
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
     const goToQuestion = (index: number) => {
       if (index < 0 || index >= totalQuestions.value) return
-      clearTimer()
-      currentQuestionIndex.value = index
 
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      const quiz = currentQuiz.value
+      // Get current question before changing index
+      const currentQuestionIndexVal = currentQuestionIndex.value
+      const quizQuestions = quiz?.questions
+      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
+
+      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
+
+      // For global timer: just change question, timer keeps running independently
+      // For per-question timer: need to clear and restart timer
+      if (hasGlobalTimer) {
+        // Global timer: just change question, timer continues running
+        currentQuestionIndex.value = index
+      } else {
+        // Per-question timer: clear and restart with fresh time limit
+        clearTimer()
+        currentQuestionIndex.value = index
+
+        const timeLimit = getCurrentQuestionTimeLimit.value
+        if (timeLimit !== null && timeLimit > 0) {
+          startTimer(timeLimit)
+        }
       }
     }
 
@@ -322,9 +390,14 @@ export const useQuizSessionStore = defineStore(
         }
       }
 
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      const quiz = shuffledQuiz.value ?? originalQuiz
+      const firstQuestion = quiz?.questions[0]
+
+      // Start timer: prefer per-question timer, fall back to global timer
+      if (firstQuestion?.timeLimit !== undefined && firstQuestion.timeLimit > 0) {
+        startTimer(firstQuestion.timeLimit)
+      } else if (quiz?.timeLimit !== undefined && quiz.timeLimit > 0) {
+        startTimer(quiz.timeLimit)
       }
     }
 

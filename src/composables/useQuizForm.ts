@@ -2,7 +2,12 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuizStore } from '../stores'
 import type { Quiz, Question } from '../types/quiz'
-import { validateQuestion as validateQuestionUtil, validateQuizFormState, type QuestionValidationResult, type FormValidationResult } from '../utils/validation'
+import {
+  validateQuestion as validateQuestionUtil,
+  validateQuizFormState,
+  type QuestionValidationResult,
+  type FormValidationResult,
+} from '../utils/validation'
 
 export interface FormQuestion {
   id: string

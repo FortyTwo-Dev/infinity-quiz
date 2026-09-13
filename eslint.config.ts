@@ -31,7 +31,7 @@ export default defineConfigWithVueTs(
   skipFormatting,
 
   {
-    files: ['src/components/common/Button.vue', 'src/components/common/Card.vue'],
+    files: ['src/components/daisy-ui/**/*.vue'],
     rules: {
       'vue/multi-word-component-names': 'off',
     },

@@ -75,8 +75,6 @@ const invalidQuestionMissingText = {
   correctAnswerIndex: 1,
 }
 
-
-
 const invalidQuestionShortOptions = {
   id: 'q-1',
   text: 'What is 2+2?',
@@ -379,7 +377,9 @@ describe('Zod validation utils', () => {
       }
       const result: FormValidationResult = validateQuizFormState(formState)
       expect(result.valid).toBe(false)
-      expect(result.errors.description).toContain('Too small: expected string to have >=1 characters')
+      expect(result.errors.description).toContain(
+        'Too small: expected string to have >=1 characters',
+      )
     })
 
     it('should return error for empty questions array', () => {

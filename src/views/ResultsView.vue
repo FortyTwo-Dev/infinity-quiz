@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useResults } from '../composables/useResults'
 import { PhEye, PhEyeClosed } from '@phosphor-icons/vue'
-import Button from '../components/common/Button.vue'
-import QuestionReviewCard from '../components/quiz/QuestionReviewCard.vue'
+import { DButton } from '@/components/daisy-ui'
+import { QuizScoreCard, QuizReviewCard } from '@/components/quiz/card'
 
 const {
   currentQuiz,
@@ -20,48 +20,63 @@ const {
 
 const showReview = ref(false)
 
+const passed = computed(() => percentage.value >= 60)
+
 function toggleReview() {
   showReview.value = !showReview.value
 }
 </script>
 
 <template>
-  <div class="results-view">
-    <h1>Résultats</h1>
+  <div class="max-w-xl mx-auto p-4 text-center">
+    <h1 class="text-base-content mb-6 text-4xl font-bold">Résultats</h1>
 
-    <div v-if="currentQuiz" class="results-container">
-      <h2>{{ currentQuiz.title }}</h2>
-      <p class="feedback" :class="feedback.class">{{ feedback.text }}</p>
+    <div v-if="currentQuiz" class="bg-base-100 border border-base-200 p-8">
+      <h2 class="text-base-content mb-2 text-xl font-semibold">{{ currentQuiz.title }}</h2>
 
-      <div class="score-display">
-        <div class="score-circle">
-          <span class="score-value">{{ score }}</span>
-          <span class="score-max">/ {{ totalQuestions }}</span>
-        </div>
-        <div class="percentage">{{ percentage }}%</div>
+      <p
+        class="text-xl font-bold my-4"
+        :class="{
+          'text-success': feedback.class === 'excellent' || feedback.class === 'good',
+          'text-warning': feedback.class === 'average',
+          'text-error': feedback.class === 'poor',
+        }"
+      >
+        {{ feedback.text }}
+      </p>
+
+      <QuizScoreCard :score="score" :total-questions="totalQuestions" :passed="passed" class="my-6">
+        <template #success-message>Félicitations !</template>
+        <template #failure-message>Essayez encore</template>
+      </QuizScoreCard>
+
+      <div class="bg-base-200 p-4 mb-8">
+        <p class="m-0 text-base-content text-lg">Bonnes réponses : {{ formattedScore }}</p>
       </div>
 
-      <div class="summary">
-        <p>Bonnes réponses : {{ formattedScore }}</p>
-      </div>
-
-      <div v-if="canReview" class="review-toggle">
-        <Button variant="outline" size="medium" @click="toggleReview">
-          <PhEye v-if="!showReview" :size="18" class="button-icon" />
-          <PhEyeClosed v-else :size="18" class="button-icon" />
+      <div v-if="canReview" class="my-4 text-center">
+        <DButton variant="outline" size="md" @click="toggleReview" class="inline-flex items-center">
+          <PhEye v-if="!showReview" :size="18" class="mr-2" />
+          <PhEyeClosed v-else :size="18" class="mr-2" />
           {{ showReview ? 'Masquer la revue' : 'Voir la revue' }}
-        </Button>
+        </DButton>
       </div>
 
-      <div class="actions">
-        <Button variant="primary" size="medium" @click="restartQuiz">Recommencer le quiz</Button>
-        <Button variant="secondary" size="medium" @click="backToQuizList">Retour à la liste</Button>
+      <div class="flex gap-4 justify-center">
+        <DButton variant="primary" size="md" @click="restartQuiz" class="min-w-[150px]"
+          >Recommencer le quiz</DButton
+        >
+        <DButton variant="secondary" size="md" @click="backToQuizList" class="min-w-[150px]"
+          >Retour à la liste</DButton
+        >
       </div>
 
-      <div v-if="showReview && canReview" class="review-section">
-        <h3>Revue des questions</h3>
-        <div class="review-cards">
-          <QuestionReviewCard
+      <div v-if="showReview && canReview" class="mt-8 pt-6 border-t border-base-300">
+        <h3 class="text-base-content mb-4 text-lg font-semibold text-center">
+          Revue des questions
+        </h3>
+        <div class="flex flex-col gap-2">
+          <QuizReviewCard
             v-for="result in questionResults"
             :key="result.question.id"
             :question-result="result"
@@ -71,150 +86,9 @@ function toggleReview() {
       </div>
     </div>
 
-    <div v-else class="no-results">
-      <p>Aucun résultat à afficher</p>
-      <Button variant="secondary" size="medium" @click="backToQuizList">Retour à la liste</Button>
+    <div v-else class="text-center pt-8 text-base-content/70">
+      <p class="mb-4">Aucun résultat à afficher</p>
+      <DButton variant="secondary" size="md" @click="backToQuizList">Retour à la liste</DButton>
     </div>
   </div>
 </template>
-
-<style scoped>
-.results-view {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: var(--space-md);
-  text-align: center;
-}
-
-.results-view h1 {
-  color: var(--color-text);
-  margin-bottom: var(--space-lg);
-}
-
-.results-container {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-xl);
-}
-
-.results-container h2 {
-  color: var(--color-text);
-  margin-bottom: var(--space-sm);
-}
-
-.feedback {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: var(--space-md) 0;
-}
-
-.feedback.excellent,
-.feedback.good {
-  color: var(--color-success);
-}
-
-.feedback.average {
-  color: var(--color-warning);
-}
-
-.feedback.poor {
-  color: var(--color-danger);
-}
-
-.score-display {
-  margin: var(--space-xl) 0;
-}
-
-.score-circle {
-  width: 150px;
-  height: 150px;
-  border: 8px solid var(--color-primary);
-  border-radius: var(--radius-full);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto var(--space-md);
-  background: var(--color-bg-card);
-}
-
-.score-value {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--color-primary);
-  line-height: 1;
-}
-
-.score-max {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-}
-
-.percentage {
-  font-size: 2rem;
-  font-weight: bold;
-  color: var(--color-primary);
-}
-
-.summary {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-
-.summary p {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 1.1rem;
-}
-
-.actions {
-  display: flex;
-  gap: var(--space-md);
-  justify-content: center;
-}
-
-.actions > * {
-  min-width: 150px;
-}
-
-.no-results {
-  text-align: center;
-  padding: var(--space-xl);
-  color: var(--color-text-secondary);
-}
-
-.no-results > * {
-  margin-top: var(--space-md);
-}
-
-.review-toggle {
-  margin: var(--space-md) 0 var(--space-lg);
-  text-align: center;
-}
-
-.review-toggle .button-icon {
-  margin-right: var(--space-sm);
-}
-
-.review-section {
-  margin-top: var(--space-xl);
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--color-border);
-}
-
-.review-section h3 {
-  color: var(--color-text);
-  margin-bottom: var(--space-md);
-  text-align: center;
-}
-
-.review-cards {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-</style>

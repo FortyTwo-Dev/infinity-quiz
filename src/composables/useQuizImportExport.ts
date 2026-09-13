@@ -65,7 +65,7 @@ export function useQuizImportExport() {
       }
       return success
     } catch (err) {
-      state.value.error = 'Erreur lors de l\'import: ' + (err as Error).message
+      state.value.error = "Erreur lors de l'import: " + (err as Error).message
       return false
     } finally {
       state.value.isImporting = false
@@ -87,7 +87,7 @@ export function useQuizImportExport() {
       }
       return success
     } catch (err) {
-      state.value.error = 'Erreur lors de l\'import: ' + (err as Error).message
+      state.value.error = "Erreur lors de l'import: " + (err as Error).message
       return false
     } finally {
       state.value.isImporting = false

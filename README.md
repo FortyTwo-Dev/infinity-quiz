@@ -19,7 +19,7 @@
 - Immediate feedback on selection
 
 ### Roadmap
-See [doc/2 - Roadmap.md](./doc/2%20-%20Roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
+See [docs/roadmap.md](./docs/roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
 
 ## Tech Stack
 
@@ -36,7 +36,7 @@ See [doc/2 - Roadmap.md](./doc/2%20-%20Roadmap.md) for the complete 6-phase deve
 | **Formatting** | Prettier 3.9.5 |
 | **Icons** | [Phosphor Icons](https://phosphoricons.com/) |
 
-See [doc/1 - Stack.md](./doc/1%20-%20Stack.md) for the full technical stack details.
+See [docs/specs.md](./docs/specs.md) for the full technical stack details.
 
 ## Project Setup
 
@@ -128,21 +128,22 @@ src/
 ├── App.vue                   # Root component
 └── main.ts                   # Application entry point
 
-doc/
-├── 1 - Stack.md              # Technical stack documentation
-├── 2 - Roadmap.md            # Development roadmap
-├── 3 - Guidelines.md         # Coding standards and architecture
-├── 4 - Git-Commits.md        # Git commit conventions
-├── 5 - Contributing.md       # Contribution guidelines
-└── 6 - Quiz JSON Format.md   # Quiz data format specification
-```
+docs/
+├── decisions/
+│   └── TEMPLATE.md          # ADR template
+├── quiz-format.md           # Quiz data format specification
+├── roadmap.md               # Development roadmap
+├── specs.md                 # Technical stack documentation
+└── workflow.md              # Git workflow and conventions
+
 
 ## Documentation
 
-- [Coding Guidelines](./doc/3%20-%20Guidelines.md) - SOLID principles, naming conventions, architecture
-- [Git Commit Conventions](./doc/4%20-%20Git-Commits.md) - Conventional Commits specification
-- [Roadmap](./doc/2%20-%20Roadmap.md) - Feature development phases
-- [Technical Stack](./doc/1%20-%20Stack.md) - Complete dependency list
+- [Technical Stack](./docs/specs.md) - Complete dependency list
+- [Roadmap](./docs/roadmap.md) - Feature development phases
+- [Workflow](./docs/workflow.md) - Git workflow, commits, PR, code review
+- [Quiz Format](./docs/quiz-format.md) - Quiz data format specification
+- [Coding Rules](./rules/) - All coding conventions and guidelines
 
 ## IDE Setup
 
