@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { DBadge, DProgress } from '@/components/daisy-ui'
 
 interface Props {
@@ -9,7 +9,14 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const initialTimeLimit = props.timeLimit
+const initialTimeLimit = ref(props.timeLimit)
+
+// Update initialTimeLimit when timeLimit prop changes (e.g., switching questions)
+watch(() => props.timeLimit, (newTimeLimit) => {
+  if (newTimeLimit !== null) {
+    initialTimeLimit.value = newTimeLimit
+  }
+})
 
 const formattedTime = computed(() => {
   if (props.timeLeft === null) return null
@@ -20,13 +27,13 @@ const formattedTime = computed(() => {
 
 const isTimeLow = computed(() => {
   if (props.timeLeft === null || props.timeLeft <= 0) return false
-  if (!initialTimeLimit) return props.timeLeft <= 30
-  return props.timeLeft <= initialTimeLimit * 0.1
+  if (!initialTimeLimit.value) return props.timeLeft <= 30
+  return props.timeLeft <= initialTimeLimit.value * 0.1
 })
 
 const percentage = computed(() => {
-  if (!initialTimeLimit || props.timeLeft === null) return 0
-  return Math.max(100 - (props.timeLeft / initialTimeLimit) * 100, 0)
+  if (!initialTimeLimit.value || props.timeLeft === null) return 0
+  return Math.max(100 - (props.timeLeft / initialTimeLimit.value) * 100, 0)
 })
 </script>
 

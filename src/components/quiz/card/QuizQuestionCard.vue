@@ -84,7 +84,7 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
         <DButton
           variant="accent"
           size="md"
-          :disabled="!hasPreviousQuestion"
+          :disabled="!hasPreviousQuestion || props.question.timeLimit !== undefined"
           @click="emit('previous')"
           class="flex-1"
         >

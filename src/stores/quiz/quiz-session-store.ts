@@ -136,6 +136,7 @@ export const useQuizSessionStore = defineStore(
     // Timer expiry handler for quiz session
     const handleTimerExpiry = (): boolean => {
       const question = currentQuestion.value
+
       if (question) {
         selectedAnswers.value[question.id] = null
       }
@@ -260,9 +261,11 @@ export const useQuizSessionStore = defineStore(
 
     const nextQuestion = () => {
       if (!hasNextQuestion.value) return
+
       clearTimer()
       currentQuestionIndex.value += 1
 
+      // Always restart timer with the current question's time limit (either question-specific or inherited from quiz)
       const timeLimit = getCurrentQuestionTimeLimit.value
       if (timeLimit !== null && timeLimit > 0) {
         startTimer(timeLimit)
@@ -271,9 +274,11 @@ export const useQuizSessionStore = defineStore(
 
     const previousQuestion = () => {
       if (!hasPreviousQuestion.value) return
+
       clearTimer()
       currentQuestionIndex.value -= 1
 
+      // Always restart timer with the current question's time limit (either question-specific or inherited from quiz)
       const timeLimit = getCurrentQuestionTimeLimit.value
       if (timeLimit !== null && timeLimit > 0) {
         startTimer(timeLimit)
@@ -282,9 +287,11 @@ export const useQuizSessionStore = defineStore(
 
     const goToQuestion = (index: number) => {
       if (index < 0 || index >= totalQuestions.value) return
+
       clearTimer()
       currentQuestionIndex.value = index
 
+      // Always restart timer with the current question's time limit (either question-specific or inherited from quiz)
       const timeLimit = getCurrentQuestionTimeLimit.value
       if (timeLimit !== null && timeLimit > 0) {
         startTimer(timeLimit)
@@ -324,9 +331,13 @@ export const useQuizSessionStore = defineStore(
         }
       }
 
-      const timeLimit = getCurrentQuestionTimeLimit.value
-      if (timeLimit !== null && timeLimit > 0) {
-        startTimer(timeLimit)
+      const quiz = shuffledQuiz.value ?? originalQuiz
+      const firstQuestion = quiz?.questions[0]
+      // Start timer: prefer per-question timer, fall back to global timer
+      if (firstQuestion?.timeLimit !== undefined && firstQuestion.timeLimit > 0) {
+        startTimer(firstQuestion.timeLimit)
+      } else if (quiz?.timeLimit !== undefined && quiz.timeLimit > 0) {
+        startTimer(quiz.timeLimit)
       }
     }
 
