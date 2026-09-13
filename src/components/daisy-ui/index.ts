@@ -29,6 +29,12 @@ export { DLabel } from './label'
 // Checkbox
 export { DCheckbox } from './checkbox'
 
+// Toast
+export { DToast } from './toast'
+
+// Steps
+export { DSteps, DStep } from './steps'
+
 // Types - All types exported from central types file
 export type {
   Size,
@@ -43,4 +49,5 @@ export type {
   ProgressColor,
   LabelVariant,
   CheckboxVariant,
+  Direction,
 } from './types'
