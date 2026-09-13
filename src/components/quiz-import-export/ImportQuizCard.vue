@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
 import { DButton, DCardActions, DCardTitle } from '@/components/daisy-ui'
-import { DInput, DTextarea } from '@/components/daisy-ui'
+import { DInput, DInputFile, DTextarea } from '@/components/daisy-ui'
 import { useQuizImportExport } from '@/composables'
 import { PhUpload, PhTrash } from '@phosphor-icons/vue'
 
@@ -64,13 +64,11 @@ const isJsonValid = computed(() => {
       <DCard>
         <DCardBody>
           <DCardTitle tag="h3" size="lg">À partir d'un fichier</DCardTitle>
-          <input
+          <DInputFile
             id="fileInput"
             ref="fileInput"
-            type="file"
             accept=".json"
             @change="handleFileSelect"
-            class="file-input"
             hidden
             aria-label="Sélectionner un fichier JSON"
           />
@@ -91,7 +89,7 @@ const isJsonValid = computed(() => {
             v-model="state.jsonData"
             placeholder="Collez votre JSON ici..."
             :rows="6"
-            :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : 'neutral'"
+            :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : ''"
             class="font-mono text-sm resize-y w-full"
             aria-label="JSON des quiz à importer"
           />
