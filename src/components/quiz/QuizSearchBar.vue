@@ -95,6 +95,7 @@ const getTagLabel = (tag: string | null): string => {
           class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
         >
           <li
+            role="button"
             tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(null)"
@@ -106,6 +107,7 @@ const getTagLabel = (tag: string | null): string => {
           <li
             v-for="category in categories"
             :key="category"
+            role="button"
             tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleCategorySelect(category)"
@@ -131,6 +133,7 @@ const getTagLabel = (tag: string | null): string => {
           class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
         >
           <li
+            role="button"
             tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleTagSelect(null)"
@@ -142,6 +145,7 @@ const getTagLabel = (tag: string | null): string => {
           <li
             v-for="tag in tags"
             :key="tag"
+            role="button"
             tabindex="0"
             class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
             @click="handleTagSelect(tag)"
