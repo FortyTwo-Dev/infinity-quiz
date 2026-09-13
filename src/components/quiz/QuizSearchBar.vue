@@ -81,7 +81,7 @@ const getTagLabel = (tag: string | null): string => {
     </div>
 
     <div class="flex gap-2 items-center">
-      <div class="relative" @click.stop>
+      <div class="relative">
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
@@ -117,7 +117,7 @@ const getTagLabel = (tag: string | null): string => {
         </ul>
       </div>
 
-      <div class="relative" @click.stop>
+      <div class="relative">
         <button
           type="button"
           class="btn btn-ghost btn-sm flex items-center gap-1"
