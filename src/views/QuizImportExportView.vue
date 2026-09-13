@@ -74,7 +74,7 @@ const handleClearText = () => {
 <template>
   <div class="max-w-7xl mx-auto p-4">
     <div class="mb-8">
-      <h1 class="text-base-content mb-2 text-2xl font-bold">Importer / Exporter des Quiz</h1>
+      <h1 class="text-base-content mb-2 text-3xl font-bold">Importer / Exporter des Quiz</h1>
       <p class="text-base-content/70 m-0">
         Partagez vos quiz avec d'autres utilisateurs ou importez des quiz existants
       </p>
@@ -90,7 +90,6 @@ const handleClearText = () => {
       <ImportQuizCard
         @import="handleImportFromText"
         @clear="handleClearText"
-        @file-select="handleImportFromFile"
       />
     </div>
   </div>

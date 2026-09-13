@@ -11,13 +11,12 @@ const { state, validateJSON, clearMessages, importFromFile } = useQuizImportExpo
 interface Emits {
   (e: 'import'): void
   (e: 'clear'): void
-  (e: 'file-select', event: Event): void
 }
 
 const emit = defineEmits<Emits>()
 
 const handleFileSelect = async (event: Event) => {
-  emit('file-select', event)
+  await importFromFile(event)
 }
 
 const handleImportFromText = () => {
@@ -62,19 +61,11 @@ const isJsonValid = computed(() => {
         <DCardBody>
           <DCardTitle tag="h3" size="lg" class="w-full">À partir d'un fichier</DCardTitle>
           <DInputFile
-            id="fileInput"
-            ref="fileInput"
             accept=".json"
             @change="handleFileSelect"
             aria-label="Sélectionner un fichier JSON"
             class="w-full"
           />
-          <DCardActions justify="start">
-            <DButton type="button" variant="primary" @click="() => fileInput?.click()">
-              <PhUpload :size="18" />
-              Import
-            </DButton>
-          </DCardActions>
         </DCardBody>
       </DCard>
 
