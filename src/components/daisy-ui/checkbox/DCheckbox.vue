@@ -24,6 +24,25 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
+const sizeClasses: Record<Size, string> = {
+  xs: 'checkbox-xs',
+  sm: 'checkbox-sm',
+  md: 'checkbox-md',
+  lg: 'checkbox-lg',
+  xl: 'checkbox-xl',
+}
+
+const variantClasses: Record<CheckboxVariant, string> = {
+  primary: 'checkbox-primary',
+  secondary: 'checkbox-secondary',
+  accent: 'checkbox-accent',
+  neutral: 'checkbox-neutral',
+  success: 'checkbox-success',
+  warning: 'checkbox-warning',
+  info: 'checkbox-info',
+  error: 'checkbox-error',
+}
+
 const inputRef = ref<HTMLInputElement | null>(null)
 
 function handleChange(event: Event) {
@@ -31,11 +50,15 @@ function handleChange(event: Event) {
   emit('update:modelValue', target.checked)
 }
 
-watch(() => props.indeterminate, (value) => {
-  if (inputRef.value) {
-    inputRef.value.indeterminate = value
-  }
-}, { immediate: true })
+watch(
+  () => props.indeterminate,
+  (value) => {
+    if (inputRef.value) {
+      inputRef.value.indeterminate = value
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -46,19 +69,8 @@ watch(() => props.indeterminate, (value) => {
     @change="handleChange"
     :class="[
       'checkbox',
-      { 'checkbox-xs': props.size === 'xs' },
-      { 'checkbox-sm': props.size === 'sm' },
-      { 'checkbox-md': props.size === 'md' },
-      { 'checkbox-lg': props.size === 'lg' },
-      { 'checkbox-xl': props.size === 'xl' },
-      { 'checkbox-primary': props.variant === 'primary' },
-      { 'checkbox-secondary': props.variant === 'secondary' },
-      { 'checkbox-accent': props.variant === 'accent' },
-      { 'checkbox-neutral': props.variant === 'neutral' },
-      { 'checkbox-success': props.variant === 'success' },
-      { 'checkbox-warning': props.variant === 'warning' },
-      { 'checkbox-info': props.variant === 'info' },
-      { 'checkbox-error': props.variant === 'error' },
+      sizeClasses[props.size],
+      variantClasses[props.variant],
     ]"
     :disabled="props.disabled"
   />
