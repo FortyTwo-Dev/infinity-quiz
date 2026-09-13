@@ -8,6 +8,8 @@ interface Props {
   size?: Size
   disabled?: boolean
   indeterminate?: boolean
+  id?: string
+  label?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,6 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   disabled: false,
   indeterminate: false,
+  id: undefined,
+  label: undefined,
 })
 
 interface Emits {
@@ -62,7 +66,21 @@ watch(
 </script>
 
 <template>
+  <label v-if="props.label" class="label cursor-pointer">
+    <input
+      :id="props.id"
+      ref="inputRef"
+      type="checkbox"
+      :checked="props.modelValue"
+      @change="handleChange"
+      :class="['checkbox', sizeClasses[props.size], variantClasses[props.variant]]"
+      :disabled="props.disabled"
+    />
+    <span class="label-text">{{ props.label }}</span>
+  </label>
   <input
+    v-else
+    :id="props.id"
     ref="inputRef"
     type="checkbox"
     :checked="props.modelValue"
