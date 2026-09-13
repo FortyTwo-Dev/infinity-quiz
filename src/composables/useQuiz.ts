@@ -32,6 +32,7 @@ export function useQuiz() {
   const canSkip = computed(() => sessionStore.canSkip)
   const remainingSkips = computed(() => sessionStore.remainingSkips)
   const hasFeedbackEnabled = computed(() => sessionStore.hasFeedbackEnabled)
+  const getCurrentQuestionTimeLimit = computed(() => sessionStore.getCurrentQuestionTimeLimit)
   const isAnswerVerified = computed(() => verificationStore.isAnswerVerified)
   const verifiedAnswerCorrect = computed(() => verificationStore.verifiedAnswerCorrect)
   const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
@@ -144,6 +145,7 @@ export function useQuiz() {
     canSkip,
     remainingSkips,
     hasFeedbackEnabled,
+    getCurrentQuestionTimeLimit,
     isAnswerVerified,
     verifiedAnswerCorrect,
     shouldShowFeedback,

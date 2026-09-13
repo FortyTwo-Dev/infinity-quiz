@@ -52,7 +52,6 @@ const percentage = computed(() => {
       :class="{
         'text-warning animate-pulse': isTimeLow,
         'text-success': !isTimeLow && props.timeLeft !== null,
-        'text-error': props.timeLeft !== null && props.timeLeft <= 10,
       }"
     >
       {{ formattedTime || '00:00' }}
