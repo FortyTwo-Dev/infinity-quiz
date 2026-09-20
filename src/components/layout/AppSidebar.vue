@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { Component } from 'vue'
 import {
   PhHouse,
-  PhPlay,
   PhTrophy,
   PhPlus,
   PhGear,
@@ -11,13 +11,10 @@ import {
 interface NavItem {
   label: string
   routeName: string
-  icon: any
+  icon: Component
 }
 
-const mainNavItems: NavItem[] = [
-  { label: 'Home', routeName: 'quiz-list', icon: PhHouse },
-  { label: 'Play', routeName: 'quiz-list', icon: PhPlay },
-]
+const mainNavItems: NavItem[] = [{ label: 'Home', routeName: 'quiz-list', icon: PhHouse }]
 
 const managementNavItems: NavItem[] = [
   { label: 'Management', routeName: 'quiz-management', icon: PhGear },
