@@ -17,5 +17,12 @@ export default defineConfig({
         inline: ['zod'],
       },
     },
+    coverage: {
+      // `lcov` is required by the SonarQube analysis; `text` for local feedback.
+      reporter: ['text', 'lcov'],
+      thresholds: {
+        lines: 80,
+      },
+    },
   },
 })

@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, type-check, build & tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Oxlint
+        run: bunx --bun oxlint .
+
+      - name: ESLint
+        run: bunx --bun eslint . --max-warnings=0
+
+      # `bunx --bun vue-tsc` runs on the Bun runtime and silently misses type
+      # errors; use the Node-routed script instead.
+      - name: Type-check
+        run: bun run type-check
+
+      - name: Build
+        run: bun run build
+
+      - name: Tests & coverage
+        run: bun test:coverage
