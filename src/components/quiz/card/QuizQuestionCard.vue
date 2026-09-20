@@ -88,7 +88,7 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
           @click="emit('previous')"
           class="flex-1"
         >
-          Précédent
+          Previous
         </DButton>
         <DButton
           v-if="canSkip"
@@ -98,7 +98,7 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
           @click="emit('skip')"
           class="flex-1"
         >
-          Sauter{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
+          Skip{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
         </DButton>
         <DButton
           variant="primary"
@@ -119,10 +119,10 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
         >
           {{
             hasFeedbackEnabled && !isCurrentQuestionVerified && selectedAnswer !== null
-              ? 'Vérifier'
+              ? 'Check'
               : hasNextQuestion
-                ? 'Suivant'
-                : 'Terminer'
+                ? 'Next'
+                : 'Finish'
           }}
         </DButton>
       </DCardActions>

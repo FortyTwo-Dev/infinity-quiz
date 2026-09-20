@@ -69,7 +69,7 @@ function goToManagement() {
     <LFlex as="header" align="center" justify="between" class="p-4">
       <div class="text-left">
         <h1 class="text-base-content mb-2 text-2xl font-bold">Infinity Quiz</h1>
-        <p class="text-base-content/70">Choisissez un quiz pour commencer</p>
+        <p class="text-base-content/70">Choose a quiz to get started</p>
       </div>
       <DButton
         variant="accent"
@@ -78,7 +78,7 @@ function goToManagement() {
         class="inline-flex items-center gap-2"
       >
         <PhGear :size="20" />
-        Gérer les quiz
+        Manage quizzes
       </DButton>
     </LFlex>
     <LGrid as="div" cols="1 md:2 lg:3" gap="4">

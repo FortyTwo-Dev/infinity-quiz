@@ -32,21 +32,21 @@ export function useQuizImportExport() {
   const downloadQuiz = (quizId: string, filename?: string): boolean => {
     const jsonData = exportSingleQuiz(quizId)
     if (!jsonData) {
-      state.value.error = 'Quiz non trouvé'
+      state.value.error = 'Quiz not found'
       return false
     }
 
     const quiz = quizStore.getQuizById(quizId)
     const name = filename || quiz?.title || 'quiz'
     downloadJSON(jsonData, `${name.replace(/[^a-z0-9]/gi, '_')}.json`)
-    state.value.successMessage = 'Quiz exporté avec succès'
+    state.value.successMessage = 'Quiz exported successfully'
     return true
   }
 
   const downloadAllQuizzes = (): void => {
     const jsonData = exportAllQuizzes()
-    downloadJSON(jsonData, 'tous-les-quizzes.json')
-    state.value.successMessage = 'Tous les quiz exportés avec succès'
+    downloadJSON(jsonData, 'all-quizzes.json')
+    state.value.successMessage = 'All quizzes exported successfully'
   }
 
   // Import functions
@@ -58,14 +58,14 @@ export function useQuizImportExport() {
     try {
       const success = quizStore.importQuiz(jsonData)
       if (success) {
-        state.value.successMessage = 'Quiz importé avec succès'
+        state.value.successMessage = 'Quiz imported successfully'
         state.value.jsonData = ''
       } else {
-        state.value.error = 'Données de quiz invalides'
+        state.value.error = 'Invalid quiz data'
       }
       return success
     } catch (err) {
-      state.value.error = "Erreur lors de l'import: " + (err as Error).message
+      state.value.error = 'Import error: ' + (err as Error).message
       return false
     } finally {
       state.value.isImporting = false
@@ -80,14 +80,14 @@ export function useQuizImportExport() {
     try {
       const success = quizStore.importQuizzes(jsonData)
       if (success) {
-        state.value.successMessage = 'Quiz importés avec succès'
+        state.value.successMessage = 'Quizzes imported successfully'
         state.value.jsonData = ''
       } else {
-        state.value.error = 'Données de quiz invalides'
+        state.value.error = 'Invalid quiz data'
       }
       return success
     } catch (err) {
-      state.value.error = "Erreur lors de l'import: " + (err as Error).message
+      state.value.error = 'Import error: ' + (err as Error).message
       return false
     } finally {
       state.value.isImporting = false
@@ -99,7 +99,7 @@ export function useQuizImportExport() {
     const file = input.files?.[0]
 
     if (!file) {
-      state.value.error = 'Aucun fichier sélectionné'
+      state.value.error = 'No file selected'
       return false
     }
 
@@ -119,7 +119,7 @@ export function useQuizImportExport() {
         return importSingleQuiz(text)
       }
     } catch (err) {
-      state.value.error = 'Erreur de lecture du fichier: ' + (err as Error).message
+      state.value.error = 'File read error: ' + (err as Error).message
       return false
     } finally {
       state.value.isImporting = false

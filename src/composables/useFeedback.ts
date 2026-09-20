@@ -8,11 +8,11 @@ export type FeedbackLevel = keyof typeof SCORE_THRESHOLDS
  * swap this dictionary for an i18n lookup later without touching the logic.
  */
 export const FEEDBACK_LABELS: Record<FeedbackLevel, string> = {
-  perfect: 'Sans faute !',
-  excellent: 'Parfait !',
-  good: 'Bien joué !',
-  average: 'Pas mal !',
-  poor: 'Continuez à pratiquer !',
+  perfect: 'Flawless!',
+  excellent: 'Excellent!',
+  good: 'Well done!',
+  average: 'Not bad!',
+  poor: 'Keep practicing!',
 }
 
 export function getFeedbackLevel(percentage: number): FeedbackLevel {

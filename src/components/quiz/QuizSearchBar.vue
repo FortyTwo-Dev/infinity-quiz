@@ -58,11 +58,11 @@ const handleClear = () => {
 }
 
 const getCategoryLabel = (category: string | null): string => {
-  return category || 'Toutes les catégories'
+  return category || 'All categories'
 }
 
 const getTagLabel = (tag: string | null): string => {
-  return tag || 'Tous les tags'
+  return tag || 'All tags'
 }
 </script>
 
@@ -74,9 +74,9 @@ const getTagLabel = (tag: string | null): string => {
         type="text"
         :value="localSearchTerm"
         @input="handleSearchChange"
-        placeholder="Rechercher des quiz..."
+        placeholder="Search quizzes..."
         class="input input-bordered w-full"
-        aria-label="Rechercher des quiz"
+        aria-label="Search quizzes"
       />
     </div>
 
@@ -102,7 +102,7 @@ const getTagLabel = (tag: string | null): string => {
             @keydown.enter="handleCategorySelect(null)"
             @keydown.space="handleCategorySelect(null)"
           >
-            Toutes les catégories
+            All categories
           </li>
           <li
             v-for="category in categories"
@@ -138,7 +138,7 @@ const getTagLabel = (tag: string | null): string => {
             @keydown.enter="handleTagSelect(null)"
             @keydown.space="handleTagSelect(null)"
           >
-            Tous les tags
+            All tags
           </li>
           <li
             v-for="tag in tags"
@@ -160,7 +160,7 @@ const getTagLabel = (tag: string | null): string => {
         @click="handleClear"
         :disabled="!localSearchTerm && !selectedCategory && !selectedTag"
       >
-        Effacer
+        Clear
       </DButton>
     </div>
   </div>

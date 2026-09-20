@@ -69,7 +69,7 @@ onUnmounted(() => {
               type="button"
               @click.stop="notificationStore.removeNotification(notification.id)"
               class="btn btn-sm btn-ghost btn-circle"
-              aria-label="Fermer"
+              aria-label="Close"
             >
               ×
             </button>

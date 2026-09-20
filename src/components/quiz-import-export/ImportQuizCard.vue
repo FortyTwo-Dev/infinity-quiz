@@ -33,15 +33,15 @@ const previewText = computed(() => {
     try {
       const parsed = JSON.parse(state.value.jsonData)
       if (Array.isArray(parsed)) {
-        return `Prêt à importer ${parsed.length} quiz`
+        return `Ready to import ${parsed.length} quizzes`
       } else {
-        return `Prêt à importer : ${parsed.title || 'Quiz sans titre'}`
+        return `Ready to import: ${parsed.title || 'Untitled quiz'}`
       }
     } catch {
-      return 'JSON invalide'
+      return 'Invalid JSON'
     }
   }
-  return 'Collez votre JSON ici...'
+  return 'Paste your JSON here...'
 })
 
 const isJsonValid = computed(() => {
@@ -54,15 +54,15 @@ const isJsonValid = computed(() => {
     <DCardBody>
       <DCardTitle tag="h2" size="xl">
         <PhUpload :size="24" />
-        Importer
+        Import
       </DCardTitle>
       <DCard>
         <DCardBody>
-          <DCardTitle tag="h3" size="lg" class="w-full">À partir d'un fichier</DCardTitle>
+          <DCardTitle tag="h3" size="lg" class="w-full">From a file</DCardTitle>
           <DInputFile
             accept=".json"
             @change="handleFileSelect"
-            aria-label="Sélectionner un fichier JSON"
+            aria-label="Select a JSON file"
             class="w-full"
           />
         </DCardBody>
@@ -72,14 +72,14 @@ const isJsonValid = computed(() => {
 
       <DCard>
         <DCardBody>
-          <DCardTitle tag="h3" size="lg">À partir de texte JSON</DCardTitle>
+          <DCardTitle tag="h3" size="lg">From JSON text</DCardTitle>
           <DTextarea
             v-model="state.jsonData"
-            placeholder="Collez votre JSON ici..."
+            placeholder="Paste your JSON here..."
             :rows="6"
             :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : ''"
             class="font-mono text-sm resize-y w-full"
-            aria-label="JSON des quiz à importer"
+            aria-label="Quizzes JSON to import"
           />
           <div class="text-xs">
             <span :class="{ 'text-success': isJsonValid, 'text-error': state.error }">
@@ -94,7 +94,7 @@ const isJsonValid = computed(() => {
               :disabled="!state.jsonData"
             >
               <PhTrash :size="18" />
-              Effacer
+              Clear
             </DButton>
             <DButton
               type="button"

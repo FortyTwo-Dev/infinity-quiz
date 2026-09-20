@@ -31,17 +31,17 @@ defineProps<Props>()
       <!-- Stats -->
       <div class="flex justify-center gap-8 text-center mb-6">
         <div>
-          <div class="text-sm text-base-content/70">Précision</div>
+          <div class="text-sm text-base-content/70">Accuracy</div>
           <div class="font-bold">{{ percentage }}%</div>
         </div>
         <div v-if="timeLimit">
-          <div class="text-sm text-base-content/70">Temps</div>
+          <div class="text-sm text-base-content/70">Time</div>
           <div class="font-bold">{{ Math.round(timeTaken || 0) }}s</div>
         </div>
         <div>
-          <div class="text-sm text-base-content/70">Résultat</div>
+          <div class="text-sm text-base-content/70">Result</div>
           <div class="font-bold" :class="passed ? 'text-success' : 'text-error'">
-            {{ passed ? 'Réussi' : 'Échoué' }}
+            {{ passed ? 'Passed' : 'Failed' }}
           </div>
         </div>
       </div>
@@ -49,10 +49,10 @@ defineProps<Props>()
       <!-- Badge -->
       <div>
         <DBadge v-if="passed" variant="success" size="lg">
-          <slot name="success-message">Félicitations !</slot>
+          <slot name="success-message">Congratulations!</slot>
         </DBadge>
         <DBadge v-else variant="error" size="lg">
-          <slot name="failure-message">Essayez encore</slot>
+          <slot name="failure-message">Try again</slot>
         </DBadge>
       </div>
     </DCardBody>

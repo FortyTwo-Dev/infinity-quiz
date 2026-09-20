@@ -61,14 +61,14 @@ const userAnswerText = computed(() => {
           />
           <PhXCircle v-else :size="24" weight="fill" class="text-warning" />
           <span class="text-xl font-bold">
-            {{ verifiedAnswerCorrect ? 'Bonne réponse !' : 'Presque...' }}
+            {{ verifiedAnswerCorrect ? 'Correct!' : 'Almost...' }}
           </span>
         </div>
 
         <!-- Body content -->
         <div class="space-y-3">
           <p class="text-success font-medium">
-            <strong>Réponse correcte :</strong> {{ correctAnswerText }}
+            <strong>Correct answer:</strong> {{ correctAnswerText }}
           </p>
 
           <div v-if="explanation" class="alert alert-success text-sm">
@@ -76,7 +76,7 @@ const userAnswerText = computed(() => {
           </div>
 
           <p v-if="!verifiedAnswerCorrect && userAnswerText" class="text-warning">
-            <em>Vous avez choisi : {{ userAnswerText }}</em>
+            <em>You chose: {{ userAnswerText }}</em>
           </p>
         </div>
       </DCardBody>

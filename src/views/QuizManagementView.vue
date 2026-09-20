@@ -83,8 +83,8 @@ const handleImportExport = () => {
   <div class="max-w-7xl mx-auto p-4">
     <div class="flex justify-between items-start mb-8 gap-6">
       <div>
-        <h1 class="text-base-content mb-2 text-2xl font-bold">Gestion des Quiz</h1>
-        <p class="text-base-content/70 m-0">Créez, modifiez, supprimez et organisez vos quiz</p>
+        <h1 class="text-base-content mb-2 text-2xl font-bold">Quiz Management</h1>
+        <p class="text-base-content/70 m-0">Create, edit, delete and organize your quizzes</p>
       </div>
       <div class="flex gap-4">
         <DButton
@@ -95,7 +95,7 @@ const handleImportExport = () => {
           class="inline-flex items-center gap-2"
         >
           <PhUpload :size="20" />
-          Importer/Exporter
+          Import/Export
         </DButton>
         <DButton
           type="button"
@@ -105,7 +105,7 @@ const handleImportExport = () => {
           class="inline-flex items-center gap-2"
         >
           <PhPlus :size="20" />
-          Nouveau Quiz
+          New Quiz
         </DButton>
       </div>
     </div>
@@ -132,18 +132,18 @@ const handleImportExport = () => {
         v-if="filteredQuizzes.length === 0"
         class="col-span-full text-center p-8 text-base-content/70"
       >
-        <h3 class="text-base-content mb-2 text-lg">Aucun quiz trouvé</h3>
+        <h3 class="text-base-content mb-2 text-lg">No quizzes found</h3>
         <p v-if="searchTerm || selectedCategory || selectedTag" class="mb-0">
-          Aucun quiz ne correspond à vos critères de recherche.
+          No quizzes match your search criteria.
           <button
             type="button"
             class="bg-none border-none text-primary cursor-pointer underline font-inherit p-0 ml-2 hover:text-primary/80"
             @click="clearFilters"
           >
-            Effacer les filtres
+            Clear filters
           </button>
         </p>
-        <p v-else class="mb-0">Aucun quiz disponible. Créez-en un nouveau !</p>
+        <p v-else class="mb-0">No quizzes available. Create a new one!</p>
       </div>
     </div>
 
@@ -152,11 +152,11 @@ const handleImportExport = () => {
       v-model="showDeleteModal"
       :title="
         quizToDelete
-          ? 'Supprimer ' + (quizStore.getQuizById(quizToDelete)?.title || '')
-          : 'Confirmer la suppression'
+          ? 'Delete ' + (quizStore.getQuizById(quizToDelete)?.title || '')
+          : 'Confirm deletion'
       "
-      confirm-text="Supprimer"
-      cancel-text="Annuler"
+      confirm-text="Delete"
+      cancel-text="Cancel"
       variant="error"
       @confirm="confirmDelete"
     />
@@ -164,14 +164,14 @@ const handleImportExport = () => {
     <!-- Duplicate Confirmation Modal -->
     <ConfirmModal
       v-model="showDuplicateModal"
-      title="Confirmer la duplication"
+      title="Confirm duplication"
       :message="
         quizToDuplicate
-          ? 'Dupliquer ' + (quizStore.getQuizById(quizToDuplicate)?.title || '') + ' ?'
+          ? 'Duplicate ' + (quizStore.getQuizById(quizToDuplicate)?.title || '') + ' ?'
           : ''
       "
-      confirm-text="Dupliquer"
-      cancel-text="Annuler"
+      confirm-text="Duplicate"
+      cancel-text="Cancel"
       variant="primary"
       @confirm="confirmDuplicate"
     />

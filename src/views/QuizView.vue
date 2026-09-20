@@ -55,7 +55,7 @@ watch(
     <!--  Component - l'entête de la page  -->
     <div v-if="currentQuiz" class="mb-8 text-center relative">
       <DButton variant="ghost" size="sm" class="absolute left-4 top-4" @click="backToQuizList"
-        >← Retour à la liste</DButton
+        >← Back to list</DButton
       >
       <h1 class="text-base-content mb-2 text-xl font-bold">{{ currentQuiz.title }}</h1>
       <p class="text-base-content/70 mb-4">{{ currentQuiz.description }}</p>
@@ -90,7 +90,7 @@ watch(
     />
 
     <div v-else class="text-center p-8 text-base-content/70">
-      <p>Aucune question disponible</p>
+      <p>No questions available</p>
     </div>
 
     <!--  Déjà un composant donc nickel  -->
