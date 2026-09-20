@@ -49,7 +49,7 @@ function toggleVariant() {
   <div class="flex items-center gap-3">
     <!-- Dropdown pour choisir le thème de base -->
     <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-sm" @keydown.enter="$event.target.click()" @keydown.space="$event.target.click()">
+      <button type="button" tabindex="0" class="btn btn-sm">
         {{ currentTheme }}
         <svg
           width="12"
@@ -60,7 +60,7 @@ function toggleVariant() {
         >
           <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z" />
         </svg>
-      </div>
+      </button>
       <ul tabindex="-1" class="dropdown-content z-1 p-2 shadow-2xl bg-base-300 rounded-box w-40">
         <li v-for="theme in themes" :key="theme">
           <button

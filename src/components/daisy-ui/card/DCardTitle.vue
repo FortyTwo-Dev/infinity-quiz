@@ -17,6 +17,8 @@ const sizeClasses: Record<TextSize, string> = {
   md: 'text-lg',
   lg: 'text-xl',
   xl: 'text-2xl',
+  '2xl': 'text-3xl',
+  '3xl': 'text-4xl',
 }
 </script>
 

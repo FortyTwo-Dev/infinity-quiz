@@ -34,6 +34,10 @@ export type ColorVariant =
 export type ButtonVariant = ColorVariant | 'link' | 'outline'
 export type ButtonType = 'button' | 'submit' | 'reset'
 
+// Input specific types
+export type InputColor = ColorVariant
+export type InputSize = Size
+
 // Progress specific types - uses subset of ColorVariant (no ghost)
 export type ProgressColor =
   'neutral' | 'primary' | 'secondary' | 'accent' | 'info' | 'success' | 'warning' | 'error'
