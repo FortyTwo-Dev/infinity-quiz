@@ -112,7 +112,7 @@ src/
 │   ├── useScore.ts           # Score calculation utilities
 │   └── useTimer.ts           # Timer functionality
 ├── constants/                # Application constants
-├── data/                     # Sample data and fixtures
+
 ├── __tests__/                # Unit tests
 │   ├── composables/          # Composable tests
 │   ├── stores/               # Store tests

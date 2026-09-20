@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useQuizStore, useNotificationStore } from '../stores'
+import { useNotificationStore } from '../stores'
 import { useQuizImportExport } from '../composables/useQuizImportExport'
 import { ExportQuizCard, ImportQuizCard } from '@/components/quiz-import-export'
 
-const quizStore = useQuizStore()
 const notificationStore = useNotificationStore()
 const { exportSingleQuiz, exportAllQuizzes, downloadQuiz, downloadAllQuizzes } =
   useQuizImportExport()
-
-// Initialize
-onMounted(() => {
-  quizStore.initializeSampleQuizzes()
-})
 
 // Export handlers
 const handleExportSingle = (quizId: string) => {

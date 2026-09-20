@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { ConfirmModal } from '@/components/common'
 import { DButton } from '@/components/daisy-ui'
 import QuizSearchBar from '../components/quiz/QuizSearchBar.vue'
@@ -30,11 +30,6 @@ const showDeleteModal = ref(false)
 const quizToDelete = ref<string | null>(null)
 const showDuplicateModal = ref(false)
 const quizToDuplicate = ref<string | null>(null)
-
-// Initialize quizzes
-onMounted(() => {
-  quizStore.initializeSampleQuizzes()
-})
 
 const handleCreateQuiz = () => {
   navigateToCreate()

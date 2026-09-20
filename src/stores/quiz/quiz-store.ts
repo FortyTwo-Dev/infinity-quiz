@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Quiz } from '../../types/quiz'
-import { SAMPLE_QUIZZES, hasInitializedQuizzes } from '../../data/sample-quizzes'
 import { parseAndValidateQuizJSON } from '../../utils/validation'
 
 export const useQuizStore = defineStore(
@@ -51,11 +50,6 @@ export const useQuizStore = defineStore(
     })
 
     // Actions
-    const initializeSampleQuizzes = () => {
-      if (hasInitializedQuizzes(quizzes.value)) return
-      quizzes.value = SAMPLE_QUIZZES
-    }
-
     const addQuiz = (quiz: Quiz) => {
       quizzes.value.push(quiz)
     }
@@ -138,7 +132,7 @@ export const useQuizStore = defineStore(
       filterQuizzesByTag,
 
       // Actions
-      initializeSampleQuizzes,
+
       addQuiz,
       updateQuiz,
       deleteQuiz,
