@@ -356,7 +356,7 @@ describe('useQuizVerificationStore', () => {
         expect(result).toBe(true)
         expect(verificationStore.isAnswerVerified).toBe(true)
         expect(verificationStore.verifiedAnswerCorrect).toBe(true)
-        expect(sessionStore.$state.verifiedQuestions['test-question'] === true).toBe(true)
+        expect(sessionStore.verifiedQuestions['test-question']).toBe(true)
       })
 
       it('should set isAnswerVerified to true and verifiedAnswerCorrect to false when answer is incorrect', () => {

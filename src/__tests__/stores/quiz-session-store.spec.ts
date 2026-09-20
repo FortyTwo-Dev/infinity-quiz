@@ -668,7 +668,7 @@ describe('useQuizSessionStore', () => {
       sessionStore.selectQuiz('test-quiz')
       sessionStore.skippedQuestions['q1'] = true
       sessionStore.selectAnswer(0)
-      expect(sessionStore.skippedQuestions['q1'] === true).toBe(false)
+      expect(sessionStore.skippedQuestions['q1']).not.toBe(true)
     })
 
     it('calculateScore should set score to 0 when no answers', () => {
@@ -822,11 +822,11 @@ describe('useQuizSessionStore', () => {
       sessionStore.selectAnswer(0)
 
       expect(sessionStore.currentQuestionIndex).toBe(0)
-      expect(sessionStore.skippedQuestions['q1'] === true).toBe(false)
+      expect(sessionStore.skippedQuestions['q1']).not.toBe(true)
       const result = sessionStore.skipQuestion()
       expect(result).toBe(false)
       expect(sessionStore.currentQuestionIndex).toBe(1)
-      expect(sessionStore.skippedQuestions['q1'] === true).toBe(true)
+      expect(sessionStore.skippedQuestions['q1']).toBe(true)
       expect(sessionStore.getAnswerForQuestion('q1')).toBeNull()
     })
 
@@ -847,7 +847,7 @@ describe('useQuizSessionStore', () => {
       const result = sessionStore.skipQuestion()
       expect(result).toBe(true)
       expect(sessionStore.isCompleted).toBe(true)
-      expect(sessionStore.skippedQuestions['q1'] === true).toBe(true)
+      expect(sessionStore.skippedQuestions['q1']).toBe(true)
     })
 
     it('goToQuestion should not change index when out of bounds', () => {
