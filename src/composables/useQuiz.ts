@@ -65,7 +65,10 @@ export function useQuiz() {
   function initializeQuiz() {
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
       sessionStore.selectQuiz(quizId.value, seed.value)
+      return
     }
+    // Same quiz already in session (e.g. page reload): resume a persisted timer
+    sessionStore.resumeTimer()
   }
 
   function selectAnswer(answerIndex: number) {

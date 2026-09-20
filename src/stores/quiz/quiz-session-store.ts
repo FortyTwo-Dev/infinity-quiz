@@ -170,11 +170,11 @@ export const useQuizSessionStore = defineStore(
       timeLeft.value = null
     }
 
-    const startTimer = (duration: number) => {
+    const runTimer = (initialDuration: number | null) => {
       clearTimer()
-      timeLeft.value = duration
-      onExpiryCallback.value = handleTimerExpiry
-      timerInterval.value = setInterval(() => {
+      timeLeft.value = initialDuration
+
+      const interval = setInterval(() => {
         if (timeLeft.value === null) return
         timeLeft.value--
         if (timeLeft.value <= 0) {
@@ -186,6 +186,22 @@ export const useQuizSessionStore = defineStore(
           }
         }
       }, 1000)
+
+      onExpiryCallback.value = handleTimerExpiry
+      timerInterval.value = interval
+    }
+
+    const startTimer = (duration: number) => {
+      runTimer(duration)
+    }
+
+    /**
+     * Resume a persisted timer without resetting the remaining time.
+     * No-op when there is no time left or the quiz is already completed.
+     */
+    const resumeTimer = () => {
+      if (isCompleted.value || timeLeft.value === null || timeLeft.value <= 0) return
+      runTimer(timeLeft.value)
     }
 
     // Actions
@@ -454,6 +470,7 @@ export const useQuizSessionStore = defineStore(
       // Actions
       clearTimer,
       startTimer,
+      resumeTimer,
       selectQuiz,
       selectAnswer,
       skipQuestion,
@@ -477,10 +494,12 @@ export const useQuizSessionStore = defineStore(
         'currentQuestionIndex',
         'selectedAnswers',
         'skippedQuestions',
+        'verifiedQuestions',
         'score',
         'isCompleted',
         'shuffledQuiz',
         'quizSeed',
+        'timeLeft',
       ],
     },
   },
