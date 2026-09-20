@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test'
+import { describe, it, expect } from 'vitest'
 import type { Question } from '../../types/quiz'
 import {
   QuestionSchema,
@@ -89,14 +89,11 @@ const invalidQuestionInvalidCorrectAnswer = {
 describe('Zod validation utils', () => {
   describe('Schemas', () => {
     it('QuestionSchema should validate correct question', () => {
-      const result = QuestionSchema.safeParse(validQuestion)
-      expect(result.success).toBe(true)
-      if (result.success) {
-        expect(result.data.id).toBe('q-1')
-        expect(result.data.text).toBe('What is 2+2?')
-        expect(result.data.options).toEqual(['3', '4', '5'])
-        expect(result.data.correctAnswerIndex).toBe(1)
-      }
+      const data = QuestionSchema.parse(validQuestion)
+      expect(data.id).toBe('q-1')
+      expect(data.text).toBe('What is 2+2?')
+      expect(data.options).toEqual(['3', '4', '5'])
+      expect(data.correctAnswerIndex).toBe(1)
     })
 
     it('QuestionSchema should reject missing id', () => {
