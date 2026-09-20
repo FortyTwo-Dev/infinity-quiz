@@ -1,22 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useQuizStore } from '../stores'
+import { useQuizStore, useNotificationStore } from '../stores'
 import { useQuizImportExport } from '../composables/useQuizImportExport'
 import { ExportQuizCard, ImportQuizCard } from '@/components/quiz-import-export'
 
 const quizStore = useQuizStore()
-const {
-  state,
-  exportSingleQuiz,
-  exportAllQuizzes,
-  downloadQuiz,
-  downloadAllQuizzes,
-  importFromFile,
-  importSingleQuiz,
-  importMultipleQuizzes,
-  validateJSON,
-  clearMessages,
-} = useQuizImportExport()
+const notificationStore = useNotificationStore()
+const { exportSingleQuiz, exportAllQuizzes, downloadQuiz, downloadAllQuizzes } =
+  useQuizImportExport()
 
 // Initialize
 onMounted(() => {
@@ -32,42 +23,14 @@ const handleExportAll = () => {
   downloadAllQuizzes()
 }
 
-const handleCopyToClipboard = (quizId: string | null) => {
+const handleCopyToClipboard = async (quizId: string | null) => {
   try {
     const jsonData = quizId ? exportSingleQuiz(quizId) || '' : exportAllQuizzes()
-    navigator.clipboard.writeText(jsonData)
-    state.value.successMessage = 'Copied to clipboard!'
+    await navigator.clipboard.writeText(jsonData)
+    notificationStore.addNotification('Copied to clipboard!', 'success')
   } catch {
-    state.value.error = 'Failed to copy to clipboard'
+    notificationStore.addNotification('Failed to copy to clipboard', 'error')
   }
-}
-
-// Import handlers
-const handleImportFromFile = async (event: Event) => {
-  await importFromFile(event)
-}
-
-const handleImportFromText = () => {
-  clearMessages()
-  if (validateJSON(state.value.jsonData)) {
-    try {
-      const parsed = JSON.parse(state.value.jsonData)
-      if (Array.isArray(parsed)) {
-        importMultipleQuizzes(state.value.jsonData)
-      } else {
-        importSingleQuiz(state.value.jsonData)
-      }
-    } catch {
-      state.value.error = 'Invalid JSON'
-    }
-  } else {
-    state.value.error = 'Invalid JSON format. Must contain id, title and questions.'
-  }
-}
-
-const handleClearText = () => {
-  state.value.jsonData = ''
-  clearMessages()
 }
 </script>
 
@@ -87,10 +50,7 @@ const handleClearText = () => {
         @copy="handleCopyToClipboard"
       />
 
-      <ImportQuizCard
-        @import="handleImportFromText"
-        @clear="handleClearText"
-      />
+      <ImportQuizCard />
     </div>
   </div>
 </template>

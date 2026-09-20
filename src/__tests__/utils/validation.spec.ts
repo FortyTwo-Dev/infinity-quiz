@@ -9,9 +9,6 @@ import {
   validateQuizJSON,
   validateQuestion,
   parseAndValidateQuizJSON,
-  hasRequiredQuizFields,
-  isValidQuizStructure,
-  isValidQuizArrayStructure,
   validateQuizFormState,
   type ValidationResult,
   type QuestionValidationResult,
@@ -280,69 +277,41 @@ describe('Zod validation utils', () => {
       const result = parseAndValidateQuizJSON(json)
       expect(result).toBeNull()
     })
-  })
 
-  describe('hasRequiredQuizFields', () => {
-    it('should return true for object with required fields', () => {
-      expect(hasRequiredQuizFields(validQuiz)).toBe(true)
+    it('should return null when a quiz has no questions', () => {
+      const json = JSON.stringify(invalidQuizEmptyQuestions)
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
-    it('should return false for null', () => {
-      expect(hasRequiredQuizFields(null)).toBe(false)
+    it('should return null when a quiz is missing a description', () => {
+      const json = JSON.stringify(invalidQuizMissingDescription)
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
-    it('should return false for non-object', () => {
-      expect(hasRequiredQuizFields('string')).toBe(false)
+    it('should return null when a quiz is missing questions', () => {
+      const json = JSON.stringify(invalidQuizMissingQuestions)
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
-    it('should return false when id is missing', () => {
-      expect(hasRequiredQuizFields(invalidQuizMissingId)).toBe(false)
+    it('should return null when a question is malformed', () => {
+      const json = JSON.stringify({
+        ...validQuiz,
+        questions: [{ id: 'q-1', text: 'Q?', options: 'not-an-array', correctAnswerIndex: 0 }],
+      })
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
-    it('should return false when title is missing', () => {
-      expect(hasRequiredQuizFields(invalidQuizMissingTitle)).toBe(false)
+    it('should return null when a question correctAnswerIndex is out of range', () => {
+      const json = JSON.stringify({
+        ...validQuiz,
+        questions: [invalidQuestionInvalidCorrectAnswer],
+      })
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
-    it('should return false when questions is missing', () => {
-      expect(hasRequiredQuizFields(invalidQuizMissingQuestions)).toBe(false)
-    })
-  })
-
-  describe('isValidQuizStructure', () => {
-    it('should return true for valid quiz', () => {
-      expect(isValidQuizStructure(validQuiz)).toBe(true)
-    })
-
-    it('should return false for null', () => {
-      expect(isValidQuizStructure(null)).toBe(false)
-    })
-
-    it('should return false for non-object', () => {
-      expect(isValidQuizStructure('string')).toBe(false)
-    })
-
-    it('should return false when id is empty string', () => {
-      expect(isValidQuizStructure({ ...validQuiz, id: '' })).toBe(false)
-    })
-  })
-
-  describe('isValidQuizArrayStructure', () => {
-    it('should return true for array of valid quizzes', () => {
-      const quizzes = [validQuiz, { ...validQuiz, id: 'quiz-2' }]
-      expect(isValidQuizArrayStructure(quizzes)).toBe(true)
-    })
-
-    it('should return false for non-array', () => {
-      expect(isValidQuizArrayStructure(validQuiz)).toBe(false)
-    })
-
-    it('should return false for array with one invalid quiz', () => {
-      const quizzes = [validQuiz, invalidQuizMissingId]
-      expect(isValidQuizArrayStructure(quizzes)).toBe(false)
-    })
-
-    it('should return false for null', () => {
-      expect(isValidQuizArrayStructure(null)).toBe(false)
+    it('should return null when one quiz of an array is invalid', () => {
+      const json = JSON.stringify([validQuiz, invalidQuizMissingId])
+      expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
   })
 

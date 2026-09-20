@@ -5,27 +5,20 @@ import { DButton, DCardActions, DCardTitle, DInputFile, DTextarea } from '@/comp
 import { useQuizImportExport } from '@/composables'
 import { PhUpload, PhTrash } from '@phosphor-icons/vue'
 
-const { state, validateJSON, clearMessages, importFromFile } = useQuizImportExport()
-
-interface Emits {
-  (e: 'import'): void
-  (e: 'clear'): void
-}
-
-const emit = defineEmits<Emits>()
+const { state, validateJSON, clearMessages, importFromJson, importFromFile } =
+  useQuizImportExport()
 
 const handleFileSelect = async (event: Event) => {
   await importFromFile(event)
 }
 
 const handleImportFromText = () => {
-  emit('import')
+  importFromJson(state.value.jsonData)
 }
 
 const handleClearText = () => {
   clearMessages()
   state.value.jsonData = ''
-  emit('clear')
 }
 
 const previewText = computed(() => {

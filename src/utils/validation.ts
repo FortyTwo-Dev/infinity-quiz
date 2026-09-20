@@ -40,24 +40,6 @@ export const QuizSchema = z.object({
   tags: z.array(z.string()).optional(),
 })
 
-/**
- * Schema pour l'import qui accepte les quiz avec questions vide pour compatibilité
- */
-export const ImportQuizSchema = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  description: z.string().optional(),
-  questions: z.array(z.any()),
-  timeLimit: z.number().optional(),
-  shuffleQuestions: z.boolean().optional(),
-  shuffleAnswers: z.boolean().optional(),
-  maxSkips: z.number().optional(),
-  enableReviewMode: z.boolean().optional(),
-  feedbackEnabled: z.boolean().optional(),
-  category: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-})
-
 // ============================================================================
 // Types inférés (pour l'autocomplétion)
 // ============================================================================
@@ -168,38 +150,15 @@ export function parseAndValidateQuizJSON(jsonData: string): Quiz | Quiz[] | null
     const parsed = JSON.parse(jsonData)
 
     if (Array.isArray(parsed)) {
-      const result = z.array(ImportQuizSchema).min(1).safeParse(parsed)
-      return result.success ? (result.data as unknown as Quiz[]) : null
+      const result = z.array(QuizSchema).min(1).safeParse(parsed)
+      return result.success ? result.data : null
     } else {
-      const result = ImportQuizSchema.safeParse(parsed)
-      return result.success ? (result.data as unknown as Quiz) : null
+      const result = QuizSchema.safeParse(parsed)
+      return result.success ? result.data : null
     }
   } catch {
     return null
   }
-}
-
-/**
- * Vérifie la structure de base pour l'import
- * Utilise ImportQuizSchema qui vérifie déjà que id est une string non vide
- */
-export function hasRequiredQuizFields(value: unknown): boolean {
-  return ImportQuizSchema.safeParse(value).success
-}
-
-/**
- * Valide la structure de base d'un quiz (pour import rapide)
- * Utilise ImportQuizSchema qui vérifie déjà que id est une string non vide
- */
-export function isValidQuizStructure(value: unknown): boolean {
-  return ImportQuizSchema.safeParse(value).success
-}
-
-/**
- * Valide un tableau de quiz pour la structure de base
- */
-export function isValidQuizArrayStructure(value: unknown): boolean {
-  return z.array(ImportQuizSchema).safeParse(value).success
 }
 
 /**

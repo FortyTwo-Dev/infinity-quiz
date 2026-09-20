@@ -94,6 +94,23 @@ export function useQuizImportExport() {
     }
   }
 
+  /** Import a JSON document, detecting whether it holds one quiz or several. */
+  const importFromJson = (jsonData: string): boolean => {
+    clearMessages()
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(jsonData)
+    } catch {
+      state.value.error = 'Invalid JSON'
+      return false
+    }
+
+    return Array.isArray(parsed)
+      ? importMultipleQuizzes(jsonData)
+      : importSingleQuiz(jsonData)
+  }
+
   const importFromFile = async (event: Event): Promise<boolean> => {
     const input = event.target as HTMLInputElement
     const file = input.files?.[0]
@@ -103,26 +120,14 @@ export function useQuizImportExport() {
       return false
     }
 
-    state.value.isImporting = true
-    state.value.error = null
-    state.value.successMessage = null
-
     try {
       const text = await file.text()
       state.value.jsonData = text
-
-      // Try to detect if it's a single quiz or multiple
-      const parsed = JSON.parse(text)
-      if (Array.isArray(parsed)) {
-        return importMultipleQuizzes(text)
-      } else {
-        return importSingleQuiz(text)
-      }
+      return importFromJson(text)
     } catch (err) {
       state.value.error = 'File read error: ' + (err as Error).message
       return false
     } finally {
-      state.value.isImporting = false
       // Reset file input
       if (input) input.value = ''
     }
@@ -146,6 +151,7 @@ export function useQuizImportExport() {
     downloadAllQuizzes,
     importSingleQuiz,
     importMultipleQuizzes,
+    importFromJson,
     importFromFile,
     validateJSON,
     clearMessages,
