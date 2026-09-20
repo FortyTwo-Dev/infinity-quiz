@@ -1,21 +1,17 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { DBadge, DProgress } from '@/components/daisy-ui'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
 
 interface Props {
   score: number
   totalQuestions: number
+  percentage: number
   passed: boolean
   timeTaken?: number
   timeLimit?: number
 }
 
-const props = defineProps<Props>()
-
-const percentage = computed(() => {
-  return Math.round((props.score / props.totalQuestions) * 100)
-})
+defineProps<Props>()
 </script>
 
 <template>

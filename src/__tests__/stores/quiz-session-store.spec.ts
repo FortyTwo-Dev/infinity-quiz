@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
+import { useQuizHistoryStore } from '../../stores/quiz/quiz-history-store'
 import type { Quiz } from '../../types/quiz'
 import { setupTestPinia } from './setup'
 
@@ -955,6 +956,62 @@ describe('useQuizSessionStore', () => {
       sessionStore.completeQuiz()
       expect(sessionStore.isCompleted).toBe(true)
       expect(sessionStore.score).toBe(1)
+    })
+
+    it('completeQuiz should record a pass at the pass threshold (60%)', () => {
+      const quizStore = useQuizStore()
+      const historyStore = useQuizHistoryStore()
+      const sessionStore = useQuizSessionStore()
+
+      const quiz: Quiz = {
+        id: 'test-quiz',
+        title: 'Test Quiz',
+        description: 'Test Description',
+        questions: [
+          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q2', text: 'Q2', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q3', text: 'Q3', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q4', text: 'Q4', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q5', text: 'Q5', options: ['A', 'B'], correctAnswerIndex: 0 },
+        ],
+      }
+      quizStore.addQuiz(quiz)
+      sessionStore.selectQuiz('test-quiz')
+      sessionStore.verifiedQuestions = {} // bypass verification lock for the test
+      sessionStore.selectedAnswers = { q1: 0, q2: 0, q3: 0, q4: 1, q5: 1 } // 3/5 = 60%
+
+      sessionStore.completeQuiz()
+
+      expect(sessionStore.score).toBe(3)
+      expect(historyStore.results[0].passed).toBe(true)
+    })
+
+    it('completeQuiz should record a failure below the pass threshold', () => {
+      const quizStore = useQuizStore()
+      const historyStore = useQuizHistoryStore()
+      const sessionStore = useQuizSessionStore()
+
+      const quiz: Quiz = {
+        id: 'test-quiz',
+        title: 'Test Quiz',
+        description: 'Test Description',
+        questions: [
+          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q2', text: 'Q2', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q3', text: 'Q3', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q4', text: 'Q4', options: ['A', 'B'], correctAnswerIndex: 0 },
+          { id: 'q5', text: 'Q5', options: ['A', 'B'], correctAnswerIndex: 0 },
+        ],
+      }
+      quizStore.addQuiz(quiz)
+      sessionStore.selectQuiz('test-quiz')
+      sessionStore.verifiedQuestions = {}
+      sessionStore.selectedAnswers = { q1: 0, q2: 0, q3: 1, q4: 1, q5: 1 } // 2/5 = 40%
+
+      sessionStore.completeQuiz()
+
+      expect(sessionStore.score).toBe(2)
+      expect(historyStore.results[0].passed).toBe(false)
     })
 
     it('restartQuiz should reset session state', () => {

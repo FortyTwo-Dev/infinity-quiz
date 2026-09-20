@@ -3,16 +3,19 @@ import { ref } from 'vue'
 import {
   useFeedback,
   getFeedbackLevel,
-  getFeedback,
-  FEEDBACK_MESSAGES,
+  FEEDBACK_LABELS,
 } from '../../composables/useFeedback'
 
 describe('useFeedback', () => {
   describe('getFeedbackLevel', () => {
-    it('should return excellent for >= 80%', () => {
-      expect(getFeedbackLevel(100)).toBe('excellent')
+    it('should return perfect for 100%', () => {
+      expect(getFeedbackLevel(100)).toBe('perfect')
+    })
+
+    it('should return excellent for >= 80% and < 100%', () => {
       expect(getFeedbackLevel(80)).toBe('excellent')
       expect(getFeedbackLevel(85)).toBe('excellent')
+      expect(getFeedbackLevel(99)).toBe('excellent')
     })
 
     it('should return good for >= 60% and < 80%', () => {
@@ -34,61 +37,31 @@ describe('useFeedback', () => {
     })
   })
 
-  describe('getFeedback', () => {
-    it('should return excellent feedback for >= 80%', () => {
-      const feedback = getFeedback(80)
-      expect(feedback).toEqual(FEEDBACK_MESSAGES.excellent)
-    })
-
-    it('should return good feedback for >= 60% and < 80%', () => {
-      const feedback = getFeedback(60)
-      expect(feedback).toEqual(FEEDBACK_MESSAGES.good)
-    })
-
-    it('should return average feedback for >= 40% and < 60%', () => {
-      const feedback = getFeedback(40)
-      expect(feedback).toEqual(FEEDBACK_MESSAGES.average)
-    })
-
-    it('should return poor feedback for < 40%', () => {
-      const feedback = getFeedback(0)
-      expect(feedback).toEqual(FEEDBACK_MESSAGES.poor)
-    })
-  })
-
   describe('useFeedback with ref', () => {
-    it('should return excellent feedback when percentage is 100', () => {
+    it('should expose the perfect level and label for 100%', () => {
       const percentage = ref(100)
-      const { feedback, level } = useFeedback(percentage)
-      expect(level.value).toBe('excellent')
-      expect(feedback.value).toEqual(FEEDBACK_MESSAGES.excellent)
+      const { level, label } = useFeedback(percentage)
+      expect(level.value).toBe('perfect')
+      expect(label.value).toBe(FEEDBACK_LABELS.perfect)
     })
 
-    it('should return good feedback when percentage is 70', () => {
+    it('should expose the good level and label for 70%', () => {
       const percentage = ref(70)
-      const { feedback, level } = useFeedback(percentage)
+      const { level, label } = useFeedback(percentage)
       expect(level.value).toBe('good')
-      expect(feedback.value).toEqual(FEEDBACK_MESSAGES.good)
+      expect(label.value).toBe(FEEDBACK_LABELS.good)
     })
 
     it('should be reactive to percentage changes', () => {
       const percentage = ref(40)
-      const { level } = useFeedback(percentage)
+      const { level, label } = useFeedback(percentage)
 
       expect(level.value).toBe('average')
+      expect(label.value).toBe(FEEDBACK_LABELS.average)
+
       percentage.value = 70
       expect(level.value).toBe('good')
-    })
-
-    it.each([
-      [100, true], // excellent
-      [70, true], // good
-      [40, false], // average
-      [20, false], // poor
-    ])('isPositive should return %s for percentage %i', (percentage, expected) => {
-      const percentageRef = ref(percentage)
-      const { isPositive } = useFeedback(percentageRef)
-      expect(isPositive.value).toBe(expected)
+      expect(label.value).toBe(FEEDBACK_LABELS.good)
     })
   })
 })

@@ -15,26 +15,20 @@ export const COLORS = {
   background: '#fafafa',
 } as const
 
-export const FEEDBACK_THRESHOLDS = {
+/**
+ * Single source of truth for score thresholds (percentages).
+ * `perfect` and `excellent` drive feedback, `good` is also the pass threshold.
+ */
+export const SCORE_THRESHOLDS = {
+  perfect: 100,
   excellent: 80,
   good: 60,
   average: 40,
   poor: 0,
 } as const
 
-export const SCORE_GRADES = {
-  A_plus: 90,
-  A: 85,
-  A_minus: 80,
-  B_plus: 75,
-  B: 70,
-  B_minus: 65,
-  C_plus: 60,
-  C: 55,
-  C_minus: 50,
-  D_plus: 45,
-  D: 40,
-} as const
+/** A quiz is considered passed at or above `good` (60%). */
+export const PASS_THRESHOLD = SCORE_THRESHOLDS.good
 
 export const QUIZ_CONSTANTS = {
   defaultQuestionCount: 10,

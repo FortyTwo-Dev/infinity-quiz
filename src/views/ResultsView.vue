@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import { useResults } from '../composables/useResults'
+import type { FeedbackLevel } from '../composables/useFeedback'
 import { PhEye, PhEyeClosed } from '@phosphor-icons/vue'
 import { DButton } from '@/components/daisy-ui'
 import { QuizScoreCard, QuizReviewCard } from '@/components/quiz/card'
@@ -10,17 +11,25 @@ const {
   score,
   totalQuestions,
   percentage,
+  passed,
   formattedScore,
-  feedback,
+  level,
+  label,
   canReview,
   questionResults,
   restartQuiz,
   backToQuizList,
 } = useResults()
 
-const showReview = ref(false)
+const feedbackTextClasses: Record<FeedbackLevel, string> = {
+  perfect: 'text-success',
+  excellent: 'text-success',
+  good: 'text-success',
+  average: 'text-warning',
+  poor: 'text-error',
+}
 
-const passed = computed(() => percentage.value >= 60)
+const showReview = ref(false)
 
 function toggleReview() {
   showReview.value = !showReview.value
@@ -34,18 +43,17 @@ function toggleReview() {
     <div v-if="currentQuiz" class="bg-base-100 border border-base-200 p-8">
       <h2 class="text-base-content mb-2 text-xl font-semibold">{{ currentQuiz.title }}</h2>
 
-      <p
-        class="text-xl font-bold my-4"
-        :class="{
-          'text-success': feedback.class === 'excellent' || feedback.class === 'good',
-          'text-warning': feedback.class === 'average',
-          'text-error': feedback.class === 'poor',
-        }"
-      >
-        {{ feedback.text }}
+      <p class="text-xl font-bold my-4" :class="feedbackTextClasses[level]">
+        {{ label }}
       </p>
 
-      <QuizScoreCard :score="score" :total-questions="totalQuestions" :passed="passed" class="my-6">
+      <QuizScoreCard
+        :score="score"
+        :total-questions="totalQuestions"
+        :percentage="percentage"
+        :passed="passed"
+        class="my-6"
+      >
         <template #success-message>Félicitations !</template>
         <template #failure-message>Essayez encore</template>
       </QuizScoreCard>

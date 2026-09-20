@@ -1,25 +1,26 @@
 import { computed, type Ref, type ComputedRef, unref } from 'vue'
-import { FEEDBACK_THRESHOLDS } from '../constants'
+import { SCORE_THRESHOLDS } from '../constants'
 
-export type FeedbackLevel = keyof typeof FEEDBACK_THRESHOLDS
+export type FeedbackLevel = keyof typeof SCORE_THRESHOLDS
 
-export const FEEDBACK_MESSAGES: Record<FeedbackLevel, { text: string; class: string }> = {
-  excellent: { text: 'Parfait !', class: 'excellent' },
-  good: { text: 'Bien joué !', class: 'good' },
-  average: { text: 'Pas mal !', class: 'average' },
-  poor: { text: 'Continuez à pratiquer !', class: 'poor' },
+/**
+ * Display labels per feedback level. Single source of truth for feedback text;
+ * swap this dictionary for an i18n lookup later without touching the logic.
+ */
+export const FEEDBACK_LABELS: Record<FeedbackLevel, string> = {
+  perfect: 'Sans faute !',
+  excellent: 'Parfait !',
+  good: 'Bien joué !',
+  average: 'Pas mal !',
+  poor: 'Continuez à pratiquer !',
 }
 
 export function getFeedbackLevel(percentage: number): FeedbackLevel {
-  if (percentage >= FEEDBACK_THRESHOLDS.excellent) return 'excellent'
-  if (percentage >= FEEDBACK_THRESHOLDS.good) return 'good'
-  if (percentage >= FEEDBACK_THRESHOLDS.average) return 'average'
+  if (percentage >= SCORE_THRESHOLDS.perfect) return 'perfect'
+  if (percentage >= SCORE_THRESHOLDS.excellent) return 'excellent'
+  if (percentage >= SCORE_THRESHOLDS.good) return 'good'
+  if (percentage >= SCORE_THRESHOLDS.average) return 'average'
   return 'poor'
-}
-
-export function getFeedback(percentage: number): { text: string; class: string } {
-  const level = getFeedbackLevel(percentage)
-  return FEEDBACK_MESSAGES[level]
 }
 
 export function useFeedback(percentage: Ref<number> | ComputedRef<number>) {
@@ -28,17 +29,12 @@ export function useFeedback(percentage: Ref<number> | ComputedRef<number>) {
     return getFeedbackLevel(p)
   })
 
-  const feedback = computed(() => {
-    return FEEDBACK_MESSAGES[level.value]
-  })
-
-  const isPositive = computed(() => {
-    return level.value === 'excellent' || level.value === 'good'
+  const label = computed(() => {
+    return FEEDBACK_LABELS[level.value]
   })
 
   return {
     level,
-    feedback,
-    isPositive,
+    label,
   }
 }
