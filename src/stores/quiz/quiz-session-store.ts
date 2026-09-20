@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useQuizStore } from './quiz-store'
 import { useQuizHistoryStore } from './quiz-history-store'
+import { isPassed } from '../../composables/useScore'
 import { shuffle } from '../../utils/array-utils'
 import type { Quiz, QuestionResult } from '../../types/quiz'
 
@@ -377,7 +378,7 @@ export const useQuizSessionStore = defineStore(
       const historyStore = useQuizHistoryStore()
       const quiz = currentQuiz.value
       if (quiz) {
-        const passed = score.value >= quiz.questions.length * 0.7
+        const passed = isPassed(score.value, quiz.questions.length)
         historyStore.addResult(quiz.id, score.value, quiz.questions.length, passed)
       }
     }

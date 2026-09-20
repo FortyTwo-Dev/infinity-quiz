@@ -1,8 +1,42 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
+import { useQuizHistoryStore } from '../../stores/quiz/quiz-history-store'
 import type { Quiz } from '../../types/quiz'
 import { setupTestPinia } from './setup'
+
+function createFiveQuestionQuiz(): Quiz {
+  return {
+    id: 'test-quiz',
+    title: 'Test Quiz',
+    description: 'Test Description',
+    questions: Array.from({ length: 5 }, (_, index) => ({
+      id: `q${index + 1}`,
+      text: `Q${index + 1}`,
+      options: ['A', 'B'],
+      correctAnswerIndex: 0,
+    })),
+  }
+}
+
+/**
+ * Complete the shared five-question quiz with the given answers and reach the
+ * history result. Used to assert pass/fail recording around the threshold.
+ */
+function completeFiveQuestionQuiz(answers: Record<string, number>) {
+  const quizStore = useQuizStore()
+  const historyStore = useQuizHistoryStore()
+  const sessionStore = useQuizSessionStore()
+
+  quizStore.addQuiz(createFiveQuestionQuiz())
+  sessionStore.selectQuiz('test-quiz')
+  sessionStore.verifiedQuestions = {} // bypass verification lock for the test
+  sessionStore.selectedAnswers = answers
+
+  sessionStore.completeQuiz()
+
+  return { sessionStore, historyStore }
+}
 
 describe('useQuizSessionStore', () => {
   beforeEach(() => {
@@ -955,6 +989,34 @@ describe('useQuizSessionStore', () => {
       sessionStore.completeQuiz()
       expect(sessionStore.isCompleted).toBe(true)
       expect(sessionStore.score).toBe(1)
+    })
+
+    it('completeQuiz should record a pass at the pass threshold (60%)', () => {
+      // 3/5 = 60%
+      const { sessionStore, historyStore } = completeFiveQuestionQuiz({
+        q1: 0,
+        q2: 0,
+        q3: 0,
+        q4: 1,
+        q5: 1,
+      })
+
+      expect(sessionStore.score).toBe(3)
+      expect(historyStore.results[0].passed).toBe(true)
+    })
+
+    it('completeQuiz should record a failure below the pass threshold', () => {
+      // 2/5 = 40%
+      const { sessionStore, historyStore } = completeFiveQuestionQuiz({
+        q1: 0,
+        q2: 0,
+        q3: 1,
+        q4: 1,
+        q5: 1,
+      })
+
+      expect(sessionStore.score).toBe(2)
+      expect(historyStore.results[0].passed).toBe(false)
     })
 
     it('restartQuiz should reset session state', () => {

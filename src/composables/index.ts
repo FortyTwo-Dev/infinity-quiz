@@ -1,5 +1,6 @@
 export * from './useScore'
 export * from './useFeedback'
+export * from './useAttempt'
 export * from './useQuiz'
 export * from './useResults'
 export * from './useQuizList'

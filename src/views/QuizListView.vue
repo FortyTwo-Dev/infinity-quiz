@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuizList } from '../composables/useQuizList'
+import { getAttemptStatus, type AttemptStatus } from '../composables/useAttempt'
 import { useQuizHistoryStore } from '../stores'
 import { DButton } from '@/components/daisy-ui'
 import { QuizLaunchCard } from '@/components/quiz/card'
@@ -54,12 +55,8 @@ function showQuizInfo(quizId: string) {
   }
 }
 
-function getStatus(quizId: string): 'success' | 'neutral' | 'error' | 'warning' {
-  const result = historyStore.getLatestResultByQuizId(quizId)
-  if (!result) return 'neutral'
-  if (result.passed) return 'success'
-  if (result.score > 0) return 'warning'
-  return 'error'
+function getStatus(quizId: string): AttemptStatus {
+  return getAttemptStatus(historyStore.getLatestResultByQuizId(quizId))
 }
 
 function goToManagement() {
@@ -72,7 +69,7 @@ function goToManagement() {
     <LFlex as="header" align="center" justify="between" class="p-4">
       <div class="text-left">
         <h1 class="text-base-content mb-2 text-2xl font-bold">Infinity Quiz</h1>
-        <p class="text-base-content/70">Choisissez un quiz pour commencer</p>
+        <p class="text-base-content/70">Choose a quiz to get started</p>
       </div>
       <DButton
         variant="accent"
@@ -81,7 +78,7 @@ function goToManagement() {
         class="inline-flex items-center gap-2"
       >
         <PhGear :size="20" />
-        Gérer les quiz
+        Manage quizzes
       </DButton>
     </LFlex>
     <LGrid as="div" cols="1 md:2 lg:3" gap="4">

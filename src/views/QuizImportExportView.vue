@@ -36,9 +36,9 @@ const handleCopyToClipboard = (quizId: string | null) => {
   try {
     const jsonData = quizId ? exportSingleQuiz(quizId) || '' : exportAllQuizzes()
     navigator.clipboard.writeText(jsonData)
-    state.value.successMessage = 'Copié dans le presse-papier !'
+    state.value.successMessage = 'Copied to clipboard!'
   } catch {
-    state.value.error = 'Échec de la copie dans le presse-papier'
+    state.value.error = 'Failed to copy to clipboard'
   }
 }
 
@@ -58,10 +58,10 @@ const handleImportFromText = () => {
         importSingleQuiz(state.value.jsonData)
       }
     } catch {
-      state.value.error = 'JSON invalide'
+      state.value.error = 'Invalid JSON'
     }
   } else {
-    state.value.error = 'Format JSON invalide. Doit contenir id, title et questions.'
+    state.value.error = 'Invalid JSON format. Must contain id, title and questions.'
   }
 }
 
@@ -74,9 +74,9 @@ const handleClearText = () => {
 <template>
   <div class="max-w-7xl mx-auto p-4">
     <div class="mb-8">
-      <h1 class="text-base-content mb-2 text-3xl font-bold">Importer / Exporter des Quiz</h1>
+      <h1 class="text-base-content mb-2 text-3xl font-bold">Import / Export Quizzes</h1>
       <p class="text-base-content/70 m-0">
-        Partagez vos quiz avec d'autres utilisateurs ou importez des quiz existants
+        Share your quizzes with other users or import existing ones
       </p>
     </div>
 

@@ -48,7 +48,7 @@ const handleDelete = (e: Event) => {
       <DCardBody padding="lg" class="gap-3">
         <LFlex as="div" justify="center" align="start" gap="sm" fullWidth>
           <DBadge soft variant="primary" class="uppercase font-bold text-nowrap">
-            {{ quiz.category || 'Non catégorisé' }}
+            {{ quiz.category || 'Uncategorized' }}
           </DBadge>
           <span v-if="quiz.tags && quiz.tags.length > 0" class="text-neutral mt-0.5">|</span>
           <LFlex as="div" justify="start" align="center" gap="sm" fullWidth class="overflow-hidden">
@@ -66,7 +66,7 @@ const handleDelete = (e: Event) => {
         <DCardActions justify="between">
           <DButton type="button" size="md" variant="primary" soft @click="handleEdit">
             <PhPencil :size="16" />
-            Modifier
+            Edit
           </DButton>
           <LFlex as="div" justify="end" align="center" gap="sm">
             <DButton
@@ -74,7 +74,7 @@ const handleDelete = (e: Event) => {
               size="md"
               variant="neutral"
               @click="handleDuplicate"
-              title="Dupliquer"
+              title="Duplicate"
             >
               <PhCopy :size="16" />
             </DButton>
@@ -84,7 +84,7 @@ const handleDelete = (e: Event) => {
               variant="error"
               soft
               @click="handleDelete"
-              title="Supprimer"
+              title="Delete"
             >
               <PhTrash :size="16" />
             </DButton>

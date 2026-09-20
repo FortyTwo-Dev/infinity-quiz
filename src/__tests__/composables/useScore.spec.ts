@@ -1,5 +1,53 @@
 import { describe, it, expect } from 'vitest'
-import { useScore } from '../../composables/useScore'
+import { ref } from 'vue'
+import { useScore, getPercentage, isPassed } from '../../composables/useScore'
+
+describe('getPercentage', () => {
+  it('should return 0 when total is 0', () => {
+    expect(getPercentage(0, 0)).toBe(0)
+  })
+
+  it('should return 0 when score is 0', () => {
+    expect(getPercentage(0, 10)).toBe(0)
+  })
+
+  it('should return 50 when score is half of total', () => {
+    expect(getPercentage(5, 10)).toBe(50)
+  })
+
+  it('should return 100 when score equals total', () => {
+    expect(getPercentage(10, 10)).toBe(100)
+  })
+
+  it('should round the result', () => {
+    expect(getPercentage(1, 3)).toBe(33)
+    expect(getPercentage(2, 3)).toBe(67)
+  })
+})
+
+describe('isPassed', () => {
+  it('should return false when total is 0', () => {
+    expect(isPassed(0, 0)).toBe(false)
+  })
+
+  it('should return true at exactly the pass threshold', () => {
+    expect(isPassed(6, 10)).toBe(true)
+  })
+
+  it('should return false just below the pass threshold', () => {
+    expect(isPassed(5, 10)).toBe(false)
+  })
+
+  it('should use the exact ratio, not the rounded percentage', () => {
+    // 59.6% rounds to 60 but must not pass
+    expect(getPercentage(56, 94)).toBe(60)
+    expect(isPassed(56, 94)).toBe(false)
+  })
+
+  it('should return true when all answers are correct', () => {
+    expect(isPassed(10, 10)).toBe(true)
+  })
+})
 
 describe('useScore', () => {
   describe('percentage', () => {
@@ -8,24 +56,26 @@ describe('useScore', () => {
       expect(percentage.value).toBe(0)
     })
 
-    it('should return 0 when current is 0', () => {
-      const { percentage } = useScore(10, 0)
-      expect(percentage.value).toBe(0)
-    })
-
-    it('should return 50 when current is half of total', () => {
-      const { percentage } = useScore(10, 5)
-      expect(percentage.value).toBe(50)
-    })
-
-    it('should return 100 when current equals total', () => {
-      const { percentage } = useScore(10, 10)
-      expect(percentage.value).toBe(100)
-    })
-
     it('should return rounded value', () => {
       const { percentage } = useScore(3, 1)
       expect(percentage.value).toBe(33)
+    })
+
+    it('should be reactive to refs', () => {
+      const { percentage } = useScore(ref(10), ref(5))
+      expect(percentage.value).toBe(50)
+    })
+  })
+
+  describe('passed', () => {
+    it('should reflect the pass threshold', () => {
+      const { passed } = useScore(10, 6)
+      expect(passed.value).toBe(true)
+    })
+
+    it('should be false below the threshold', () => {
+      const { passed } = useScore(10, 5)
+      expect(passed.value).toBe(false)
     })
   })
 
@@ -38,48 +88,6 @@ describe('useScore', () => {
     it('should handle 0 total', () => {
       const { formattedScore } = useScore(0, 0)
       expect(formattedScore.value).toBe('0 / 0')
-    })
-  })
-
-  describe('letterGrade', () => {
-    it('should return A+ for 90-100%', () => {
-      const { letterGrade } = useScore(10, 10)
-      expect(letterGrade.value).toBe('A+')
-    })
-
-    it('should return A for 85-89%', () => {
-      const { letterGrade } = useScore(100, 85)
-      expect(letterGrade.value).toBe('A')
-    })
-
-    it('should return A- for 80-84%', () => {
-      const { letterGrade } = useScore(100, 80)
-      expect(letterGrade.value).toBe('A-')
-    })
-
-    it('should return B+ for 75-79%', () => {
-      const { letterGrade } = useScore(100, 75)
-      expect(letterGrade.value).toBe('B+')
-    })
-
-    it('should return B for 70-74%', () => {
-      const { letterGrade } = useScore(100, 70)
-      expect(letterGrade.value).toBe('B')
-    })
-
-    it('should return B- for 65-69%', () => {
-      const { letterGrade } = useScore(100, 65)
-      expect(letterGrade.value).toBe('B-')
-    })
-
-    it('should return C+ for 60-64%', () => {
-      const { letterGrade } = useScore(100, 60)
-      expect(letterGrade.value).toBe('C+')
-    })
-
-    it('should return F for below 40%', () => {
-      const { letterGrade } = useScore(100, 39)
-      expect(letterGrade.value).toBe('F')
     })
   })
 })

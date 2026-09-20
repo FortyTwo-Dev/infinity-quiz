@@ -48,19 +48,19 @@ const handleCopyToClipboard = () => {
     <DCardBody>
       <DCardTitle tag="h2" size="xl">
         <PhDownload :size="24" />
-        Exporter
+        Export
       </DCardTitle>
 
       <DCard>
         <DCardBody>
-          <DCardTitle tag="h3" size="lg">Sélectionner un quiz à exporter</DCardTitle>
+          <DCardTitle tag="h3" size="lg">Select a quiz to export</DCardTitle>
           <DLabel variant="select" text="Export" class="w-full">
             <DSelect
               v-model="selectedQuizId"
               :disabled="!hasQuizzes"
               class="w-full"
             >
-              <DSelectOption value="">Tous les quiz</DSelectOption>
+              <DSelectOption value="">All quizzes</DSelectOption>
               <DSelectOption v-for="quiz in quizzes" :key="quiz.id" :value="quiz.id">
                 {{ quiz.title }}
               </DSelectOption>
@@ -74,12 +74,12 @@ const handleCopyToClipboard = () => {
               :disabled="!selectedQuizId"
             >
               <PhDownload :size="18" />
-              Exporter Quiz Sélectionné
+              Export Selected Quiz
             </DButton>
 
             <DButton type="button" variant="primary" @click="handleExportAll">
               <PhDownload :size="18" />
-              Exporter Tous les Quiz
+              Export All Quizzes
             </DButton>
 
             <DButton
@@ -89,7 +89,7 @@ const handleCopyToClipboard = () => {
               :disabled="!selectedQuizId && !hasQuizzes"
             >
               <PhCopy :size="18" />
-              Copier dans le presse-papier
+              Copy to clipboard
             </DButton>
           </DCardActions>
         </DCardBody>
@@ -97,7 +97,7 @@ const handleCopyToClipboard = () => {
 
       <DCard v-if="selectedQuizId" class="">
         <DCardBody>
-          <DCardTitle tag="h3" size="lg">Aperçu</DCardTitle>
+          <DCardTitle tag="h3" size="lg">Preview</DCardTitle>
           <pre
             class="bg-base-200 font-mono text-md overflow-x-auto whitespace-pre-wrap wrap-break-word max-h-96 overflow-y-auto"
             >{{ getExportPreview }}</pre>

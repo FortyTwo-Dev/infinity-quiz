@@ -7,8 +7,11 @@ export function useResults() {
   const router = useRouter()
   const sessionStore = useQuizSessionStore()
 
-  const { percentage, formattedScore } = useScore(sessionStore.totalQuestions, sessionStore.score)
-  const { feedback } = useFeedback(percentage)
+  const { percentage, passed, formattedScore } = useScore(
+    sessionStore.totalQuestions,
+    sessionStore.score,
+  )
+  const { level, label } = useFeedback(percentage)
 
   function restartQuiz() {
     sessionStore.restartQuiz()
@@ -27,8 +30,10 @@ export function useResults() {
     score: sessionStore.score,
     totalQuestions: sessionStore.totalQuestions,
     percentage,
+    passed,
     formattedScore,
-    feedback,
+    level,
+    label,
     canReview: sessionStore.canReview,
     questionResults: sessionStore.getQuestionResults,
     restartQuiz,

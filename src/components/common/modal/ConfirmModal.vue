@@ -15,9 +15,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: 'Confirmer la suppression',
-  confirmText: 'Supprimer',
-  cancelText: 'Annuler',
+  title: 'Confirm deletion',
+  confirmText: 'Delete',
+  cancelText: 'Cancel',
   variant: 'error',
   persistent: false,
 })
@@ -98,14 +98,14 @@ onMounted(() => {
       </p>
 
       <p v-if="!props.message && props.itemName" class="py-4">
-        Êtes-vous sûr de vouloir supprimer "<strong>{{ props.itemName }}</strong>
-        " ?
-        <span class="text-sm text-base-content/70">Cette action ne peut pas être annulée.</span>
+        Are you sure you want to delete "<strong>{{ props.itemName }}</strong
+        >"?
+        <span class="text-sm text-base-content/70">This action cannot be undone.</span>
       </p>
 
       <p v-if="!props.message && !props.itemName" class="py-4">
-        Êtes-vous sûr de vouloir supprimer cet élément ?
-        <span class="text-sm text-base-content/70">Cette action ne peut pas être annulée.</span>
+        Are you sure you want to delete this item?
+        <span class="text-sm text-base-content/70">This action cannot be undone.</span>
       </p>
 
       <DModalActions>

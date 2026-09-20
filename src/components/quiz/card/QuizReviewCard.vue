@@ -23,7 +23,7 @@ const getStatusVariant = () => {
 }
 
 const getStatusLabel = () => {
-  if (isSkipped) return 'Sauté'
+  if (isSkipped) return 'Skipped'
   if (isCorrect) return 'Correct'
   return 'Incorrect'
 }
@@ -108,7 +108,7 @@ const isOptionCorrect = (optionIndex: number) => {
       >
         <PhCheckCircle :size="16" weight="fill" />
         <span>
-          La bonne réponse était :
+          The correct answer was:
           <strong>{{ question.options[question.correctAnswerIndex] }}</strong>
         </span>
       </div>

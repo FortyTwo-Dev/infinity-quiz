@@ -13,9 +13,9 @@ const handleGoBack = () => {
     <div class="text-center">
       <h1 class="text-4xl font-bold text-warning mb-4">Under Construction</h1>
       <p class="text-lg text-base-content/70 mb-8">
-        Le formulaire de création/modification de quiz est en cours de refactorisation.
+        The quiz creation/edit form is being refactored.
       </p>
-      <button type="button" @click="handleGoBack" class="btn btn-primary">Retour à la gestion des quiz</button>
+      <button type="button" @click="handleGoBack" class="btn btn-primary">Back to quiz management</button>
     </div>
   </div>
 </template>
