@@ -17,8 +17,8 @@ export const useQuizSessionStore = defineStore(
     const currentQuizId = ref<string | null>(null)
     const currentQuestionIndex = ref<number>(0)
     const selectedAnswers = ref<Record<string, number | null>>({})
-    const skippedQuestions = ref<Set<string>>(new Set())
-    const verifiedQuestions = ref<Set<string>>(new Set())
+    const skippedQuestions = ref<Record<string, true>>({})
+    const verifiedQuestions = ref<Record<string, true>>({})
     const score = ref<number>(0)
     const isCompleted = ref<boolean>(false)
     const shuffledQuiz = ref<Quiz | null>(null)
@@ -69,7 +69,7 @@ export const useQuizSessionStore = defineStore(
     })
 
     const skippedCount = computed(() => {
-      return skippedQuestions.value.size
+      return Object.keys(skippedQuestions.value).length
     })
 
     const canSkip = computed(() => {
@@ -99,7 +99,7 @@ export const useQuizSessionStore = defineStore(
     const isCurrentQuestionVerified = computed(() => {
       const question = currentQuestion.value
       if (!question) return false
-      return verifiedQuestions.value.has(question.id)
+      return verifiedQuestions.value[question.id] === true
     })
 
     const canSkipCurrentQuestion = computed(() => {
@@ -111,7 +111,7 @@ export const useQuizSessionStore = defineStore(
       if (!quiz) return [] as QuestionResult[]
       return quiz.questions.map((question): QuestionResult => {
         const userAnswer = selectedAnswers.value[question.id] ?? null
-        const isSkipped = skippedQuestions.value.has(question.id)
+        const isSkipped = skippedQuestions.value[question.id] === true
         return {
           question,
           userAnswer,
@@ -170,11 +170,11 @@ export const useQuizSessionStore = defineStore(
       timeLeft.value = null
     }
 
-    const startTimer = (duration: number) => {
+    const runTimer = (initialDuration: number | null) => {
       clearTimer()
-      timeLeft.value = duration
-      onExpiryCallback.value = handleTimerExpiry
-      timerInterval.value = setInterval(() => {
+      timeLeft.value = initialDuration
+
+      const interval = setInterval(() => {
         if (timeLeft.value === null) return
         timeLeft.value--
         if (timeLeft.value <= 0) {
@@ -186,6 +186,22 @@ export const useQuizSessionStore = defineStore(
           }
         }
       }, 1000)
+
+      onExpiryCallback.value = handleTimerExpiry
+      timerInterval.value = interval
+    }
+
+    const startTimer = (duration: number) => {
+      runTimer(duration)
+    }
+
+    /**
+     * Resume a persisted timer without resetting the remaining time.
+     * No-op when there is no time left or the quiz is already completed.
+     */
+    const resumeTimer = () => {
+      if (isCompleted.value || timeLeft.value === null || timeLeft.value <= 0) return
+      runTimer(timeLeft.value)
     }
 
     // Actions
@@ -198,8 +214,8 @@ export const useQuizSessionStore = defineStore(
       currentQuizId.value = quizId
       currentQuestionIndex.value = 0
       selectedAnswers.value = {}
-      skippedQuestions.value = new Set()
-      verifiedQuestions.value = new Set()
+      skippedQuestions.value = {}
+      verifiedQuestions.value = {}
       score.value = 0
       isCompleted.value = false
       quizSeed.value = seed ?? null
@@ -225,14 +241,12 @@ export const useQuizSessionStore = defineStore(
       if (!question) return
 
       // Prevent changing answer if question is already verified
-      if (verifiedQuestions.value.has(question.id)) {
+      if (verifiedQuestions.value[question.id] === true) {
         return
       }
 
       selectedAnswers.value[question.id] = answerIndex
-      const newSet = new Set(skippedQuestions.value)
-      newSet.delete(question.id)
-      skippedQuestions.value = newSet
+      delete skippedQuestions.value[question.id]
     }
 
     const skipQuestion = (): boolean => {
@@ -241,9 +255,7 @@ export const useQuizSessionStore = defineStore(
       if (!canSkipCurrentQuestion.value) return false
 
       selectedAnswers.value[question.id] = null
-      const newSet = new Set(skippedQuestions.value)
-      newSet.add(question.id)
-      skippedQuestions.value = newSet
+      skippedQuestions.value[question.id] = true
 
       if (hasNextQuestion.value) {
         nextQuestion()
@@ -376,8 +388,8 @@ export const useQuizSessionStore = defineStore(
       clearTimer()
       currentQuestionIndex.value = 0
       selectedAnswers.value = {}
-      skippedQuestions.value = new Set()
-      verifiedQuestions.value = new Set()
+      skippedQuestions.value = {}
+      verifiedQuestions.value = {}
       score.value = 0
       isCompleted.value = false
 
@@ -406,8 +418,8 @@ export const useQuizSessionStore = defineStore(
       currentQuizId.value = null
       currentQuestionIndex.value = 0
       selectedAnswers.value = {}
-      skippedQuestions.value = new Set()
-      verifiedQuestions.value = new Set()
+      skippedQuestions.value = {}
+      verifiedQuestions.value = {}
       score.value = 0
       isCompleted.value = false
       shuffledQuiz.value = null
@@ -458,6 +470,7 @@ export const useQuizSessionStore = defineStore(
       // Actions
       clearTimer,
       startTimer,
+      resumeTimer,
       selectQuiz,
       selectAnswer,
       skipQuestion,
@@ -481,10 +494,12 @@ export const useQuizSessionStore = defineStore(
         'currentQuestionIndex',
         'selectedAnswers',
         'skippedQuestions',
+        'verifiedQuestions',
         'score',
         'isCompleted',
         'shuffledQuiz',
         'quizSeed',
+        'timeLeft',
       ],
     },
   },

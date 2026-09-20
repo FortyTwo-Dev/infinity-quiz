@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
 import type { Quiz } from '../../types/quiz'
+import { setupTestPinia } from './setup'
 
 describe('Quiz Timer Integration', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    setActivePinia(createPinia())
+    setupTestPinia()
   })
 
   afterEach(() => {
