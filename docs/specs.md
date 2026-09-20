@@ -28,10 +28,12 @@
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| [Vitest](https://vitest.dev/) | ^4.1.10 | Vite-native test framework |
+| [Vitest](https://vitest.dev/) | ^4.1.10 | Vite-native test framework, run on the Bun runtime (`bun run --bun vitest`) |
 | [@vue/test-utils](https://test-utils.vuejs.org/) | ^2.4.11 | Vue-specific testing utilities |
 | [jsdom](https://github.com/jsdom/jsdom) | ^29.1.1 | DOM implementation for Node.js |
 | [@types/jsdom](https://www.npmjs.com/package/@types/jsdom) | ^28.0.3 | TypeScript types for jsdom |
+
+> Requires Bun >= 1.4. Bun's test runner cannot compile `.vue` single-file components, so Vitest is used as the test runner on top of the Bun runtime. `zod` is inlined in `vitest.config.ts` to work around a Bun `__esModule` interop bug (oven-sh/bun#3393).
 
 ## Linting & Formatting
 
@@ -85,11 +87,12 @@
 |------|---------|---------|
 | [@phosphor-icons/vue](https://github.com/phosphor-icons/vue) | ^2.2.1 | Flexible icon library for Vue 3 |
 
-## Node.js Compatibility
+## Runtime Compatibility
 
 | Tool | Version | Purpose |
 |------|---------|---------|
 | Node.js | ^22.18.0 \| >=24.12.0 | JavaScript runtime (as defined in package.json engines) |
+| Bun | >=1.4.0 | JavaScript runtime and package manager; required to run the test suite |
 
 ---
 

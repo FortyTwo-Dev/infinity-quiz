@@ -25,7 +25,7 @@ Note: Some commands cannot be executed in sandbox environment. Always use the co
 
 ```bash
 # Full verification before push (run locally, not in sandbox)
-bunx --bun oxlint . --fix && bunx --bun eslint . --fix --cache && bunx --bun vue-tsc --build && bun test --coverage
+bunx --bun oxlint . --fix && bunx --bun eslint . --fix --cache && bun run type-check && bun test:coverage
 ```
 
 ---

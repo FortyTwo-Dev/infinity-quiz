@@ -132,7 +132,7 @@ describe('useQuizStore', () => {
 
 Run tests with coverage:
 ```bash
-bun test --coverage
+bun test:coverage
 ```
 
 ---

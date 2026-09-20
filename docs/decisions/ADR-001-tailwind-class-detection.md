@@ -287,7 +287,7 @@ The project already has `@source inline()` in `main.css`. **Expand it to cover a
 
 ### Phase 3: Verify
 1. Run `bunx --bun vue-tsc --build` (TypeScript check)
-2. Run `bun test --coverage` (Tests still pass)
+2. Run `bun test:coverage` (Tests still pass)
 3. Run `bun run build` and verify generated CSS contains daisyUI classes
 4. Manual test: Verify UI renders correctly in production mode
 
