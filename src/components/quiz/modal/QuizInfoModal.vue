@@ -2,22 +2,18 @@
 import { ref, computed } from 'vue'
 import { DModal, DModalBox, DModalActions, DModalBackdrop } from '@/components/daisy-ui/modal'
 import { DBadge } from '@/components/daisy-ui'
-
-type StatusColor = 'success' | 'neutral' | 'error' | 'warning'
-
-const STATUS_LABELS: Record<StatusColor, string> = {
-  success: 'Completed',
-  neutral: 'Not attempted',
-  error: 'Failed',
-  warning: 'Partial',
-}
+import {
+  ATTEMPT_STATUS_COLORS,
+  ATTEMPT_STATUS_LABELS,
+  type AttemptStatus,
+} from '@/composables/useAttempt'
 
 interface Props {
   title: string
   description: string
   primaryTag?: string
   tags?: string[]
-  status?: StatusColor
+  status?: AttemptStatus
   questionCount?: number
   timeLimit?: number
   hasIndividualQuestionTimeLimits?: boolean
@@ -30,7 +26,9 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const statusLabel = computed(() => (props.status ? STATUS_LABELS[props.status] : ''))
+const statusLabel = computed(() => (props.status ? ATTEMPT_STATUS_LABELS[props.status] : ''))
+
+const statusColor = computed(() => (props.status ? ATTEMPT_STATUS_COLORS[props.status] : 'neutral'))
 
 const modal = ref<InstanceType<typeof DModal> | null>(null)
 
@@ -118,7 +116,7 @@ defineExpose({
         <!-- Status -->
         <section v-if="props.status">
           <h4 class="text-sm font-medium text-base-content mb-2">Quiz Status</h4>
-          <span class="badge" :class="`badge-${props.status}`">
+          <span class="badge" :class="`badge-${statusColor}`">
             {{ statusLabel }}
           </span>
         </section>

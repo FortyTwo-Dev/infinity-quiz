@@ -1,13 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-
-interface QuizResult {
-  quizId: string
-  score: number
-  totalQuestions: number
-  date: string
-  passed: boolean
-}
+import type { QuizResult } from '../../types/quiz'
 
 export const useQuizHistoryStore = defineStore(
   'quizHistory',

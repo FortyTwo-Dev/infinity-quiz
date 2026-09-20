@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuizList } from '../composables/useQuizList'
+import { getAttemptStatus, type AttemptStatus } from '../composables/useAttempt'
 import { useQuizHistoryStore } from '../stores'
 import { DButton } from '@/components/daisy-ui'
 import { QuizLaunchCard } from '@/components/quiz/card'
@@ -54,12 +55,8 @@ function showQuizInfo(quizId: string) {
   }
 }
 
-function getStatus(quizId: string): 'success' | 'neutral' | 'error' | 'warning' {
-  const result = historyStore.getLatestResultByQuizId(quizId)
-  if (!result) return 'neutral'
-  if (result.passed) return 'success'
-  if (result.score > 0) return 'warning'
-  return 'error'
+function getStatus(quizId: string): AttemptStatus {
+  return getAttemptStatus(historyStore.getLatestResultByQuizId(quizId))
 }
 
 function goToManagement() {

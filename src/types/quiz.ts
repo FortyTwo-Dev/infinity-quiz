@@ -30,6 +30,14 @@ export interface QuestionResult {
   isSkipped: boolean
 }
 
+export interface QuizResult {
+  quizId: string
+  score: number
+  totalQuestions: number
+  date: string
+  passed: boolean
+}
+
 export interface QuizState {
   currentQuizId: string | null
   currentQuestionIndex: number
