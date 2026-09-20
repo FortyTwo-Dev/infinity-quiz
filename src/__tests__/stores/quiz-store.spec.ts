@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
 import type { Quiz, Question } from '../../types/quiz'
+import { setupTestPinia } from './setup'
 
 describe('useQuizStore', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    setupTestPinia()
   })
+
 
   describe('state', () => {
     it('should initialize with empty quizzes array', () => {

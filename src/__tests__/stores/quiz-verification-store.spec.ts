@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 import { useQuizVerificationStore } from '../../stores/quiz/quiz-verification-store'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import type { Quiz, Question } from '../../types/quiz'
+import { setupTestPinia } from './setup'
 
 // Helper to create a test quiz
 function createTestQuiz(questions: Question[] = []): Quiz {
@@ -26,7 +26,7 @@ function createTestQuiz(questions: Question[] = []): Quiz {
 
 describe('useQuizVerificationStore', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    setupTestPinia()
   })
 
   describe('state', () => {
@@ -219,7 +219,7 @@ describe('useQuizVerificationStore', () => {
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          verifiedQuestions: new Set(),
+          verifiedQuestions: {},
           shuffledQuiz: createTestQuiz(),
         })
 
@@ -237,7 +237,7 @@ describe('useQuizVerificationStore', () => {
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          verifiedQuestions: new Set(['q1']),
+          verifiedQuestions: { q1: true },
           shuffledQuiz: quiz,
         })
 
@@ -253,8 +253,8 @@ describe('useQuizVerificationStore', () => {
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          skippedQuestions: new Set(['q1', 'q2']),
-          verifiedQuestions: new Set(),
+          skippedQuestions: { q1: true, q2: true },
+          verifiedQuestions: {},
           shuffledQuiz: {
             ...createTestQuiz([
               { id: 'q1', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
@@ -277,8 +277,8 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           maxSkips: 2,
-          skippedQuestions: new Set(),
-          verifiedQuestions: new Set(['q1']),
+          skippedQuestions: {},
+          verifiedQuestions: { q1: true },
           shuffledQuiz: createTestQuiz([
             { id: 'q1', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
           ]),
@@ -295,8 +295,8 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           maxSkips: 2,
-          skippedQuestions: new Set(),
-          verifiedQuestions: new Set(),
+          skippedQuestions: {},
+          verifiedQuestions: {},
           shuffledQuiz: createTestQuiz([
             { id: 'q1', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
           ]),
@@ -356,7 +356,7 @@ describe('useQuizVerificationStore', () => {
         expect(result).toBe(true)
         expect(verificationStore.isAnswerVerified).toBe(true)
         expect(verificationStore.verifiedAnswerCorrect).toBe(true)
-        expect(sessionStore.$state.verifiedQuestions?.has('test-question')).toBe(true)
+        expect(sessionStore.$state.verifiedQuestions['test-question'] === true).toBe(true)
       })
 
       it('should set isAnswerVerified to true and verifiedAnswerCorrect to false when answer is incorrect', () => {
@@ -461,7 +461,7 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           selectedAnswers: { 'test-question': 1 },
-          verifiedQuestions: new Set(['test-question']),
+          verifiedQuestions: { 'test-question': true },
           shuffledQuiz: createTestQuiz([
             { id: 'test-question', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
           ]),
@@ -481,7 +481,7 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           selectedAnswers: { 'test-question': 0 },
-          verifiedQuestions: new Set(['test-question']),
+          verifiedQuestions: { 'test-question': true },
           shuffledQuiz: createTestQuiz([
             { id: 'test-question', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
           ]),

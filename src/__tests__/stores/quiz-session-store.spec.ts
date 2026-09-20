@@ -1,14 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 import { useQuizSessionStore } from '../../stores/quiz/quiz-session-store'
 import { useQuizStore } from '../../stores/quiz/quiz-store'
 import type { Quiz } from '../../types/quiz'
+import { setupTestPinia } from './setup'
 
 describe('useQuizSessionStore', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    setupTestPinia()
   })
-
   describe('state', () => {
     it('should initialize with null currentQuizId', () => {
       const store = useQuizSessionStore()
@@ -170,7 +169,7 @@ describe('useQuizSessionStore', () => {
 
     it('skippedCount should return correct count when questions skipped', () => {
       const store = useQuizSessionStore()
-      store.skippedQuestions = new Set(['q1', 'q2'])
+      store.skippedQuestions = { q1: true, q2: true }
       expect(store.skippedCount).toBe(2)
     })
 
@@ -202,7 +201,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.skippedQuestions.add('q1')
+      sessionStore.skippedQuestions['q1'] = true
       expect(sessionStore.canSkip).toBe(true)
     })
 
@@ -222,7 +221,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.skippedQuestions.add('q1')
+      sessionStore.skippedQuestions['q1'] = true
       expect(sessionStore.canSkip).toBe(false)
     })
 
@@ -336,7 +335,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.verifiedQuestions.add('q1')
+      sessionStore.verifiedQuestions['q1'] = true
       expect(sessionStore.isCurrentQuestionVerified).toBe(true)
     })
 
@@ -372,7 +371,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.verifiedQuestions.add('q1')
+      sessionStore.verifiedQuestions['q1'] = true
       expect(sessionStore.canSkipCurrentQuestion).toBe(false)
     })
 
@@ -474,7 +473,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.skippedQuestions.add('q1')
+      sessionStore.skippedQuestions['q1'] = true
       expect(sessionStore.remainingSkips).toBe(2)
     })
 
@@ -650,7 +649,7 @@ describe('useQuizSessionStore', () => {
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
       sessionStore.selectAnswer(0)
-      sessionStore.verifiedQuestions.add('q1')
+      sessionStore.verifiedQuestions['q1'] = true
       sessionStore.selectAnswer(1)
       expect(sessionStore.getAnswerForQuestion('q1')).toBe(0)
     })
@@ -667,9 +666,9 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      sessionStore.skippedQuestions.add('q1')
+      sessionStore.skippedQuestions['q1'] = true
       sessionStore.selectAnswer(0)
-      expect(sessionStore.skippedQuestions.has('q1')).toBe(false)
+      expect(sessionStore.skippedQuestions['q1'] === true).toBe(false)
     })
 
     it('calculateScore should set score to 0 when no answers', () => {
@@ -823,11 +822,11 @@ describe('useQuizSessionStore', () => {
       sessionStore.selectAnswer(0)
 
       expect(sessionStore.currentQuestionIndex).toBe(0)
-      expect(sessionStore.skippedQuestions.has('q1')).toBe(false)
+      expect(sessionStore.skippedQuestions['q1'] === true).toBe(false)
       const result = sessionStore.skipQuestion()
       expect(result).toBe(false)
       expect(sessionStore.currentQuestionIndex).toBe(1)
-      expect(sessionStore.skippedQuestions.has('q1')).toBe(true)
+      expect(sessionStore.skippedQuestions['q1'] === true).toBe(true)
       expect(sessionStore.getAnswerForQuestion('q1')).toBeNull()
     })
 
@@ -848,7 +847,7 @@ describe('useQuizSessionStore', () => {
       const result = sessionStore.skipQuestion()
       expect(result).toBe(true)
       expect(sessionStore.isCompleted).toBe(true)
-      expect(sessionStore.skippedQuestions.has('q1')).toBe(true)
+      expect(sessionStore.skippedQuestions['q1'] === true).toBe(true)
     })
 
     it('goToQuestion should not change index when out of bounds', () => {
