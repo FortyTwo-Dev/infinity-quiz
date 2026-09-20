@@ -349,7 +349,7 @@ describe('useQuizStore', () => {
         id: 'imported-quiz',
         title: 'Imported Quiz',
         description: 'Imported Description',
-        questions: [],
+        questions: [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }],
       })
 
       const success = store.importQuiz(jsonData)
@@ -382,18 +382,19 @@ describe('useQuizStore', () => {
 
     it('importQuizzes should add multiple quizzes from JSON array', () => {
       const store = useQuizStore()
+      const questions = [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }]
       const jsonData = JSON.stringify([
         {
           id: 'quiz-1',
           title: 'Quiz 1',
           description: 'Description 1',
-          questions: [],
+          questions,
         },
         {
           id: 'quiz-2',
           title: 'Quiz 2',
           description: 'Description 2',
-          questions: [],
+          questions,
         },
       ])
 
