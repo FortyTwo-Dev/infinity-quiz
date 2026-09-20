@@ -5,6 +5,39 @@ import { useQuizHistoryStore } from '../../stores/quiz/quiz-history-store'
 import type { Quiz } from '../../types/quiz'
 import { setupTestPinia } from './setup'
 
+function createFiveQuestionQuiz(): Quiz {
+  return {
+    id: 'test-quiz',
+    title: 'Test Quiz',
+    description: 'Test Description',
+    questions: Array.from({ length: 5 }, (_, index) => ({
+      id: `q${index + 1}`,
+      text: `Q${index + 1}`,
+      options: ['A', 'B'],
+      correctAnswerIndex: 0,
+    })),
+  }
+}
+
+/**
+ * Complete the shared five-question quiz with the given answers and reach the
+ * history result. Used to assert pass/fail recording around the threshold.
+ */
+function completeFiveQuestionQuiz(answers: Record<string, number>) {
+  const quizStore = useQuizStore()
+  const historyStore = useQuizHistoryStore()
+  const sessionStore = useQuizSessionStore()
+
+  quizStore.addQuiz(createFiveQuestionQuiz())
+  sessionStore.selectQuiz('test-quiz')
+  sessionStore.verifiedQuestions = {} // bypass verification lock for the test
+  sessionStore.selectedAnswers = answers
+
+  sessionStore.completeQuiz()
+
+  return { sessionStore, historyStore }
+}
+
 describe('useQuizSessionStore', () => {
   beforeEach(() => {
     setupTestPinia()
@@ -959,56 +992,28 @@ describe('useQuizSessionStore', () => {
     })
 
     it('completeQuiz should record a pass at the pass threshold (60%)', () => {
-      const quizStore = useQuizStore()
-      const historyStore = useQuizHistoryStore()
-      const sessionStore = useQuizSessionStore()
-
-      const quiz: Quiz = {
-        id: 'test-quiz',
-        title: 'Test Quiz',
-        description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q2', text: 'Q2', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q3', text: 'Q3', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q4', text: 'Q4', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q5', text: 'Q5', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ],
-      }
-      quizStore.addQuiz(quiz)
-      sessionStore.selectQuiz('test-quiz')
-      sessionStore.verifiedQuestions = {} // bypass verification lock for the test
-      sessionStore.selectedAnswers = { q1: 0, q2: 0, q3: 0, q4: 1, q5: 1 } // 3/5 = 60%
-
-      sessionStore.completeQuiz()
+      // 3/5 = 60%
+      const { sessionStore, historyStore } = completeFiveQuestionQuiz({
+        q1: 0,
+        q2: 0,
+        q3: 0,
+        q4: 1,
+        q5: 1,
+      })
 
       expect(sessionStore.score).toBe(3)
       expect(historyStore.results[0].passed).toBe(true)
     })
 
     it('completeQuiz should record a failure below the pass threshold', () => {
-      const quizStore = useQuizStore()
-      const historyStore = useQuizHistoryStore()
-      const sessionStore = useQuizSessionStore()
-
-      const quiz: Quiz = {
-        id: 'test-quiz',
-        title: 'Test Quiz',
-        description: 'Test Description',
-        questions: [
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q2', text: 'Q2', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q3', text: 'Q3', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q4', text: 'Q4', options: ['A', 'B'], correctAnswerIndex: 0 },
-          { id: 'q5', text: 'Q5', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ],
-      }
-      quizStore.addQuiz(quiz)
-      sessionStore.selectQuiz('test-quiz')
-      sessionStore.verifiedQuestions = {}
-      sessionStore.selectedAnswers = { q1: 0, q2: 0, q3: 1, q4: 1, q5: 1 } // 2/5 = 40%
-
-      sessionStore.completeQuiz()
+      // 2/5 = 40%
+      const { sessionStore, historyStore } = completeFiveQuestionQuiz({
+        q1: 0,
+        q2: 0,
+        q3: 1,
+        q4: 1,
+        q5: 1,
+      })
 
       expect(sessionStore.score).toBe(2)
       expect(historyStore.results[0].passed).toBe(false)
