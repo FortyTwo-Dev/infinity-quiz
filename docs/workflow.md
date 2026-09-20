@@ -78,7 +78,7 @@ git commit -m "type(scope): message"
 
 A PR must meet these requirements:
 - Feature/fix is complete and tested locally
-- All tests pass (`bun test --coverage`)
+- All tests pass (`bun test:coverage`)
 - Code is clean (lint, type-check, formatting)
 - Code is commented if necessary
 - Never with "WIP" or broken code
@@ -191,7 +191,7 @@ git push origin develop
 
 Run before pushing:
 ```bash
-bunx --bun oxlint . --fix && bunx --bun eslint . --fix --cache && bunx --bun vue-tsc --build && bun test --coverage
+bunx --bun oxlint . --fix && bunx --bun eslint . --fix --cache && bun run type-check && bun test:coverage
 ```
 
 ### Rules

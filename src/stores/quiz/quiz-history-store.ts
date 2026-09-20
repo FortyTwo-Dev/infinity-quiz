@@ -17,7 +17,7 @@ export const useQuizHistoryStore = defineStore(
       const quizResults = results.value
         .filter((r) => r.quizId === quizId)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      return quizResults.length > 0 ? quizResults[0] : null
+      return quizResults[0] ?? null
     })
 
     // Actions

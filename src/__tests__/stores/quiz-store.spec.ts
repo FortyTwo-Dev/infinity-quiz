@@ -192,21 +192,6 @@ describe('useQuizStore', () => {
   })
 
   describe('actions', () => {
-    it('initializeSampleQuizzes should populate quizzes when empty', () => {
-      const store = useQuizStore()
-      expect(store.quizzes).toHaveLength(0)
-      store.initializeSampleQuizzes()
-      expect(store.quizzes.length).toBeGreaterThan(0)
-    })
-
-    it('initializeSampleQuizzes should not duplicate quizzes', () => {
-      const store = useQuizStore()
-      store.initializeSampleQuizzes()
-      const initialCount = store.quizzes.length
-      store.initializeSampleQuizzes()
-      expect(store.quizzes).toHaveLength(initialCount)
-    })
-
     it('addQuiz should add a new quiz', () => {
       const store = useQuizStore()
       const newQuiz: Quiz = {

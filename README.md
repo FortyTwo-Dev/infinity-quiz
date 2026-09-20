@@ -68,12 +68,17 @@ bun preview
 ### Testing
 
 ```sh
-# Run unit tests with Vitest
+# Run unit tests (Vitest on the Bun runtime)
 bun test:unit
 
-# Run tests in watch mode
+# Run tests once with coverage
+bun test:coverage
+
+# Watch mode
 bun test:unit --watch
 ```
+
+> Tests require Bun >= 1.4. Vitest runs on the Bun runtime via `bun run --bun vitest`.
 
 ### Linting & Formatting
 
@@ -107,7 +112,7 @@ src/
 │   ├── useScore.ts           # Score calculation utilities
 │   └── useTimer.ts           # Timer functionality
 ├── constants/                # Application constants
-├── data/                     # Sample data and fixtures
+
 ├── __tests__/                # Unit tests
 │   ├── composables/          # Composable tests
 │   ├── stores/               # Store tests

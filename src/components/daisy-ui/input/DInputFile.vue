@@ -63,7 +63,7 @@ function handleChange(event: Event) {
   if (props.multiple) {
     emit('update:modelValue', Array.from(files))
   } else {
-    emit('update:modelValue', files[0])
+    emit('update:modelValue', files[0] ?? null)
   }
 
   emit('change', event)

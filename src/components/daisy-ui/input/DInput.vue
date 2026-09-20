@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { InputColor, InputSize } from '../types'
+import type { ColorVariant, Size } from '../types'
 
 interface Props {
   modelValue?: string | number
   type?: string
-  color?: InputColor
-  size?: InputSize
+  color?: ColorVariant
+  size?: Size
   ghost?: boolean
 }
 
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
   ghost: false,
 })
 
-const colorClasses: Record<InputColor, string> = {
+const colorClasses: Record<ColorVariant, string> = {
   primary: 'input-primary',
   secondary: 'input-secondary',
   accent: 'input-accent',
@@ -29,7 +29,7 @@ const colorClasses: Record<InputColor, string> = {
   ghost: 'input-ghost',
 }
 
-const sizeClasses: Record<InputSize, string> = {
+const sizeClasses: Record<Size, string> = {
   xs: 'input-xs',
   sm: 'input-sm',
   md: 'input-md',

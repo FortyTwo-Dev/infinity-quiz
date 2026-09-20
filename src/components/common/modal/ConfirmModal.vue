@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, type ComponentRef } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { DModal, DModalBox, DModalActions, DModalBackdrop, DButton } from '@/components/daisy-ui'
 import type { ButtonVariant } from '@/components/daisy-ui/types'
 
@@ -30,7 +30,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const dialog = ref<ComponentRef<typeof DModal> | null>(null)
+const dialog = ref<InstanceType<typeof DModal> | null>(null)
 
 function syncDialogState() {
   if (props.modelValue && dialog.value) {
