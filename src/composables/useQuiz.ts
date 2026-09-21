@@ -14,7 +14,7 @@ export function useQuiz() {
   const router = useRouter()
   const sessionStore = useQuizSessionStore()
   const verificationStore = useQuizVerificationStore()
-  const { seed } = useSeededRandom()
+  const { seed, ensureSeed } = useSeededRandom()
 
   const quizId = computed(() => route.params.quizId as string | undefined)
 
@@ -48,7 +48,7 @@ export function useQuiz() {
     const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
 
     if (shouldShuffle) {
-      return indexedSeededShuffle(options, seed.value, currentQuestionIndex.value).map(
+      return indexedSeededShuffle(options, seed.value ?? quiz?.id ?? '', currentQuestionIndex.value).map(
         (option) => ({
           option,
           originalIndex: question.options.indexOf(option),
@@ -63,8 +63,12 @@ export function useQuiz() {
   })
 
   function initializeQuiz() {
+    // Always resolve the seed (from the URL or a fresh one) so answer
+    // shuffling stays reproducible, including after a page reload.
+    const currentSeed = ensureSeed()
+
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
-      sessionStore.selectQuiz(quizId.value, seed.value)
+      sessionStore.selectQuiz(quizId.value, currentSeed)
       return
     }
     // Same quiz already in session (e.g. page reload): resume a persisted timer
