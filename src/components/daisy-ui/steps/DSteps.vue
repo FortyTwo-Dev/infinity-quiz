@@ -11,8 +11,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const directionClasses = {
-  horizontal: 'steps steps-horizontal',
-  vertical: 'steps steps-vertical',
+  horizontal: 'steps steps-horizontal w-full',
+  vertical: 'steps steps-vertical w-full',
 } as const
 
 const stepsClasses = computed(() => directionClasses[props.direction])
