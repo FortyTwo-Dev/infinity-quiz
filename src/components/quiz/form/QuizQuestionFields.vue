@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Field, useFieldArray } from 'vee-validate'
-import { DButton, DCheckbox, DInput, DLabel, DTextarea } from '@/components/daisy-ui'
+import { DButton, DCheckbox, DFieldset, DInput, DTextarea } from '@/components/daisy-ui'
 import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 import { PhPlus, PhTrash, PhCaretDown, PhCaretUp } from '@phosphor-icons/vue'
 
@@ -57,7 +57,12 @@ function removeOptionAt(optionIndex: number) {
       </div>
 
       <Field v-slot="{ field, errorMessage }" :name="`${basePath}.text`">
-        <DLabel variant="input" text="Question text" class="w-full">
+        <DFieldset
+          label="Question text"
+          :message="errorMessage"
+          :error="!!errorMessage"
+          class="w-full"
+        >
           <DInput
             :model-value="field.value"
             :color="errorMessage ? 'error' : undefined"
@@ -65,8 +70,7 @@ function removeOptionAt(optionIndex: number) {
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DLabel>
-        <span v-if="errorMessage" class="text-error text-sm">{{ errorMessage }}</span>
+        </DFieldset>
       </Field>
 
       <div class="flex flex-col gap-2">
@@ -134,7 +138,7 @@ function removeOptionAt(optionIndex: number) {
 
         <div v-if="showAdvanced" class="flex flex-col gap-4 pl-2">
           <Field v-slot="{ field }" :name="`${basePath}.explanation`">
-            <DLabel variant="input" text="Explanation (shown with feedback)" class="w-full">
+            <DFieldset label="Explanation (shown with feedback)" class="w-full">
               <DTextarea
                 :model-value="field.value ?? ''"
                 :rows="2"
@@ -142,11 +146,11 @@ function removeOptionAt(optionIndex: number) {
                 @update:model-value="field.onChange"
                 @blur="field.onBlur"
               />
-            </DLabel>
+            </DFieldset>
           </Field>
 
           <Field v-slot="{ field }" :name="`${basePath}.timeLimit`">
-            <DLabel variant="input" text="Time limit (seconds, optional)" class="w-full">
+            <DFieldset label="Time limit (seconds, optional)" class="w-full">
               <DInput
                 type="number"
                 :model-value="field.value ?? ''"
@@ -154,7 +158,7 @@ function removeOptionAt(optionIndex: number) {
                 @update:model-value="field.onChange"
                 @blur="field.onBlur"
               />
-            </DLabel>
+            </DFieldset>
           </Field>
 
           <Field v-slot="{ field }" :name="`${basePath}.shuffleAnswers`">

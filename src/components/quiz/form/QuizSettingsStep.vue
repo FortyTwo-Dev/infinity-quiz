@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Field } from 'vee-validate'
-import { DCheckbox, DInput, DLabel } from '@/components/daisy-ui'
+import { DCheckbox, DFieldset, DInput } from '@/components/daisy-ui'
 import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 </script>
 
@@ -11,7 +11,12 @@ import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field v-slot="{ field, errorMessage }" name="timeLimit">
-          <DLabel variant="input" text="Time limit (seconds, optional)" class="w-full">
+          <DFieldset
+            label="Time limit (seconds, optional)"
+            :message="errorMessage"
+            :error="!!errorMessage"
+            class="w-full"
+          >
             <DInput
               type="number"
               :model-value="field.value ?? ''"
@@ -20,12 +25,16 @@ import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
               @update:model-value="field.onChange"
               @blur="field.onBlur"
             />
-          </DLabel>
-          <span v-if="errorMessage" class="text-error text-sm">{{ errorMessage }}</span>
+          </DFieldset>
         </Field>
 
         <Field v-slot="{ field, errorMessage }" name="maxSkips">
-          <DLabel variant="input" text="Maximum skips (optional)" class="w-full">
+          <DFieldset
+            label="Maximum skips (optional)"
+            :message="errorMessage"
+            :error="!!errorMessage"
+            class="w-full"
+          >
             <DInput
               type="number"
               :model-value="field.value ?? ''"
@@ -34,12 +43,11 @@ import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
               @update:model-value="field.onChange"
               @blur="field.onBlur"
             />
-          </DLabel>
-          <span v-if="errorMessage" class="text-error text-sm">{{ errorMessage }}</span>
+          </DFieldset>
         </Field>
       </div>
 
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-2">
         <Field v-slot="{ field }" name="shuffleQuestions">
           <label class="flex items-center gap-3 cursor-pointer">
             <DCheckbox :model-value="field.value" @update:model-value="field.onChange" />

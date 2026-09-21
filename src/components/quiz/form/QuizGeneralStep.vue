@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Field } from 'vee-validate'
-import { DBadge, DButton, DInput, DLabel, DTextarea } from '@/components/daisy-ui'
+import { DBadge, DButton, DFieldset, DInput, DTextarea } from '@/components/daisy-ui'
 import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 import { PhPlus } from '@phosphor-icons/vue'
 
@@ -34,7 +34,7 @@ function submitTag() {
       <DCardTitle tag="h2" size="lg">General information</DCardTitle>
 
       <Field v-slot="{ field, errorMessage }" name="title">
-        <DLabel variant="input" text="Title" class="w-full">
+        <DFieldset label="Title" :message="errorMessage" :error="!!errorMessage" class="w-full">
           <DInput
             :model-value="field.value"
             :color="errorMessage ? 'error' : undefined"
@@ -42,12 +42,16 @@ function submitTag() {
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DLabel>
-        <span v-if="errorMessage" class="text-error text-sm">{{ errorMessage }}</span>
+        </DFieldset>
       </Field>
 
       <Field v-slot="{ field, errorMessage }" name="description">
-        <DLabel variant="input" text="Description" class="w-full">
+        <DFieldset
+          label="Description"
+          :message="errorMessage"
+          :error="!!errorMessage"
+          class="w-full"
+        >
           <DTextarea
             :model-value="field.value"
             :variant="errorMessage ? 'error' : 'neutral'"
@@ -56,33 +60,30 @@ function submitTag() {
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DLabel>
-        <span v-if="errorMessage" class="text-error text-sm">{{ errorMessage }}</span>
+        </DFieldset>
       </Field>
 
       <Field v-slot="{ field }" name="category">
-        <DLabel variant="input" text="Category" class="w-full">
+        <DFieldset label="Category" class="w-full">
           <DInput
             :model-value="field.value ?? ''"
             placeholder="e.g. Geography"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DLabel>
+        </DFieldset>
       </Field>
 
-      <div class="flex flex-col gap-3">
-        <DLabel variant="input" text="Tags" class="w-full">
-          <div class="flex gap-2">
-            <DInput v-model="tagDraft" placeholder="Add a tag" @keydown.enter.prevent="submitTag" />
-            <DButton type="button" variant="secondary" size="md" @click="submitTag">
-              <PhPlus :size="16" />
-            </DButton>
-          </div>
-        </DLabel>
+      <DFieldset label="Tags" class="w-full">
+        <div class="flex gap-2">
+          <DInput v-model="tagDraft" placeholder="Add a tag" @keydown.enter.prevent="submitTag" />
+          <DButton type="button" variant="secondary" size="md" @click="submitTag">
+            <PhPlus :size="16" />
+          </DButton>
+        </div>
 
         <Field v-slot="{ field }" name="tags">
-          <div v-if="field.value.length > 0" class="flex flex-wrap gap-2">
+          <div v-if="field.value.length > 0" class="flex flex-wrap gap-2 mt-2">
             <DBadge
               v-for="tag in field.value"
               :key="tag"
@@ -95,7 +96,7 @@ function submitTag() {
             </DBadge>
           </div>
 
-          <div v-if="tagSuggestions.length > 0" class="flex flex-wrap gap-2 mt-1">
+          <div v-if="tagSuggestions.length > 0" class="flex flex-wrap gap-2 mt-2">
             <button
               v-for="suggestion in tagSuggestions"
               :key="suggestion"
@@ -107,7 +108,7 @@ function submitTag() {
             </button>
           </div>
         </Field>
-      </div>
+      </DFieldset>
     </DCardBody>
   </DCard>
 </template>
