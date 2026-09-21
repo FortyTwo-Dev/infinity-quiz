@@ -39,4 +39,5 @@ export const QUIZ_CONSTANTS = {
 export const STORAGE_KEYS = {
   quizzes: 'infinity-quiz-quizzes',
   session: 'infinity-quiz-session',
+  history: 'infinity-quiz-history',
 } as const

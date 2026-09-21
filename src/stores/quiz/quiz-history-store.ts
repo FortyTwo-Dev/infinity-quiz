@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { QuizResult } from '../../types/quiz'
+import { STORAGE_KEYS } from '../../constants'
 
 export const useQuizHistoryStore = defineStore(
   'quizHistory',
@@ -56,7 +57,7 @@ export const useQuizHistoryStore = defineStore(
   },
   {
     persist: {
-      key: 'infinity-quiz-history',
+      key: STORAGE_KEYS.history,
       pick: ['results'],
     },
   },

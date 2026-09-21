@@ -4,6 +4,7 @@ import { useQuizStore } from './quiz-store'
 import { useQuizHistoryStore } from './quiz-history-store'
 import { isPassed } from '../../composables/useScore'
 import { shuffle } from '../../utils/array-utils'
+import { STORAGE_KEYS } from '../../constants'
 import type { Quiz, QuestionResult } from '../../types/quiz'
 
 export const useQuizSessionStore = defineStore(
@@ -489,7 +490,7 @@ export const useQuizSessionStore = defineStore(
   },
   {
     persist: {
-      key: 'infinity-quiz-session',
+      key: STORAGE_KEYS.session,
       pick: [
         'currentQuizId',
         'currentQuestionIndex',
