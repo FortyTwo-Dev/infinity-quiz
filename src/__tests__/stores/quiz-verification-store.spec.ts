@@ -29,68 +29,95 @@ describe('useQuizVerificationStore', () => {
     setupTestPinia()
   })
 
-  describe('state', () => {
-    it('should initialize with isAnswerVerified as false', () => {
+  describe('derived state', () => {
+    it('should report no current question as not verified', () => {
       const store = useQuizVerificationStore()
       expect(store.isAnswerVerified).toBe(false)
+      expect(store.verifiedAnswerCorrect).toBeNull()
     })
 
-    it('should initialize with verifiedAnswerCorrect as null', () => {
-      const store = useQuizVerificationStore()
-      expect(store.verifiedAnswerCorrect).toBeNull()
+    it('should expose verified state from the session store', () => {
+      const sessionStore = useQuizSessionStore()
+      const verificationStore = useQuizVerificationStore()
+
+      sessionStore.$patch({
+        currentQuizId: 'test-quiz',
+        currentQuestionIndex: 0,
+        selectedAnswers: { q1: 1 },
+        verifiedQuestions: { q1: true },
+        shuffledQuiz: createTestQuiz(),
+      })
+
+      expect(verificationStore.isAnswerVerified).toBe(true)
+      expect(verificationStore.verifiedAnswerCorrect).toBe(true)
+    })
+
+    it('should keep states in sync when navigating between questions', () => {
+      const sessionStore = useQuizSessionStore()
+      const verificationStore = useQuizVerificationStore()
+
+      sessionStore.$patch({
+        currentQuizId: 'test-quiz',
+        currentQuestionIndex: 0,
+        selectedAnswers: { q1: 1, q2: 0 },
+        verifiedQuestions: { q1: true },
+        shuffledQuiz: createTestQuiz([
+          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 1 },
+          { id: 'q2', text: 'Q2', options: ['A', 'B'], correctAnswerIndex: 1 },
+        ]),
+      })
+
+      expect(verificationStore.isAnswerVerified).toBe(true)
+
+      sessionStore.currentQuestionIndex = 1
+      expect(verificationStore.isAnswerVerified).toBe(false)
+      expect(verificationStore.verifiedAnswerCorrect).toBeNull()
+
+      sessionStore.currentQuestionIndex = 0
+      expect(verificationStore.isAnswerVerified).toBe(true)
     })
   })
 
   describe('getters', () => {
     describe('shouldShowFeedback', () => {
-      it('should return false when isAnswerVerified is false', () => {
+      it('should return false when no answer is verified', () => {
         const store = useQuizVerificationStore()
         expect(store.shouldShowFeedback).toBe(false)
       })
 
-      it('should return false when hasFeedbackEnabled is false', () => {
+      it('should return false when feedback is disabled', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
-        // Mock session store state
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
+          selectedAnswers: { q1: 1 },
+          verifiedQuestions: { q1: true },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: false },
         })
 
-        // Set a quiz without feedback enabled
-        sessionStore.$patch({
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: false,
-          },
-        })
-
-        verificationStore.isAnswerVerified = true
         expect(verificationStore.shouldShowFeedback).toBe(false)
       })
 
-      it('should return true when isAnswerVerified is true and hasFeedbackEnabled is true', () => {
+      it('should return true when verified and feedback is enabled', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
-        // Mock session store with feedback enabled
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: true,
-          },
+          selectedAnswers: { q1: 1 },
+          verifiedQuestions: { q1: true },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: true },
         })
 
-        verificationStore.isAnswerVerified = true
         expect(verificationStore.shouldShowFeedback).toBe(true)
       })
     })
 
     describe('shouldShowVerifyButton', () => {
-      it('should return false when hasFeedbackEnabled is false', () => {
+      it('should return false when feedback is disabled', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -98,10 +125,7 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           selectedAnswers: {},
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: false,
-          },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: false },
         })
 
         expect(verificationStore.shouldShowVerifyButton).toBe(false)
@@ -115,34 +139,13 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           selectedAnswers: {},
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: true,
-          },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: true },
         })
 
         expect(verificationStore.shouldShowVerifyButton).toBe(false)
       })
 
-      it('should return false when answer is already verified', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          currentQuizId: 'test-quiz',
-          currentQuestionIndex: 0,
-          selectedAnswers: { 'test-question': 1 },
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: true,
-          },
-        })
-
-        verificationStore.isAnswerVerified = true
-        expect(verificationStore.shouldShowVerifyButton).toBe(false)
-      })
-
-      it('should return true when answer is selected and not verified', () => {
+      it('should return true when an answer is selected and not verified', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -150,69 +153,57 @@ describe('useQuizVerificationStore', () => {
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           selectedAnswers: { q1: 1 },
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: true,
-          },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: true },
         })
 
-        verificationStore.isAnswerVerified = false
         expect(verificationStore.shouldShowVerifyButton).toBe(true)
+      })
+
+      it('should return false when the answer is already verified', () => {
+        const sessionStore = useQuizSessionStore()
+        const verificationStore = useQuizVerificationStore()
+
+        sessionStore.$patch({
+          currentQuizId: 'test-quiz',
+          currentQuestionIndex: 0,
+          selectedAnswers: { q1: 1 },
+          verifiedQuestions: { q1: true },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: true },
+        })
+
+        expect(verificationStore.shouldShowVerifyButton).toBe(false)
       })
     })
 
     describe('shouldShowContinueButton', () => {
-      it('should return false when isAnswerVerified is false', () => {
-        const verificationStore = useQuizVerificationStore()
-        verificationStore.isAnswerVerified = false
-        expect(verificationStore.shouldShowContinueButton).toBe(false)
+      it('should return false when not verified', () => {
+        const store = useQuizVerificationStore()
+        expect(store.shouldShowContinueButton).toBe(false)
       })
 
-      it('should return false when hasFeedbackEnabled is false', () => {
+      it('should return true when verified and feedback is enabled', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
         sessionStore.$patch({
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: false,
-          },
+          currentQuizId: 'test-quiz',
+          currentQuestionIndex: 0,
+          selectedAnswers: { q1: 1 },
+          verifiedQuestions: { q1: true },
+          shuffledQuiz: { ...createTestQuiz(), feedbackEnabled: true },
         })
 
-        verificationStore.isAnswerVerified = true
-        expect(verificationStore.shouldShowContinueButton).toBe(false)
-      })
-
-      it('should return true when isAnswerVerified is true and hasFeedbackEnabled is true', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          shuffledQuiz: {
-            ...createTestQuiz(),
-            feedbackEnabled: true,
-          },
-        })
-
-        verificationStore.isAnswerVerified = true
         expect(verificationStore.shouldShowContinueButton).toBe(true)
       })
     })
 
     describe('isCurrentQuestionVerified', () => {
       it('should return false when no current question', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          currentQuizId: null,
-          currentQuestionIndex: 0,
-        })
-
-        expect(verificationStore.isCurrentQuestionVerified).toBe(false)
+        const store = useQuizVerificationStore()
+        expect(store.isCurrentQuestionVerified).toBe(false)
       })
 
-      it('should return false when question is not in verifiedQuestions', () => {
+      it('should return false when the question is not verified', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -226,19 +217,15 @@ describe('useQuizVerificationStore', () => {
         expect(verificationStore.isCurrentQuestionVerified).toBe(false)
       })
 
-      it('should return true when question is in verifiedQuestions', () => {
+      it('should return true when the question is verified', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
-
-        const quiz = createTestQuiz([
-          { id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 },
-        ])
 
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
           verifiedQuestions: { q1: true },
-          shuffledQuiz: quiz,
+          shuffledQuiz: createTestQuiz(),
         })
 
         expect(verificationStore.isCurrentQuestionVerified).toBe(true)
@@ -246,7 +233,7 @@ describe('useQuizVerificationStore', () => {
     })
 
     describe('canSkipCurrentQuestion', () => {
-      it('should return false when canSkip is false', () => {
+      it('should return false when the skip limit is reached', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -264,19 +251,16 @@ describe('useQuizVerificationStore', () => {
           },
         })
 
-        // canSkip is false because skippedCount (2) >= maxSkips (1)
-        // So canSkipCurrentQuestion should be false
         expect(verificationStore.canSkipCurrentQuestion).toBe(false)
       })
 
-      it('should return false when question is already verified', () => {
+      it('should return false when the question is already verified', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          maxSkips: 2,
           skippedQuestions: {},
           verifiedQuestions: { q1: true },
           shuffledQuiz: createTestQuiz([
@@ -287,14 +271,13 @@ describe('useQuizVerificationStore', () => {
         expect(verificationStore.canSkipCurrentQuestion).toBe(false)
       })
 
-      it('should return true when can skip and question not verified', () => {
+      it('should return true when skippable and not verified', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
         sessionStore.$patch({
           currentQuizId: 'test-quiz',
           currentQuestionIndex: 0,
-          maxSkips: 2,
           skippedQuestions: {},
           verifiedQuestions: {},
           shuffledQuiz: createTestQuiz([
@@ -310,20 +293,11 @@ describe('useQuizVerificationStore', () => {
   describe('actions', () => {
     describe('verifyAnswer', () => {
       it('should return false when no current question', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          currentQuizId: null,
-          currentQuestionIndex: 0,
-        })
-
-        const result = verificationStore.verifyAnswer()
-        expect(result).toBe(false)
-        expect(verificationStore.isAnswerVerified).toBe(false)
+        const store = useQuizVerificationStore()
+        expect(store.verifyAnswer()).toBe(false)
       })
 
-      it('should return false when no answer selected', () => {
+      it('should return false when no answer is selected', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -334,12 +308,11 @@ describe('useQuizVerificationStore', () => {
           shuffledQuiz: createTestQuiz(),
         })
 
-        const result = verificationStore.verifyAnswer()
-        expect(result).toBe(false)
+        expect(verificationStore.verifyAnswer()).toBe(false)
         expect(verificationStore.isAnswerVerified).toBe(false)
       })
 
-      it('should set isAnswerVerified to true and verifiedAnswerCorrect to true when answer is correct', () => {
+      it('should mark the question verified and report a correct answer', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -352,14 +325,13 @@ describe('useQuizVerificationStore', () => {
           ]),
         })
 
-        const result = verificationStore.verifyAnswer()
-        expect(result).toBe(true)
+        expect(verificationStore.verifyAnswer()).toBe(true)
         expect(verificationStore.isAnswerVerified).toBe(true)
         expect(verificationStore.verifiedAnswerCorrect).toBe(true)
         expect(sessionStore.verifiedQuestions['test-question']).toBe(true)
       })
 
-      it('should set isAnswerVerified to true and verifiedAnswerCorrect to false when answer is incorrect', () => {
+      it('should report an incorrect answer', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -372,27 +344,14 @@ describe('useQuizVerificationStore', () => {
           ]),
         })
 
-        const result = verificationStore.verifyAnswer()
-        expect(result).toBe(false)
+        expect(verificationStore.verifyAnswer()).toBe(false)
         expect(verificationStore.isAnswerVerified).toBe(true)
         expect(verificationStore.verifiedAnswerCorrect).toBe(false)
       })
     })
 
     describe('continueToNext', () => {
-      it('should reset verification state', () => {
-        const verificationStore = useQuizVerificationStore()
-
-        verificationStore.isAnswerVerified = true
-        verificationStore.verifiedAnswerCorrect = true
-
-        verificationStore.continueToNext()
-
-        expect(verificationStore.isAnswerVerified).toBe(false)
-        expect(verificationStore.verifiedAnswerCorrect).toBeNull()
-      })
-
-      it('should call completeQuiz when no next question', () => {
+      it('should complete the quiz when there is no next question', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -405,15 +364,11 @@ describe('useQuizVerificationStore', () => {
           ]),
         })
 
-        verificationStore.continueToNext()
-
-        // Should have called completeQuiz internally, which sets isCompleted to true
-        // But since we can't spy on the internal store instance, we verify the result
-        expect(verificationStore.isAnswerVerified).toBe(false)
-        expect(verificationStore.verifiedAnswerCorrect).toBeNull()
+        expect(verificationStore.continueToNext()).toBe(true)
+        expect(sessionStore.isCompleted).toBe(true)
       })
 
-      it('should call nextQuestion when there are more questions', () => {
+      it('should move to the next question when there is one', () => {
         const sessionStore = useQuizSessionStore()
         const verificationStore = useQuizVerificationStore()
 
@@ -426,85 +381,8 @@ describe('useQuizVerificationStore', () => {
           ]),
         })
 
-        verificationStore.continueToNext()
-
-        // Should have called nextQuestion internally
-        expect(verificationStore.isAnswerVerified).toBe(false)
-        expect(verificationStore.verifiedAnswerCorrect).toBeNull()
-      })
-    })
-
-    describe('updateVerificationState', () => {
-      it('should reset state when no current question', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        verificationStore.isAnswerVerified = true
-        verificationStore.verifiedAnswerCorrect = true
-
-        sessionStore.$patch({
-          currentQuizId: null,
-          currentQuestionIndex: 0,
-        })
-
-        verificationStore.updateVerificationState()
-
-        expect(verificationStore.isAnswerVerified).toBe(false)
-        expect(verificationStore.verifiedAnswerCorrect).toBeNull()
-      })
-
-      it('should set verification state based on session store', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          currentQuizId: 'test-quiz',
-          currentQuestionIndex: 0,
-          selectedAnswers: { 'test-question': 1 },
-          verifiedQuestions: { 'test-question': true },
-          shuffledQuiz: createTestQuiz([
-            { id: 'test-question', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
-          ]),
-        })
-
-        verificationStore.updateVerificationState()
-
-        expect(verificationStore.isAnswerVerified).toBe(true)
-        expect(verificationStore.verifiedAnswerCorrect).toBe(true)
-      })
-
-      it('should set verifiedAnswerCorrect to false when answer is wrong', () => {
-        const sessionStore = useQuizSessionStore()
-        const verificationStore = useQuizVerificationStore()
-
-        sessionStore.$patch({
-          currentQuizId: 'test-quiz',
-          currentQuestionIndex: 0,
-          selectedAnswers: { 'test-question': 0 },
-          verifiedQuestions: { 'test-question': true },
-          shuffledQuiz: createTestQuiz([
-            { id: 'test-question', text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 1 },
-          ]),
-        })
-
-        verificationStore.updateVerificationState()
-
-        expect(verificationStore.isAnswerVerified).toBe(true)
-        expect(verificationStore.verifiedAnswerCorrect).toBe(false)
-      })
-    })
-
-    describe('resetVerification', () => {
-      it('should reset isAnswerVerified and verifiedAnswerCorrect', () => {
-        const verificationStore = useQuizVerificationStore()
-
-        verificationStore.isAnswerVerified = true
-        verificationStore.verifiedAnswerCorrect = true
-
-        verificationStore.resetVerification()
-
-        expect(verificationStore.isAnswerVerified).toBe(false)
-        expect(verificationStore.verifiedAnswerCorrect).toBeNull()
+        expect(verificationStore.continueToNext()).toBe(false)
+        expect(sessionStore.currentQuestionIndex).toBe(1)
       })
     })
   })

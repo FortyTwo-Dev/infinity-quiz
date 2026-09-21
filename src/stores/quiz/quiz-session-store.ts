@@ -53,7 +53,9 @@ export const useQuizSessionStore = defineStore(
       if (!quiz) return 0
       const total = quiz.questions.length
       if (total === 0) return 0
-      return (currentQuestionIndex.value / total) * 100
+      // Progress reflects the question currently shown, so the bar reaches
+      // 100% on the last question instead of capping below it.
+      return ((currentQuestionIndex.value + 1) / total) * 100
     })
 
     const hasNextQuestion = computed(() => {

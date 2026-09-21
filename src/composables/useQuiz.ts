@@ -79,18 +79,10 @@ export function useQuiz() {
     sessionStore.selectAnswer(answerIndex)
   }
 
+  // Completion is owned by the store: QuizView watches `isCompleted` and
+  // redirects to results, so these actions never navigate themselves.
   function skipQuestion() {
-    const quizCompleted = sessionStore.skipQuestion()
-    if (quizCompleted) {
-      router.push({ name: 'results' })
-    }
-  }
-
-  function handleTimerExpiry() {
-    const quizCompleted = sessionStore.handleTimerExpiry()
-    if (quizCompleted) {
-      router.push({ name: 'results' })
-    }
+    sessionStore.skipQuestion()
   }
 
   function submitAndNext() {
@@ -98,7 +90,6 @@ export function useQuiz() {
       sessionStore.nextQuestion()
     } else {
       sessionStore.completeQuiz()
-      router.push({ name: 'results' })
     }
   }
 
@@ -107,10 +98,7 @@ export function useQuiz() {
   }
 
   function continueToNext() {
-    const quizCompleted = verificationStore.continueToNext()
-    if (quizCompleted) {
-      router.push({ name: 'results' })
-    }
+    verificationStore.continueToNext()
   }
 
   function goToPrevious() {
@@ -162,7 +150,6 @@ export function useQuiz() {
     initializeQuiz,
     selectAnswer,
     skipQuestion,
-    handleTimerExpiry,
     verifyAnswer,
     continueToNext,
     submitAndNext,
