@@ -70,7 +70,7 @@ const isJsonValid = computed(() => {
             v-model="state.jsonData"
             placeholder="Paste your JSON here..."
             :rows="6"
-            :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : 'neutral'"
+            :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : undefined"
             class="font-mono text-sm resize-y w-full"
             aria-label="Quizzes JSON to import"
           />

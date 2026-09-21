@@ -41,6 +41,57 @@ export const QuizSchema = z.object({
 })
 
 // ============================================================================
+// Quiz form schema (VeeValidate)
+// ============================================================================
+
+/**
+ * Question as edited in the form. `id` is optional: absent for new questions,
+ * preserved for existing ones so answers stay linked across edits.
+ */
+export const FormQuestionSchema = z
+  .object({
+    id: z.string().optional(),
+    text: z.string().min(1, 'Question text is required'),
+    options: z
+      .array(z.string().min(1, 'Option cannot be empty'))
+      .min(2, 'At least 2 options are required'),
+    correctAnswerIndex: z.number().int().nonnegative(),
+    timeLimit: z.number().positive('Time limit must be positive').optional(),
+    shuffleAnswers: z.boolean().optional(),
+    explanation: z.string().optional(),
+  })
+  .superRefine((q, ctx) => {
+    if (q.correctAnswerIndex >= q.options.length) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Select one of the available options',
+        path: ['correctAnswerIndex'],
+      })
+    }
+  })
+
+/**
+ * Full quiz form schema. Booleans are required because the form initializes
+ * them explicitly; optional quiz fields stay optional.
+ */
+export const QuizFormSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string().min(1, 'Description is required'),
+  category: z.string().optional(),
+  tags: z.array(z.string()),
+  timeLimit: z.number().positive('Time limit must be positive').optional(),
+  shuffleQuestions: z.boolean(),
+  shuffleAnswers: z.boolean(),
+  maxSkips: z.number().int().nonnegative('Must be 0 or more').optional(),
+  enableReviewMode: z.boolean(),
+  feedbackEnabled: z.boolean(),
+  questions: z.array(FormQuestionSchema).min(1, 'At least one question is required'),
+})
+
+export type FormQuestion = z.infer<typeof FormQuestionSchema>
+export type QuizFormValues = z.infer<typeof QuizFormSchema>
+
+// ============================================================================
 // Types inférés (pour l'autocomplétion)
 // ============================================================================
 
@@ -79,39 +130,6 @@ export function isQuizArray(value: unknown): value is Quiz[] {
 export interface ValidationResult {
   valid: boolean
   errors: string[]
-}
-
-export interface QuestionValidationResult {
-  valid: boolean
-  errors: Record<string, string>
-}
-
-/**
- * Valide une question et retourne les erreurs
- */
-export function validateQuestion(
-  question: Partial<Question>,
-  index?: number,
-): QuestionValidationResult {
-  const result = QuestionSchema.safeParse(question)
-
-  if (result.success) {
-    return { valid: true, errors: {} }
-  }
-
-  const errors: Record<string, string> = {}
-  const prefix = index !== undefined ? `question-${index}-` : ''
-
-  for (const issue of result.error.issues) {
-    const path = issue.path.join('-')
-    const key = prefix + path
-    errors[key] = issue.message
-  }
-
-  return {
-    valid: false,
-    errors,
-  }
 }
 
 /**
@@ -158,90 +176,5 @@ export function parseAndValidateQuizJSON(jsonData: string): Quiz | Quiz[] | null
     }
   } catch {
     return null
-  }
-}
-
-/**
- * Valide l'état d'un formulaire de quiz
- */
-/**
- * Schema Zod pour une question partielle (sans validation de correctAnswerIndex)
- * Utilisé pour les formulaires où les questions peuvent être incomplètes
- */
-export const PartialQuestionSchema = z
-  .object({
-    id: z.string().min(1),
-    text: z.string().min(1),
-    options: z.array(z.string().min(1)).min(2),
-    correctAnswerIndex: z.number().int().nonnegative(),
-    timeLimit: z.number().optional(),
-    shuffleAnswers: z.boolean().optional(),
-    explanation: z.string().optional(),
-  })
-  .partial()
-
-/**
- * Schema Zod pour la validation de l'état du formulaire de quiz
- * Utilise les messages par défaut de Zod
- */
-export const QuizFormStateSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  category: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  questions: z.array(PartialQuestionSchema).min(1),
-  timeLimit: z.number().optional(),
-  shuffleQuestions: z.boolean().optional(),
-  shuffleAnswers: z.boolean().optional(),
-  maxSkips: z.number().optional(),
-  enableReviewMode: z.boolean().optional(),
-  feedbackEnabled: z.boolean().optional(),
-})
-
-export interface QuizFormState {
-  title: string
-  description: string
-  category?: string
-  tags?: string[]
-  questions: Partial<Question>[]
-}
-
-export interface FormValidationResult {
-  valid: boolean
-  errors: Record<string, string>
-}
-
-export function validateQuizFormState(form: QuizFormState): FormValidationResult {
-  const result = QuizFormStateSchema.safeParse(form)
-
-  if (result.success) {
-    // Si le formulaire est valide, on valide aussi chaque question individuellement
-    // car QuestionSchema.partial() permet des questions incomplètes
-    const errors: Record<string, string> = {}
-    form.questions.forEach((q, index) => {
-      const qResult = QuestionSchema.safeParse(q)
-      if (!qResult.success) {
-        for (const issue of qResult.error.issues) {
-          const path = `question-${index}-${issue.path.join('-')}`
-          errors[path] = issue.message
-        }
-      }
-    })
-    return {
-      valid: Object.keys(errors).length === 0,
-      errors,
-    }
-  }
-
-  // Conversion des erreurs Zod en Record<string, string>
-  const errors: Record<string, string> = {}
-  for (const issue of result.error.issues) {
-    const path = issue.path.join('-')
-    errors[path] = issue.message
-  }
-
-  return {
-    valid: false,
-    errors,
   }
 }

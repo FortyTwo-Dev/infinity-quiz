@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { DCard, DCardBody } from '@/components/daisy-ui/card'
-import { DButton, DCardActions, DCardTitle, DLabel, DSelect, DSelectOption } from '@/components/daisy-ui'
+import {
+  DButton,
+  DCardActions,
+  DCardTitle,
+  DFieldset,
+  DSelect,
+  DSelectOption,
+} from '@/components/daisy-ui'
 import { useQuizStore } from '../../stores'
 import { PhDownload, PhCopy } from '@phosphor-icons/vue'
 
@@ -54,18 +61,14 @@ const handleCopyToClipboard = () => {
       <DCard>
         <DCardBody>
           <DCardTitle tag="h3" size="lg">Select a quiz to export</DCardTitle>
-          <DLabel variant="select" text="Export" class="w-full">
-            <DSelect
-              v-model="selectedQuizId"
-              :disabled="!hasQuizzes"
-              class="w-full"
-            >
+          <DFieldset label="Export" class="w-full">
+            <DSelect v-model="selectedQuizId" :disabled="!hasQuizzes" class="w-full">
               <DSelectOption value="">All quizzes</DSelectOption>
               <DSelectOption v-for="quiz in quizzes" :key="quiz.id" :value="quiz.id">
                 {{ quiz.title }}
               </DSelectOption>
             </DSelect>
-          </DLabel>
+          </DFieldset>
           <DCardActions justify="start">
             <DButton
               type="button"

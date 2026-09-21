@@ -26,8 +26,8 @@ export { DTextarea } from './textarea'
 // Select
 export { DSelect, DSelectOption } from './select'
 
-// Label
-export { DLabel } from './label'
+// Fieldset
+export { DFieldset } from './fieldset'
 
 // Checkbox
 export { DCheckbox } from './checkbox'
@@ -50,7 +50,6 @@ export type {
   ButtonType,
   IndicatorAlign,
   ProgressColor,
-  LabelVariant,
   CheckboxVariant,
   Direction,
 } from './types'

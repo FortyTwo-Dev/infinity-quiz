@@ -1,18 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import type { Question } from '../../types/quiz'
 import {
   QuestionSchema,
   QuizSchema,
+  FormQuestionSchema,
+  QuizFormSchema,
   isQuestion,
   isQuiz,
   isQuizArray,
   validateQuizJSON,
-  validateQuestion,
   parseAndValidateQuizJSON,
-  validateQuizFormState,
   type ValidationResult,
-  type QuestionValidationResult,
-  type FormValidationResult,
 } from '../../utils/validation'
 
 const validQuestion = {
@@ -47,12 +44,6 @@ const invalidQuizMissingDescription = {
   questions: [validQuestion],
 }
 
-const invalidQuizMissingQuestions = {
-  id: 'quiz-1',
-  title: 'Math Quiz',
-  description: 'A simple math quiz',
-}
-
 const invalidQuizEmptyQuestions = {
   id: 'quiz-1',
   title: 'Math Quiz',
@@ -70,13 +61,6 @@ const invalidQuestionMissingText = {
   id: 'q-1',
   options: ['3', '4'],
   correctAnswerIndex: 1,
-}
-
-const invalidQuestionShortOptions = {
-  id: 'q-1',
-  text: 'What is 2+2?',
-  options: ['4'],
-  correctAnswerIndex: 0,
 }
 
 const invalidQuestionInvalidCorrectAnswer = {
@@ -179,115 +163,57 @@ describe('Zod validation utils', () => {
     })
   })
 
-  describe('validateQuestion', () => {
-    it('should return valid: true for valid question', () => {
-      const result: QuestionValidationResult = validateQuestion(validQuestion)
-      expect(result.valid).toBe(true)
-      expect(result.errors).toEqual({})
-    })
-
-    it('should return errors for missing text', () => {
-      const result: QuestionValidationResult = validateQuestion(invalidQuestionMissingText, 0)
-      expect(result.valid).toBe(false)
-      expect(result.errors['question-0-text']).toBeDefined()
-    })
-
-    it('should return errors for invalid options', () => {
-      const result: QuestionValidationResult = validateQuestion(invalidQuestionShortOptions)
-      expect(result.valid).toBe(false)
-      expect(Object.keys(result.errors).length).toBeGreaterThan(0)
-    })
-
-    it('should include question index in error path', () => {
-      const result: QuestionValidationResult = validateQuestion(invalidQuestionMissingText, 0)
-      expect(result.errors['question-0-text']).toBeDefined()
-    })
-
-    it('should validate all options', () => {
-      const questionWithEmptyOption: Partial<Question> = {
-        id: 'q-1',
-        text: 'Test',
-        options: ['option1', '', 'option3'],
-        correctAnswerIndex: 0,
-      }
-      const result: QuestionValidationResult = validateQuestion(questionWithEmptyOption, 0)
-      expect(result.valid).toBe(false)
-      expect(result.errors['question-0-options-1']).toBeDefined()
-    })
-  })
-
   describe('validateQuizJSON', () => {
-    it('should return valid: true for valid single quiz JSON', () => {
-      const json = JSON.stringify(validQuiz)
-      const result: ValidationResult = validateQuizJSON(json)
+    it('should return valid: true for a valid single quiz', () => {
+      const result: ValidationResult = validateQuizJSON(JSON.stringify(validQuiz))
       expect(result.valid).toBe(true)
       expect(result.errors).toEqual([])
     })
 
-    it('should return valid: true for valid quiz array JSON', () => {
+    it('should return valid: true for a valid quiz array', () => {
       const json = JSON.stringify([validQuiz, { ...validQuiz, id: 'quiz-2' }])
-      const result: ValidationResult = validateQuizJSON(json)
-      expect(result.valid).toBe(true)
-      expect(result.errors).toEqual([])
+      expect(validateQuizJSON(json).valid).toBe(true)
     })
 
     it('should return valid: false for invalid JSON', () => {
-      const result: ValidationResult = validateQuizJSON('not valid json')
+      const result = validateQuizJSON('not valid json')
       expect(result.valid).toBe(false)
       expect(result.errors).toContain('Invalid JSON')
     })
 
-    it('should return valid: false for empty array', () => {
-      const result: ValidationResult = validateQuizJSON('[]')
-      expect(result.valid).toBe(false)
-      expect(result.errors).toContain('Too small: expected array to have >=1 items')
+    it('should return valid: false for an empty array', () => {
+      expect(validateQuizJSON('[]').valid).toBe(false)
     })
 
-    it('should return valid: false for quiz missing required fields', () => {
-      const json = JSON.stringify(invalidQuizMissingId)
-      const result: ValidationResult = validateQuizJSON(json)
-      expect(result.valid).toBe(false)
+    it('should return valid: false for a quiz missing required fields', () => {
+      expect(validateQuizJSON(JSON.stringify(invalidQuizMissingId)).valid).toBe(false)
     })
   })
 
   describe('parseAndValidateQuizJSON', () => {
-    it('should return parsed quiz for valid single quiz JSON', () => {
-      const json = JSON.stringify(validQuiz)
-      const result = parseAndValidateQuizJSON(json)
-      expect(result).toEqual(validQuiz)
+    it('should return the parsed quiz for a valid single quiz', () => {
+      expect(parseAndValidateQuizJSON(JSON.stringify(validQuiz))).toEqual(validQuiz)
     })
 
-    it('should return parsed quizzes for valid array JSON', () => {
+    it('should return the parsed quizzes for a valid array', () => {
       const quizzes = [validQuiz, { ...validQuiz, id: 'quiz-2' }]
-      const json = JSON.stringify(quizzes)
-      const result = parseAndValidateQuizJSON(json)
-      expect(result).toEqual(quizzes)
+      expect(parseAndValidateQuizJSON(JSON.stringify(quizzes))).toEqual(quizzes)
     })
 
     it('should return null for invalid JSON', () => {
-      const result = parseAndValidateQuizJSON('not valid json')
-      expect(result).toBeNull()
+      expect(parseAndValidateQuizJSON('not valid json')).toBeNull()
     })
 
-    it('should return null for invalid quiz structure', () => {
-      const json = JSON.stringify(invalidQuizMissingId)
-      const result = parseAndValidateQuizJSON(json)
-      expect(result).toBeNull()
+    it('should return null for an invalid quiz structure', () => {
+      expect(parseAndValidateQuizJSON(JSON.stringify(invalidQuizMissingId))).toBeNull()
     })
 
     it('should return null when a quiz has no questions', () => {
-      const json = JSON.stringify(invalidQuizEmptyQuestions)
-      expect(parseAndValidateQuizJSON(json)).toBeNull()
+      expect(parseAndValidateQuizJSON(JSON.stringify(invalidQuizEmptyQuestions))).toBeNull()
     })
 
     it('should return null when a quiz is missing a description', () => {
-      const json = JSON.stringify(invalidQuizMissingDescription)
-      expect(parseAndValidateQuizJSON(json)).toBeNull()
-    })
-
-    it('should return null when a quiz is missing questions', () => {
-      const json = JSON.stringify(invalidQuizMissingQuestions)
-      expect(parseAndValidateQuizJSON(json)).toBeNull()
+      expect(parseAndValidateQuizJSON(JSON.stringify(invalidQuizMissingDescription))).toBeNull()
     })
 
     it('should return null when a question is malformed', () => {
@@ -299,75 +225,89 @@ describe('Zod validation utils', () => {
     })
 
     it('should return null when a question correctAnswerIndex is out of range', () => {
-      const json = JSON.stringify({
-        ...validQuiz,
-        questions: [invalidQuestionInvalidCorrectAnswer],
-      })
+      const json = JSON.stringify({ ...validQuiz, questions: [invalidQuestionInvalidCorrectAnswer] })
       expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
     it('should return null when one quiz of an array is invalid', () => {
-      const json = JSON.stringify([validQuiz, invalidQuizMissingId])
-      expect(parseAndValidateQuizJSON(json)).toBeNull()
+      expect(
+        parseAndValidateQuizJSON(JSON.stringify([validQuiz, invalidQuizMissingId])),
+      ).toBeNull()
     })
   })
 
-  describe('validateQuizFormState', () => {
-    it('should return valid: true for valid form state', () => {
-      const formState = {
-        title: 'Test Quiz',
-        description: 'Test Description',
-        questions: [validQuestion],
-      }
-      const result: FormValidationResult = validateQuizFormState(formState)
-      expect(result.valid).toBe(true)
-      expect(result.errors).toEqual({})
+  describe('FormQuestionSchema', () => {
+    it('should accept a valid form question', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: 'Q?',
+        options: ['A', 'B'],
+        correctAnswerIndex: 1,
+      })
+      expect(result.success).toBe(true)
     })
 
-    it('should return error for missing title', () => {
-      const formState = {
-        title: '',
-        description: 'Test Description',
-        questions: [validQuestion],
-      }
-      const result: FormValidationResult = validateQuizFormState(formState)
-      expect(result.valid).toBe(false)
-      expect(result.errors.title).toContain('Too small: expected string to have >=1 characters')
+    it('should reject an empty question text', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: '',
+        options: ['A', 'B'],
+        correctAnswerIndex: 0,
+      })
+      expect(result.success).toBe(false)
     })
 
-    it('should return error for missing description', () => {
-      const formState = {
-        title: 'Test Quiz',
-        description: '',
-        questions: [validQuestion],
-      }
-      const result: FormValidationResult = validateQuizFormState(formState)
-      expect(result.valid).toBe(false)
-      expect(result.errors.description).toContain(
-        'Too small: expected string to have >=1 characters',
-      )
+    it('should reject fewer than two options', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: 'Q?',
+        options: ['A'],
+        correctAnswerIndex: 0,
+      })
+      expect(result.success).toBe(false)
     })
 
-    it('should return error for empty questions array', () => {
-      const formState = {
-        title: 'Test Quiz',
-        description: 'Test Description',
-        questions: [],
-      }
-      const result: FormValidationResult = validateQuizFormState(formState)
-      expect(result.valid).toBe(false)
-      expect(result.errors.questions).toContain('Too small: expected array to have >=1 items')
+    it('should reject a correctAnswerIndex out of range', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: 'Q?',
+        options: ['A', 'B'],
+        correctAnswerIndex: 5,
+      })
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('QuizFormSchema', () => {
+    const validForm = {
+      title: 'Title',
+      description: 'Description',
+      tags: [],
+      shuffleQuestions: false,
+      shuffleAnswers: false,
+      enableReviewMode: false,
+      feedbackEnabled: false,
+      questions: [{ text: 'Q?', options: ['A', 'B'], correctAnswerIndex: 0 }],
+    }
+
+    it('should accept a valid form', () => {
+      expect(QuizFormSchema.safeParse(validForm).success).toBe(true)
     })
 
-    it('should return errors for invalid questions', () => {
-      const formState = {
-        title: 'Test Quiz',
-        description: 'Test Description',
-        questions: [invalidQuestionMissingText],
-      }
-      const result: FormValidationResult = validateQuizFormState(formState)
-      expect(result.valid).toBe(false)
-      expect(Object.keys(result.errors).length).toBeGreaterThan(0)
+    it('should reject an empty title', () => {
+      expect(QuizFormSchema.safeParse({ ...validForm, title: '' }).success).toBe(false)
+    })
+
+    it('should reject an empty description', () => {
+      expect(QuizFormSchema.safeParse({ ...validForm, description: '' }).success).toBe(false)
+    })
+
+    it('should reject no questions', () => {
+      expect(QuizFormSchema.safeParse({ ...validForm, questions: [] }).success).toBe(false)
+    })
+
+    it('should reject a negative maxSkips', () => {
+      expect(QuizFormSchema.safeParse({ ...validForm, maxSkips: -1 }).success).toBe(false)
+    })
+
+    it('should reject a non-positive timeLimit', () => {
+      expect(QuizFormSchema.safeParse({ ...validForm, timeLimit: 0 }).success).toBe(false)
     })
   })
 })

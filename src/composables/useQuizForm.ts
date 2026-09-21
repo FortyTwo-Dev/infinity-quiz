@@ -1,50 +1,36 @@
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useForm, useFieldArray, type Path } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
 import { useQuizStore } from '../stores'
-import type { Quiz, Question } from '../types/quiz'
-import {
-  validateQuestion as validateQuestionUtil,
-  validateQuizFormState,
-  type QuestionValidationResult,
-  type FormValidationResult,
-} from '../utils/validation'
+import { QuizFormSchema, type QuizFormValues, type FormQuestion } from '../utils/validation'
+import type { Quiz } from '../types/quiz'
 
-export interface FormQuestion {
-  id: string
-  text: string
-  options: string[]
-  correctAnswerIndex: number
-  timeLimit?: number
-  shuffleAnswers?: boolean
-  explanation?: string
+/** Steps of the multi-step quiz form, in display order. */
+export const QUIZ_FORM_STEPS = ['general', 'questions', 'settings', 'review'] as const
+export type QuizFormStep = (typeof QUIZ_FORM_STEPS)[number]
+
+/** Static field paths validated when leaving each step. */
+const STEP_FIELDS: Record<QuizFormStep, Path<QuizFormValues>[]> = {
+  general: ['title', 'description', 'category', 'tags'],
+  questions: [],
+  settings: [],
+  review: [],
 }
 
-export interface QuizFormState {
-  title: string
-  description: string
-  category: string
-  tags: string[]
-  timeLimit?: number
-  shuffleQuestions: boolean
-  shuffleAnswers: boolean
-  maxSkips?: number
-  enableReviewMode: boolean
-  feedbackEnabled: boolean
-  questions: FormQuestion[]
+function createEmptyQuestion(): FormQuestion {
+  return {
+    text: '',
+    options: ['', ''],
+    correctAnswerIndex: 0,
+  }
 }
 
-export function useQuizForm(quizId?: string) {
-  const router = useRouter()
-  const quizStore = useQuizStore()
-
-  // Store the current quiz ID being edited
-  const currentQuizId = ref<string | undefined>(quizId)
-
-  // Form state
-  const form = ref<QuizFormState>({
+function createEmptyValues(): QuizFormValues {
+  return {
     title: '',
     description: '',
-    category: '',
+    category: undefined,
     tags: [],
     timeLimit: undefined,
     shuffleQuestions: false,
@@ -52,207 +38,223 @@ export function useQuizForm(quizId?: string) {
     maxSkips: undefined,
     enableReviewMode: false,
     feedbackEnabled: false,
-    questions: [
-      {
-        id: `q-new-0`,
-        text: '',
-        options: ['', ''],
-        correctAnswerIndex: 0,
-      },
-    ],
-  })
+    questions: [createEmptyQuestion()],
+  }
+}
 
-  // Load quiz data into form
-  const loadQuiz = (id: string): void => {
-    const existingQuiz = quizStore.getQuizById(id)
-    if (existingQuiz) {
-      currentQuizId.value = id
-      form.value = {
-        title: existingQuiz.title || '',
-        description: existingQuiz.description || '',
-        category: existingQuiz.category || '',
-        tags: existingQuiz.tags || [],
-        timeLimit: existingQuiz.timeLimit,
-        shuffleQuestions: existingQuiz.shuffleQuestions ?? false,
-        shuffleAnswers: existingQuiz.shuffleAnswers ?? false,
-        maxSkips: existingQuiz.maxSkips,
-        enableReviewMode: existingQuiz.enableReviewMode ?? false,
-        feedbackEnabled: existingQuiz.feedbackEnabled ?? false,
-        questions: existingQuiz.questions.map((q: Question): FormQuestion => ({
-          id: q.id,
-          text: q.text,
-          options: [...q.options],
-          correctAnswerIndex: q.correctAnswerIndex,
-          timeLimit: q.timeLimit,
-          shuffleAnswers: q.shuffleAnswers,
-          explanation: q.explanation,
-        })),
-      }
+function quizToFormValues(quiz: Quiz): QuizFormValues {
+  return {
+    title: quiz.title,
+    description: quiz.description,
+    category: quiz.category,
+    tags: quiz.tags ?? [],
+    timeLimit: quiz.timeLimit,
+    shuffleQuestions: quiz.shuffleQuestions ?? false,
+    shuffleAnswers: quiz.shuffleAnswers ?? false,
+    maxSkips: quiz.maxSkips,
+    enableReviewMode: quiz.enableReviewMode ?? false,
+    feedbackEnabled: quiz.feedbackEnabled ?? false,
+    questions: quiz.questions.map((q) => ({
+      id: q.id,
+      text: q.text,
+      options: [...q.options],
+      correctAnswerIndex: q.correctAnswerIndex,
+      timeLimit: q.timeLimit,
+      shuffleAnswers: q.shuffleAnswers,
+      explanation: q.explanation,
+    })),
+  }
+}
+
+function formValuesToQuiz(values: QuizFormValues, quizId: string): Quiz {
+  return {
+    id: quizId,
+    title: values.title,
+    description: values.description,
+    category: values.category || undefined,
+    tags: values.tags.length > 0 ? values.tags : undefined,
+    timeLimit: values.timeLimit,
+    shuffleQuestions: values.shuffleQuestions,
+    shuffleAnswers: values.shuffleAnswers,
+    maxSkips: values.maxSkips,
+    enableReviewMode: values.enableReviewMode,
+    feedbackEnabled: values.feedbackEnabled,
+    questions: values.questions.map((q, index) => ({
+      // Reuse the existing id when editing; assign one for new questions.
+      id: q.id ?? `q-${Date.now()}-${index}`,
+      text: q.text,
+      options: q.options,
+      correctAnswerIndex: q.correctAnswerIndex,
+      timeLimit: q.timeLimit,
+      shuffleAnswers: q.shuffleAnswers,
+      explanation: q.explanation,
+    })),
+  }
+}
+
+/**
+ * Multi-step quiz creation/editing form backed by VeeValidate + Zod.
+ *
+ * @param quizId - when provided, the form loads and updates that quiz.
+ */
+export function useQuizForm(quizId?: string) {
+  const router = useRouter()
+  const quizStore = useQuizStore()
+
+  const existingQuiz = quizId ? quizStore.getQuizById(quizId) : null
+  const editingQuizId = ref<string | null>(existingQuiz?.id ?? null)
+  const isEditing = computed(() => editingQuizId.value !== null)
+
+  const initialValues = existingQuiz ? quizToFormValues(existingQuiz) : createEmptyValues()
+
+  const { handleSubmit, errors, values, setFieldValue, validateField, resetForm } =
+    useForm<QuizFormValues>({
+      validationSchema: toTypedSchema(QuizFormSchema),
+      initialValues,
+      // Multi-step form: fields unmount when switching steps. Without this,
+      // VeeValidate prunes their values (e.g. `questions` becomes undefined
+      // on the review step).
+      keepValuesOnUnmount: true,
+    })
+
+  const {
+    fields: questionFields,
+    push: pushQuestion,
+    remove: removeQuestion,
+    replace: replaceQuestions,
+  } = useFieldArray<FormQuestion>('questions')
+
+  // Step navigation
+  const currentStepIndex = ref(0)
+  const currentStep = computed<QuizFormStep>(
+    () => QUIZ_FORM_STEPS[currentStepIndex.value] ?? 'general',
+  )
+  const isFirstStep = computed(() => currentStepIndex.value === 0)
+  const isLastStep = computed(() => currentStepIndex.value === QUIZ_FORM_STEPS.length - 1)
+  const stepCount = QUIZ_FORM_STEPS.length
+
+  /**
+   * Validate the current step. VeeValidate's `validateField` returns a false
+   * positive for array paths (e.g. `questions`), so question fields are
+   * validated explicitly, per index.
+   */
+  async function stepFieldPaths(): Promise<Path<QuizFormValues>[]> {
+    const paths = [...STEP_FIELDS[currentStep.value]]
+
+    if (currentStep.value === 'questions') {
+      values.questions.forEach((_, index) => {
+        paths.push(
+          `questions[${index}].text` as Path<QuizFormValues>,
+          `questions[${index}].options` as Path<QuizFormValues>,
+          `questions[${index}].correctAnswerIndex` as Path<QuizFormValues>,
+        )
+      })
     }
+
+    return paths
   }
 
-  // Load existing quiz if ID provided
-  if (quizId) {
-    loadQuiz(quizId)
-  }
-
-  // Validation
-  const errors = ref<Record<string, string>>({})
-
-  const validate = (): boolean => {
-    const result: FormValidationResult = validateQuizFormState(form.value)
-    errors.value = result.errors
-    return result.valid
-  }
-
-  const validateQuestion = (questionIndex: number): boolean => {
-    const q: FormQuestion | undefined = form.value.questions[questionIndex]
-    if (!q) {
-      return false
+  async function goToNextStep(): Promise<boolean> {
+    const paths = await stepFieldPaths()
+    if (paths.length > 0) {
+      const results = await Promise.all(paths.map((path) => validateField(path)))
+      if (results.some((r) => !r.valid)) return false
     }
-    const result: QuestionValidationResult = validateQuestionUtil(q, questionIndex)
-    return result.valid
+    if (!isLastStep.value) currentStepIndex.value += 1
+    return true
+  }
+
+  function goToPreviousStep(): void {
+    if (!isFirstStep.value) currentStepIndex.value -= 1
+  }
+
+  function goToStep(index: number): void {
+    if (index >= 0 && index < stepCount) currentStepIndex.value = index
   }
 
   // Question management
-  const addQuestion = () => {
-    form.value.questions.push({
-      id: `q-new-${Date.now()}`,
-      text: '',
-      options: ['', ''],
-      correctAnswerIndex: 0,
-    })
+  function addQuestion(): void {
+    pushQuestion(createEmptyQuestion())
   }
 
-  const removeQuestion = (index: number) => {
-    if (form.value.questions.length > 1) {
-      form.value.questions.splice(index, 1)
+  function removeQuestionAt(index: number): void {
+    if (questionFields.value.length > 1) {
+      removeQuestion(index)
     }
   }
 
-  const addOption = (questionIndex: number) => {
-    const question = form.value.questions[questionIndex]
-    if (question) {
-      question.options.push('')
+  // Tags
+  const tagSuggestions = computed(() =>
+    quizStore.getAllTags.filter((tag) => !values.tags.includes(tag)),
+  )
+
+  function addTag(tag: string): void {
+    const trimmed = tag.trim()
+    if (trimmed && !values.tags.includes(trimmed)) {
+      setFieldValue('tags', [...values.tags, trimmed])
     }
   }
 
-  const removeOption = (questionIndex: number, optionIndex: number) => {
-    const question = form.value.questions[questionIndex]
-    if (question && question.options.length > 2) {
-      question.options.splice(optionIndex, 1)
-      // Adjust correct answer if needed
-      if (question.correctAnswerIndex >= optionIndex) {
-        question.correctAnswerIndex = Math.max(0, question.correctAnswerIndex - 1)
-      }
+  function removeTag(tag: string): void {
+    setFieldValue(
+      'tags',
+      values.tags.filter((t) => t !== tag),
+    )
+  }
+
+  // Submission
+  const submit = handleSubmit((formValues) => {
+    const id = editingQuizId.value ?? `quiz-${Date.now()}`
+    const quiz = formValuesToQuiz(formValues, id)
+
+    if (editingQuizId.value) {
+      quizStore.updateQuiz(id, quiz)
+    } else {
+      quizStore.addQuiz(quiz)
     }
-  }
 
-  const addTag = (tag: string) => {
-    if (tag?.length && !form.value.tags.includes(tag)) {
-      form.value.tags.push(tag)
-    }
-  }
-
-  const removeTag = (tag: string) => {
-    form.value.tags = form.value.tags.filter((t) => t !== tag)
-  }
-
-  // Tag suggestions from existing quizzes
-  const tagSuggestions = computed(() => {
-    const existingTags = new Set(quizStore.getAllTags)
-    return Array.from(existingTags).filter((t) => !form.value.tags.includes(t))
+    router.push({ name: 'quiz-management' })
   })
 
-  // Submit
-  const submit = async (): Promise<Quiz | null> => {
-    if (!validate()) {
-      return null
-    }
-
-    const quizData: Quiz = {
-      id: currentQuizId.value || `quiz-${Date.now()}`,
-      title: form.value.title,
-      description: form.value.description,
-      category: form.value.category || undefined,
-      tags: form.value.tags.length > 0 ? form.value.tags : undefined,
-      timeLimit: form.value.timeLimit,
-      shuffleQuestions: form.value.shuffleQuestions,
-      shuffleAnswers: form.value.shuffleAnswers,
-      maxSkips: form.value.maxSkips,
-      enableReviewMode: form.value.enableReviewMode,
-      feedbackEnabled: form.value.feedbackEnabled,
-      questions: form.value.questions.map((q) => ({
-        id: q.id,
-        text: q.text,
-        options: q.options,
-        correctAnswerIndex: q.correctAnswerIndex,
-        timeLimit: q.timeLimit,
-        shuffleAnswers: q.shuffleAnswers,
-        explanation: q.explanation,
-      })),
-    }
-
-    if (currentQuizId.value) {
-      quizStore.updateQuiz(currentQuizId.value, quizData)
-    } else {
-      quizStore.addQuiz(quizData)
-    }
-
-    return quizData
-  }
-
-  const saveAndContinue = async (): Promise<Quiz | null> => {
-    const result = await submit()
-    if (result) {
-      router.push({ name: 'quiz-list' })
-    }
-    return result
-  }
-
-  const saveAndCreateNew = async (): Promise<Quiz | null> => {
-    const result = await submit()
-    if (result) {
-      // Reset form for new quiz
-      form.value = {
-        title: '',
-        description: '',
-        category: '',
-        tags: [],
-        timeLimit: undefined,
-        shuffleQuestions: false,
-        shuffleAnswers: false,
-        maxSkips: undefined,
-        enableReviewMode: false,
-        feedbackEnabled: false,
-        questions: [
-          {
-            id: `q-new-0`,
-            text: '',
-            options: ['', ''],
-            correctAnswerIndex: 0,
-          },
-        ],
-      }
-    }
-    return result
+  function reloadQuizFromStore(id: string): void {
+    const quiz = quizStore.getQuizById(id)
+    if (!quiz) return
+    editingQuizId.value = quiz.id
+    const nextValues = quizToFormValues(quiz)
+    resetForm({ values: nextValues })
+    replaceQuestions(nextValues.questions)
+    currentStepIndex.value = 0
   }
 
   return {
-    form,
+    // Form state
     errors,
-    tagSuggestions,
-    validate,
-    validateQuestion,
+    values,
+    setFieldValue,
+
+    // Steps
+    currentStep,
+    currentStepIndex,
+    stepCount,
+    isFirstStep,
+    isLastStep,
+    goToNextStep,
+    goToPreviousStep,
+    goToStep,
+
+    // Questions
+    questionFields,
     addQuestion,
-    removeQuestion,
-    addOption,
-    removeOption,
+    removeQuestionAt,
+
+    // Tags
+    tagSuggestions,
     addTag,
     removeTag,
+
+    // Submit
     submit,
-    saveAndContinue,
-    saveAndCreateNew,
-    loadQuiz,
+    isEditing,
+    reloadQuizFromStore,
   }
 }
