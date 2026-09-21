@@ -88,7 +88,7 @@ export const useQuizSessionStore = defineStore(
     const canReview = computed(() => {
       const quiz = currentQuiz.value
       if (!quiz) return false
-      return quiz.enableReviewMode !== false
+      return quiz.enableReviewMode === true
     })
 
     const hasFeedbackEnabled = computed(() => {

@@ -259,7 +259,7 @@ describe('useQuizSessionStore', () => {
       expect(sessionStore.canSkip).toBe(false)
     })
 
-    it('canReview should return true when quiz has no enableReviewMode', () => {
+    it('canReview should return false when quiz has no enableReviewMode', () => {
       const quizStore = useQuizStore()
       const sessionStore = useQuizSessionStore()
 
@@ -271,7 +271,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      expect(sessionStore.canReview).toBe(true)
+      expect(sessionStore.canReview).toBe(false)
     })
 
     it('canReview should return true when enableReviewMode is true', () => {
