@@ -111,6 +111,23 @@ describe('useQuizForm', () => {
     expect(api.values.tags).toEqual([])
   })
 
+  it('should keep questions when navigating through all steps', async () => {
+    const { api } = withForm()
+    api.setFieldValue('title', 'My quiz')
+    api.setFieldValue('description', 'A description')
+    await api.goToNextStep()
+
+    api.setFieldValue('questions[0].text', 'Q1?')
+    api.setFieldValue('questions[0].options', ['A', 'B'])
+    api.setFieldValue('questions[0].correctAnswerIndex', 0)
+    await api.goToNextStep()
+    await api.goToNextStep()
+
+    expect(api.currentStep.value).toBe('review')
+    expect(api.values.questions).toHaveLength(1)
+    expect(api.values.questions[0]?.text).toBe('Q1?')
+  })
+
   it('should add a quiz on submit when creating', async () => {
     const quizStore = useQuizStore()
     const { api } = withForm()

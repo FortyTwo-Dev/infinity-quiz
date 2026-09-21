@@ -111,6 +111,10 @@ export function useQuizForm(quizId?: string) {
     useForm<QuizFormValues>({
       validationSchema: toTypedSchema(QuizFormSchema),
       initialValues,
+      // Multi-step form: fields unmount when switching steps. Without this,
+      // VeeValidate prunes their values (e.g. `questions` becomes undefined
+      // on the review step).
+      keepValuesOnUnmount: true,
     })
 
   const {
