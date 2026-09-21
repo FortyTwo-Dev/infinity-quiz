@@ -41,6 +41,11 @@ const router = createRouter({
       name: 'quiz-import-export',
       component: () => import('@/views/QuizImportExportView.vue'),
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/views/NotFoundView.vue'),
+    },
   ],
 })
 

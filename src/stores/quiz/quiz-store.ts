@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Quiz } from '../../types/quiz'
 import { parseAndValidateQuizJSON } from '../../utils/validation'
+import { STORAGE_KEYS } from '../../constants'
 
 export const useQuizStore = defineStore(
   'quiz',
@@ -145,7 +146,7 @@ export const useQuizStore = defineStore(
   },
   {
     persist: {
-      key: 'infinity-quiz-quizzes',
+      key: STORAGE_KEYS.quizzes,
       pick: ['quizzes'],
     },
   },

@@ -170,7 +170,7 @@ describe('useQuizSessionStore', () => {
       expect(sessionStore.progress).toBe(0)
     })
 
-    it('progress should return correct percentage when quiz has questions', () => {
+    it('progress should reflect the current question position', () => {
       const quizStore = useQuizStore()
       const sessionStore = useQuizSessionStore()
 
@@ -185,10 +185,10 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      expect(sessionStore.progress).toBe(0)
+      expect(sessionStore.progress).toBe(50)
 
       sessionStore.nextQuestion()
-      expect(sessionStore.progress).toBe(50)
+      expect(sessionStore.progress).toBe(100)
     })
 
     it('hasTimer should return false when timeLeft is null', () => {
@@ -259,7 +259,7 @@ describe('useQuizSessionStore', () => {
       expect(sessionStore.canSkip).toBe(false)
     })
 
-    it('canReview should return true when quiz has no enableReviewMode', () => {
+    it('canReview should return false when quiz has no enableReviewMode', () => {
       const quizStore = useQuizStore()
       const sessionStore = useQuizSessionStore()
 
@@ -271,7 +271,7 @@ describe('useQuizSessionStore', () => {
       }
       quizStore.addQuiz(quiz)
       sessionStore.selectQuiz('test-quiz')
-      expect(sessionStore.canReview).toBe(true)
+      expect(sessionStore.canReview).toBe(false)
     })
 
     it('canReview should return true when enableReviewMode is true', () => {

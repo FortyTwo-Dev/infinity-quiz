@@ -4,6 +4,7 @@ import { useQuizStore } from './quiz-store'
 import { useQuizHistoryStore } from './quiz-history-store'
 import { isPassed } from '../../composables/useScore'
 import { shuffle } from '../../utils/array-utils'
+import { STORAGE_KEYS } from '../../constants'
 import type { Quiz, QuestionResult } from '../../types/quiz'
 
 export const useQuizSessionStore = defineStore(
@@ -52,7 +53,9 @@ export const useQuizSessionStore = defineStore(
       if (!quiz) return 0
       const total = quiz.questions.length
       if (total === 0) return 0
-      return (currentQuestionIndex.value / total) * 100
+      // Progress reflects the question currently shown, so the bar reaches
+      // 100% on the last question instead of capping below it.
+      return ((currentQuestionIndex.value + 1) / total) * 100
     })
 
     const hasNextQuestion = computed(() => {
@@ -88,7 +91,7 @@ export const useQuizSessionStore = defineStore(
     const canReview = computed(() => {
       const quiz = currentQuiz.value
       if (!quiz) return false
-      return quiz.enableReviewMode !== false
+      return quiz.enableReviewMode === true
     })
 
     const hasFeedbackEnabled = computed(() => {
@@ -489,7 +492,7 @@ export const useQuizSessionStore = defineStore(
   },
   {
     persist: {
-      key: 'infinity-quiz-session',
+      key: STORAGE_KEYS.session,
       pick: [
         'currentQuizId',
         'currentQuestionIndex',
