@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   readonly: false,
   error: false,
-  variant: 'neutral',
+  variant: undefined,
   size: 'md',
   rows: 4,
 })
@@ -58,7 +58,12 @@ function handleInput(event: Event) {
   <textarea
     :value="props.modelValue"
     @input="handleInput"
-    :class="['textarea', 'w-full', variantClasses[props.variant], sizeClasses[props.size]]"
+    :class="[
+      'textarea',
+      'w-full',
+      props.variant ? variantClasses[props.variant] : '',
+      sizeClasses[props.size],
+    ]"
     :placeholder="props.placeholder"
     :disabled="props.disabled"
     :readonly="props.readonly"

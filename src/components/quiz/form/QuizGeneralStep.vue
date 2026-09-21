@@ -54,7 +54,7 @@ function submitTag() {
         >
           <DTextarea
             :model-value="field.value"
-            :variant="errorMessage ? 'error' : 'neutral'"
+            :variant="errorMessage ? 'error' : undefined"
             placeholder="What is this quiz about?"
             :rows="3"
             @update:model-value="field.onChange"
