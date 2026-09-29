@@ -15,6 +15,7 @@ import TrendLineChart from '@/components/quiz/TrendLineChart.vue'
 import PassFailDoughnut from '@/components/quiz/PassFailDoughnut.vue'
 import ScoreDistributionChart from '@/components/quiz/ScoreDistributionChart.vue'
 import AverageByQuizChart from '@/components/quiz/AverageByQuizChart.vue'
+import GaugeChart from '@/components/quiz/GaugeChart.vue'
 
 const quizStore = useQuizStore()
 const historyStore = useQuizHistoryStore()
@@ -86,20 +87,27 @@ function formatPercentage(value: number | undefined): string {
       <div class="mb-8">
         <h2 class="text-base-content mb-4 text-xl font-semibold">Overall performance</h2>
         <LGrid as="div" cols="1 md:2 lg:4" gap="lg">
-          <div class="grid grid-cols-3 gap-2 text-center md:col-span-2 lg:col-span-1">
-            <div>
-              <div class="text-sm text-base-content/70">Attempts</div>
-              <div class="font-bold">{{ globalStats.attempts }}</div>
-            </div>
-            <div>
-              <div class="text-sm text-base-content/70">Average</div>
-              <div class="font-bold">{{ formatPercentage(globalStats.averagePercentage) }}</div>
-            </div>
-            <div>
-              <div class="text-sm text-base-content/70">Pass rate</div>
-              <div class="font-bold">{{ formatPercentage(globalStats.passRate) }}</div>
-            </div>
-          </div>
+          <DCard border class="bg-base-100">
+            <DCardBody padding="lg" class="gap-4">
+              <DCardTitle>Overall</DCardTitle>
+              <div class="flex items-center justify-center gap-4">
+                <GaugeChart
+                  :value="globalStats.averagePercentage"
+                  label="Average"
+                  color="oklch(54% 0.245 262.881)"
+                />
+                <GaugeChart
+                  :value="globalStats.passRate"
+                  label="Pass rate"
+                  color="oklch(72% 0.219 149.579)"
+                />
+              </div>
+              <div class="text-center">
+                <div class="text-sm text-base-content/70">Attempts</div>
+                <div class="font-bold">{{ globalStats.attempts }}</div>
+              </div>
+            </DCardBody>
+          </DCard>
 
           <DCard border class="bg-base-100">
             <DCardBody padding="lg" class="gap-2">
