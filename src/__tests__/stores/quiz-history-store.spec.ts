@@ -157,6 +157,57 @@ describe('useQuizHistoryStore', () => {
         expect(points.map((p) => p.average)).toEqual([50, 60, 70])
       })
     })
+
+    describe('getPassFailTotals', () => {
+      it('should return zero counts when there are no results', () => {
+        const store = useQuizHistoryStore()
+        expect(store.getPassFailTotals).toEqual({ passed: 0, failed: 0 })
+      })
+
+      it('should count passed and failed attempts', () => {
+        const store = useQuizHistoryStore()
+        store.addResult('quiz-1', 8, 10, true)
+        store.addResult('quiz-2', 5, 10, false)
+        store.addResult('quiz-2', 9, 10, true)
+
+        expect(store.getPassFailTotals).toEqual({ passed: 2, failed: 1 })
+      })
+    })
+
+    describe('getScoreDistribution', () => {
+      it('should distribute attempts into 20-point bins', () => {
+        const store = useQuizHistoryStore()
+        store.addResult('q1', 1, 10, false) // 10%
+        store.addResult('q2', 5, 10, false) // 50%
+        store.addResult('q3', 10, 10, true) // 100%
+
+        const bins = store.getScoreDistribution
+        expect(bins.find((b) => b.label === '0-20%')?.count).toBe(1)
+        expect(bins.find((b) => b.label === '41-60%')?.count).toBe(1)
+        expect(bins.find((b) => b.label === '81-100%')?.count).toBe(1)
+        expect(bins.reduce((sum, b) => sum + b.count, 0)).toBe(3)
+      })
+    })
+
+    describe('getAverageByQuiz', () => {
+      it('should return an empty array when there are no results', () => {
+        const store = useQuizHistoryStore()
+        expect(store.getAverageByQuiz).toEqual([])
+      })
+
+      it('should compute averages sorted from highest to lowest', () => {
+        const store = useQuizHistoryStore()
+        store.addResult('q1', 9, 10, true) // 90%
+        store.addResult('q2', 5, 10, false) // 50%
+        store.addResult('q1', 7, 10, true) // 70%
+
+        const averages = store.getAverageByQuiz
+        expect(averages).toEqual([
+          { quizId: 'q1', average: 80 },
+          { quizId: 'q2', average: 50 },
+        ])
+      })
+    })
   })
 
   describe('actions', () => {

@@ -82,6 +82,56 @@ export const useQuizHistoryStore = defineStore(
       })
     })
 
+    /** Count of passed vs failed attempts across every quiz. */
+    const getPassFailTotals = computed(() => {
+      const passed = results.value.filter((r) => r.passed).length
+      return {
+        passed,
+        failed: results.value.length - passed,
+      }
+    })
+
+    /**
+     * Distribution of attempt percentages into 20-point bins (0-20, 21-40,
+     * 41-60, 61-80, 81-100).
+     */
+    const getScoreDistribution = computed(() => {
+      const bins = [
+        { label: '0-20%', min: 0, max: 20, count: 0 },
+        { label: '21-40%', min: 20, max: 40, count: 0 },
+        { label: '41-60%', min: 40, max: 60, count: 0 },
+        { label: '61-80%', min: 60, max: 80, count: 0 },
+        { label: '81-100%', min: 80, max: 100, count: 0 },
+      ]
+      for (const result of results.value) {
+        const pct = toPercentage(result)
+        for (const bin of bins) {
+          if (pct >= bin.min && pct <= bin.max) {
+            bin.count += 1
+            break
+          }
+        }
+      }
+      return bins
+    })
+
+    /** Average percentage per quiz, ordered from highest to lowest. */
+    const getAverageByQuiz = computed(() => {
+      const byQuiz = new Map<string, { total: number; count: number }>()
+      for (const result of results.value) {
+        const entry = byQuiz.get(result.quizId) ?? { total: 0, count: 0 }
+        entry.total += toPercentage(result)
+        entry.count += 1
+        byQuiz.set(result.quizId, entry)
+      }
+      return [...byQuiz.entries()]
+        .map(([quizId, { total, count }]) => ({
+          quizId,
+          average: total / count,
+        }))
+        .sort((a, b) => b.average - a.average)
+    })
+
     // Actions
     const addResult = (quizId: string, score: number, totalQuestions: number, passed: boolean) => {
       const result: QuizResult = {
@@ -112,6 +162,9 @@ export const useQuizHistoryStore = defineStore(
       getStatsByQuizId,
       getGlobalStats,
       getCumulativeAverages,
+      getPassFailTotals,
+      getScoreDistribution,
+      getAverageByQuiz,
 
       // Actions
       addResult,
