@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useQuizStore, useQuizHistoryStore } from '@/stores'
+import { useStatistics } from '@/composables'
 import {
   DCard,
   DCardBody,
@@ -17,6 +18,7 @@ import AverageByQuizChart from '@/components/quiz/AverageByQuizChart.vue'
 
 const quizStore = useQuizStore()
 const historyStore = useQuizHistoryStore()
+const { categories, selectedCategory, learningCurve } = useStatistics()
 
 /** Quizzes that have at least one recorded attempt. */
 const attemptedQuizzes = computed(() =>
@@ -30,18 +32,14 @@ const selectedQuiz = computed(() =>
 )
 
 const globalStats = computed(() => historyStore.getGlobalStats)
-const cumulativeAverages = computed(() => historyStore.getCumulativeAverages)
 const passFailTotals = computed(() => historyStore.getPassFailTotals)
 const scoreDistribution = computed(() => historyStore.getScoreDistribution)
 const averageByQuiz = computed(() => historyStore.getAverageByQuiz)
 
-const cumulativeChart = computed(() => {
-  const points = cumulativeAverages.value
-  return {
-    labels: points.map((_, index) => `#${index + 1}`),
-    data: points.map((p) => Math.round(p.average)),
-  }
-})
+const learningCurveChart = computed(() => ({
+  labels: learningCurve.value.map((p) => `#${p.attempt}`),
+  data: learningCurve.value.map((p) => Math.round(p.passRate)),
+}))
 
 const averageByQuizChart = computed(() => ({
   labels: averageByQuiz.value.map(
@@ -129,11 +127,24 @@ function formatPercentage(value: number | undefined): string {
         </LGrid>
       </div>
 
-      <!-- Cumulative trend -->
+      <!-- Learning curve -->
       <DCard border class="bg-base-100 mb-8">
         <DCardBody padding="lg" class="gap-4">
-          <DCardTitle>Progression over time</DCardTitle>
-          <TrendLineChart :labels="cumulativeChart.labels" :data="cumulativeChart.data" />
+          <div class="flex items-center justify-between gap-4 flex-wrap">
+            <DCardTitle>Learning curve</DCardTitle>
+            <DFieldset label="Category" class="w-56">
+              <DSelect v-model="selectedCategory" class="w-full">
+                <DSelectOption value="">All categories</DSelectOption>
+                <DSelectOption v-for="category in categories" :key="category" :value="category">
+                  {{ category }}
+                </DSelectOption>
+              </DSelect>
+            </DFieldset>
+          </div>
+          <TrendLineChart :labels="learningCurveChart.labels" :data="learningCurveChart.data" />
+          <p class="text-sm text-base-content/70 m-0">
+            Average pass rate by attempt number across all quizzes.
+          </p>
         </DCardBody>
       </DCard>
 
