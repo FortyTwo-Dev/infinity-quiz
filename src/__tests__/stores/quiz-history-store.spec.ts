@@ -16,22 +16,6 @@ describe('useQuizHistoryStore', () => {
   })
 
   describe('getters', () => {
-    describe('getResultByQuizId', () => {
-      it('should return null when no result found', () => {
-        const store = useQuizHistoryStore()
-        expect(store.getResultByQuizId('non-existent')).toBeNull()
-      })
-
-      it('should return the result when found', () => {
-        const store = useQuizHistoryStore()
-        store.addResult('quiz-1', 5, 10, true)
-        const result = store.getResultByQuizId('quiz-1')
-        expect(result).not.toBeNull()
-        expect(result?.quizId).toBe('quiz-1')
-        expect(result?.score).toBe(5)
-      })
-    })
-
     describe('getLatestResultByQuizId', () => {
       it('should return null when no result found', () => {
         const store = useQuizHistoryStore()

@@ -10,10 +10,6 @@ export const useQuizHistoryStore = defineStore(
     const results = ref<QuizResult[]>([])
 
     // Getters
-    const getResultByQuizId = computed(() => (quizId: string) => {
-      return results.value.find((r) => r.quizId === quizId) ?? null
-    })
-
     const getLatestResultByQuizId = computed(() => (quizId: string) => {
       const quizResults = results.value
         .filter((r) => r.quizId === quizId)
@@ -46,7 +42,6 @@ export const useQuizHistoryStore = defineStore(
       results,
 
       // Getters
-      getResultByQuizId,
       getLatestResultByQuizId,
 
       // Actions
