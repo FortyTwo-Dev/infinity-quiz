@@ -2,6 +2,7 @@
 import type { RadioVariant, Size } from '../types'
 
 interface Props {
+  id?: string
   value?: string | number
   name?: string
   checked?: boolean
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  id: undefined,
   value: undefined,
   name: undefined,
   checked: false,
@@ -57,6 +59,7 @@ function handleChange(event: Event) {
       props.size ? sizeClasses[props.size] : '',
       props.variant ? variantClasses[props.variant] : '',
     ]"
+    :id="props.id"
     :value="props.value"
     :name="props.name"
     :checked="props.checked"

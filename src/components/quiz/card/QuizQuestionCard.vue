@@ -67,8 +67,14 @@ const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
       <DCardTitle>{{ question.text }}</DCardTitle>
 
       <LGrid as="div" cols="1 md:2 lg:3" gap="4">
-        <DLabel v-for="(item, displayIndex) in questionOptions" :key="displayIndex" class="p-2 bg-base-200">
+        <DLabel
+          v-for="(item, displayIndex) in questionOptions"
+          :key="displayIndex"
+          :for="`${question.id}-${item.originalIndex}`"
+          class="p-2 bg-base-200"
+        >
           <DRadio
+            :id="`${question.id}-${item.originalIndex}`"
             :name="question.id"
             :value="item.originalIndex"
             :checked="selectedAnswer === item.originalIndex"

@@ -1,5 +1,5 @@
 <template>
   <form method="dialog" class="modal-backdrop">
-    <button>close</button>
+    <button type="submit">close</button>
   </form>
 </template>
