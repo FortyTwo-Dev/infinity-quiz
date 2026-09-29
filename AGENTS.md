@@ -36,4 +36,4 @@ Use VeeValidate with Zod (`@vee-validate/zod`) for form validation and handling.
 ---
 
 ## Styling
-Use Tailwind CSS with daisyUI for styling. Custom variables are defined in `src/assets/styles/_variables.css`.
+Use Tailwind CSS with daisyUI for styling. Custom variables and daisyUI themes are defined in `src/css/main.css`.
