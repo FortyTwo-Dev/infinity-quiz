@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Quiz, Question } from '../types/quiz'
+import type { Quiz } from '../types/quiz'
 
 // ============================================================================
 // Schemas Zod
@@ -90,38 +90,6 @@ export const QuizFormSchema = z.object({
 
 export type FormQuestion = z.infer<typeof FormQuestionSchema>
 export type QuizFormValues = z.infer<typeof QuizFormSchema>
-
-// ============================================================================
-// Types inférés (pour l'autocomplétion)
-// ============================================================================
-
-export type ZodQuestion = z.infer<typeof QuestionSchema>
-export type ZodQuiz = z.infer<typeof QuizSchema>
-
-// ============================================================================
-// Type Guards
-// ============================================================================
-
-/**
- * Type guard pour Question
- */
-export function isQuestion(value: unknown): value is Question {
-  return QuestionSchema.safeParse(value).success
-}
-
-/**
- * Type guard pour Quiz
- */
-export function isQuiz(value: unknown): value is Quiz {
-  return QuizSchema.safeParse(value).success
-}
-
-/**
- * Type guard pour Quiz[]
- */
-export function isQuizArray(value: unknown): value is Quiz[] {
-  return z.array(QuizSchema).min(1).safeParse(value).success
-}
 
 // ============================================================================
 // Validation avec résultats détaillés
