@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import type { Question } from '@/types'
 import type { QuestionOption } from '@/composables/useQuiz'
-import { DButton, DCardTitle, DCard, DCardBody, DCardActions } from '@/components/daisy-ui'
-import type { ColorVariant } from '@/components/daisy-ui/types'
+import {
+  DButton,
+  DRadio,
+  DLabel,
+  DCardTitle,
+  DCard,
+  DCardBody,
+  DCardActions,
+} from '@/components/daisy-ui'
+import type { RadioVariant } from '@/components/daisy-ui/types'
 import { LGrid } from '@/components/layout'
 
 interface Props {
@@ -39,9 +47,9 @@ const isOptionSelected = (originalIndex: number): boolean => {
   return props.selectedAnswer === originalIndex
 }
 
-const getButtonVariant = (originalIndex: number): ColorVariant => {
+const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
   if (!props.isAnswerVerified) {
-    return 'ghost'
+    return undefined
   }
   if (isCorrectAnswer(originalIndex)) {
     return 'success'
@@ -49,7 +57,7 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
   if (isOptionSelected(originalIndex) && !isCorrectAnswer(originalIndex)) {
     return 'error'
   }
-  return 'neutral'
+  return undefined
 }
 </script>
 
@@ -59,23 +67,22 @@ const getButtonVariant = (originalIndex: number): ColorVariant => {
       <DCardTitle>{{ question.text }}</DCardTitle>
 
       <LGrid as="div" cols="1 md:2 lg:3" gap="4">
-        <DButton
-          v-for="(item, displayIndex) in questionOptions"
-          :key="displayIndex"
-          as="input-radio"
-          :name="question.options[displayIndex]"
-          :value="item.originalIndex"
-          :checked="selectedAnswer === item.originalIndex"
-          :disabled="
-            isCurrentQuestionVerified &&
-            !isCorrectAnswer(item.originalIndex) &&
-            !isOptionSelected(item.originalIndex)
-          "
-          :variant="getButtonVariant(item.originalIndex)"
-          size="md"
-          class="w-full"
-          @change="!isCurrentQuestionVerified ? emit('select', item.originalIndex) : null"
-        />
+        <DLabel v-for="(item, displayIndex) in questionOptions" :key="displayIndex" class="p-2 bg-base-200">
+          <DRadio
+            :name="question.id"
+            :value="item.originalIndex"
+            :checked="selectedAnswer === item.originalIndex"
+            :disabled="
+              isCurrentQuestionVerified &&
+              !isCorrectAnswer(item.originalIndex) &&
+              !isOptionSelected(item.originalIndex)
+            "
+            :variant="getRadioVariant(item.originalIndex)"
+            size="xs"
+            @change="!isCurrentQuestionVerified ? emit('select', item.originalIndex) : null"
+          />
+          <span class="text-base-content">{{ item.option }}</span>
+        </DLabel>
       </LGrid>
 
       <div class="divider"></div>
