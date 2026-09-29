@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { QuizResult, QuizStats } from '../../types/quiz'
+import type { QuizResult, QuizStats, GlobalStats } from '../../types/quiz'
 import { STORAGE_KEYS } from '../../constants'
 
 /** Results for a single quiz ordered chronologically (oldest first). */
 function sortByDateAsc(results: QuizResult[]): QuizResult[] {
   return [...results].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+}
+
+function toPercentage(result: QuizResult): number {
+  return result.totalQuestions > 0 ? (result.score / result.totalQuestions) * 100 : 0
 }
 
 export const useQuizHistoryStore = defineStore(
@@ -32,9 +36,7 @@ export const useQuizHistoryStore = defineStore(
       const quizResults = results.value.filter((r) => r.quizId === quizId)
       if (quizResults.length === 0) return null
 
-      const percentages = quizResults.map(
-        (r) => (r.totalQuestions > 0 ? (r.score / r.totalQuestions) * 100 : 0),
-      )
+      const percentages = quizResults.map(toPercentage)
       const bestPercentage = Math.max(...percentages)
       const averagePercentage = percentages.reduce((sum, p) => sum + p, 0) / percentages.length
       const passRate =
@@ -46,6 +48,38 @@ export const useQuizHistoryStore = defineStore(
         averagePercentage,
         passRate,
       }
+    })
+
+    /** Global stats across every recorded attempt. */
+    const getGlobalStats = computed((): GlobalStats | null => {
+      if (results.value.length === 0) return null
+
+      const percentages = results.value.map(toPercentage)
+      const averagePercentage = percentages.reduce((sum, p) => sum + p, 0) / percentages.length
+      const passRate = (results.value.filter((r) => r.passed).length / results.value.length) * 100
+
+      return {
+        attempts: results.value.length,
+        averagePercentage,
+        passRate,
+      }
+    })
+
+    /**
+     * Cumulative average percentage over time (oldest → newest). Each point is
+     * the running mean of all attempts up to that date, producing a smooth
+     * progression curve.
+     */
+    const getCumulativeAverages = computed(() => {
+      const ordered = sortByDateAsc(results.value)
+      let sum = 0
+      return ordered.map((result, index) => {
+        sum += toPercentage(result)
+        return {
+          date: result.date,
+          average: sum / (index + 1),
+        }
+      })
     })
 
     // Actions
@@ -76,6 +110,8 @@ export const useQuizHistoryStore = defineStore(
       getLatestResultByQuizId,
       getResultsByQuizId,
       getStatsByQuizId,
+      getGlobalStats,
+      getCumulativeAverages,
 
       // Actions
       addResult,

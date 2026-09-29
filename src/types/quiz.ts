@@ -45,6 +45,12 @@ export interface QuizStats {
   passRate: number
 }
 
+export interface GlobalStats {
+  attempts: number
+  averagePercentage: number
+  passRate: number
+}
+
 export interface QuizState {
   currentQuizId: string | null
   currentQuestionIndex: number
