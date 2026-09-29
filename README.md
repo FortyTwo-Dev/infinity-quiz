@@ -4,7 +4,7 @@
 
 ## Features
 
-### Current (Phase 2 - Enhanced Quiz Experience)
+### Current (Phase 3 - Quiz Management)
 - Quiz list with local storage
 - Quiz selection and question navigation
 - Multiple choice questions
@@ -17,6 +17,11 @@
 - Review mode at quiz end
 - Correct answer highlighting
 - Immediate feedback on selection
+- Quiz creation, editing, deletion, and duplication
+- Categories and tags for organizing quizzes
+- Search and filter quizzes
+- JSON import/export for sharing quizzes
+- Light/dark mode with multiple color themes
 
 ### Roadmap
 See [docs/roadmap.md](./docs/roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
