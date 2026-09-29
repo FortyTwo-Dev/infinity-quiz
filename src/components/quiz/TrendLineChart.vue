@@ -35,12 +35,12 @@ const chartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
   layout: {
-    padding: { top: 24, right: 8, bottom: 4 },
+    padding: { top: 40, right: 8, bottom: 4 },
   },
   scales: {
     y: {
       min: 0,
-      grace: '10%',
+      max: 100,
       ticks: {
         callback: (value) => `${value}${props.unit}`,
         padding: 10,
