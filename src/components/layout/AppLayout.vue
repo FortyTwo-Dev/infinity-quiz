@@ -12,6 +12,7 @@ const routeLabels: Record<string, string> = {
   'quiz-list': 'Home',
   quiz: 'Quiz',
   results: 'Results',
+  statistics: 'Statistics',
   'quiz-management': 'Management',
   'quiz-create': 'Create',
   'quiz-edit': 'Edit',

@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'results',
       component: () => import('@/views/ResultsView.vue'),
     },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: () => import('@/views/StatisticsView.vue'),
+    },
     // Phase 3 - Quiz Management Routes
     {
       path: '/manage',

@@ -1,0 +1,5 @@
+export { default as TrendLineChart } from './TrendLineChart.vue'
+export { default as PassFailDoughnut } from './PassFailDoughnut.vue'
+export { default as ScoreDistributionChart } from './ScoreDistributionChart.vue'
+export { default as AverageByQuizChart } from './AverageByQuizChart.vue'
+export { default as GaugeChart } from './GaugeChart.vue'
