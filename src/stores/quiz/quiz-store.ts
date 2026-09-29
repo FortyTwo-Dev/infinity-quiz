@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 import type { Quiz } from '../../types/quiz'
 import { parseAndValidateQuizJSON } from '../../utils/validation'
 import { STORAGE_KEYS } from '../../constants'
@@ -13,10 +14,6 @@ export const useQuizStore = defineStore(
     // Getters
     const getQuizById = computed(() => (id: string) => {
       return quizzes.value.find((q) => q.id === id) ?? null
-    })
-
-    const getQuizzesByCategory = computed(() => (category: string) => {
-      return quizzes.value.filter((q) => q.category === category)
     })
 
     const getAllCategories = computed(() => {
@@ -46,10 +43,6 @@ export const useQuizStore = defineStore(
       )
     })
 
-    const filterQuizzesByTag = computed(() => (tag: string) => {
-      return quizzes.value.filter((q) => q.tags?.includes(tag))
-    })
-
     // Actions
     const addQuiz = (quiz: Quiz) => {
       quizzes.value.push(quiz)
@@ -72,14 +65,14 @@ export const useQuizStore = defineStore(
 
       const duplicatedQuiz: Quiz = {
         ...originalQuiz,
-        id: `${originalQuiz.id}-copy-${Date.now()}`,
-        title: `${originalQuiz.title} (Copie)`,
+        id: `${originalQuiz.id}-copy-${uuidv4()}`,
+        title: `${originalQuiz.title} (Copy)`,
       }
 
       // Deep copy questions with new IDs
       duplicatedQuiz.questions = originalQuiz.questions.map((q) => ({
         ...q,
-        id: `${q.id}-copy-${Date.now()}`,
+        id: `${q.id}-copy-${uuidv4()}`,
       }))
 
       quizzes.value.push(duplicatedQuiz)
@@ -134,11 +127,9 @@ export const useQuizStore = defineStore(
 
       // Getters
       getQuizById,
-      getQuizzesByCategory,
       getAllCategories,
       getAllTags,
       searchQuizzes,
-      filterQuizzesByTag,
 
       // Actions
 
