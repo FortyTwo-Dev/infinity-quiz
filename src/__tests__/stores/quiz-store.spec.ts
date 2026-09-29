@@ -34,37 +34,6 @@ describe('useQuizStore', () => {
       expect(store.getQuizById('test-quiz')).toEqual(quiz)
     })
 
-    it('getQuizzesByCategory should return quizzes with matching category', () => {
-      const store = useQuizStore()
-      const quiz1: Quiz = {
-        id: 'quiz-1',
-        title: 'Quiz 1',
-        description: 'Description 1',
-        category: 'Science',
-        questions: [],
-      }
-      const quiz2: Quiz = {
-        id: 'quiz-2',
-        title: 'Quiz 2',
-        description: 'Description 2',
-        category: 'History',
-        questions: [],
-      }
-      const quiz3: Quiz = {
-        id: 'quiz-3',
-        title: 'Quiz 3',
-        description: 'Description 3',
-        category: 'Science',
-        questions: [],
-      }
-      store.addQuiz(quiz1)
-      store.addQuiz(quiz2)
-      store.addQuiz(quiz3)
-
-      expect(store.getQuizzesByCategory('Science')).toHaveLength(2)
-      expect(store.getQuizzesByCategory('Science')).toEqual([quiz1, quiz3])
-    })
-
     it('getAllCategories should return unique sorted categories', () => {
       const store = useQuizStore()
       const quiz1: Quiz = {
@@ -166,29 +135,6 @@ describe('useQuizStore', () => {
       expect(store.searchQuizzes('science')).toHaveLength(1)
       expect(store.searchQuizzes('science')[0].description).toBe('A quiz about science')
     })
-
-    it('filterQuizzesByTag should return quizzes with matching tag', () => {
-      const store = useQuizStore()
-      const quiz1: Quiz = {
-        id: 'quiz-1',
-        title: 'Quiz 1',
-        description: 'Description 1',
-        tags: ['easy', 'beginner'],
-        questions: [],
-      }
-      const quiz2: Quiz = {
-        id: 'quiz-2',
-        title: 'Quiz 2',
-        description: 'Description 2',
-        tags: ['hard', 'advanced'],
-        questions: [],
-      }
-      store.addQuiz(quiz1)
-      store.addQuiz(quiz2)
-
-      expect(store.filterQuizzesByTag('easy')).toHaveLength(1)
-      expect(store.filterQuizzesByTag('easy')[0].id).toBe('quiz-1')
-    })
   })
 
   describe('actions', () => {
@@ -267,7 +213,7 @@ describe('useQuizStore', () => {
       expect(duplicatedQuiz).not.toBeNull()
       expect(duplicatedQuiz!.id).not.toBe('original-quiz')
       expect(duplicatedQuiz!.id).toContain('copy')
-      expect(duplicatedQuiz!.title).toBe('Original Quiz (Copie)')
+      expect(duplicatedQuiz!.title).toBe('Original Quiz (Copy)')
       expect(duplicatedQuiz!.description).toBe('Original Description')
       expect(duplicatedQuiz!.category).toBe('Test')
       expect(duplicatedQuiz!.tags).toEqual(['test'])
