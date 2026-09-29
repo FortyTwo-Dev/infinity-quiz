@@ -46,6 +46,72 @@ describe('useQuizHistoryStore', () => {
         expect(result?.score).toBe(8)
       })
     })
+
+    describe('getResultsByQuizId', () => {
+      it('should return an empty array when no result found', () => {
+        const store = useQuizHistoryStore()
+        expect(store.getResultsByQuizId('non-existent')).toEqual([])
+      })
+
+      it('should return results ordered oldest first', () => {
+        const store = useQuizHistoryStore()
+        const olderDate = new Date(Date.now() - 4000).toISOString()
+        const newerDate = new Date(Date.now() - 2000).toISOString()
+
+        store.$patch({
+          results: [
+            { quizId: 'quiz-1', score: 8, totalQuestions: 10, passed: true, date: newerDate },
+            { quizId: 'quiz-1', score: 5, totalQuestions: 10, passed: false, date: olderDate },
+          ],
+        })
+
+        const results = store.getResultsByQuizId('quiz-1')
+        expect(results.map((r) => r.score)).toEqual([5, 8])
+      })
+
+      it('should only return results for the given quiz', () => {
+        const store = useQuizHistoryStore()
+        store.addResult('quiz-1', 5, 10, true)
+        store.addResult('quiz-2', 8, 10, true)
+
+        const results = store.getResultsByQuizId('quiz-1')
+        expect(results).toHaveLength(1)
+        expect(results[0]?.quizId).toBe('quiz-1')
+      })
+    })
+
+    describe('getStatsByQuizId', () => {
+      it('should return null when no result found', () => {
+        const store = useQuizHistoryStore()
+        expect(store.getStatsByQuizId('non-existent')).toBeNull()
+      })
+
+      it('should aggregate attempts, best, average and pass rate', () => {
+        const store = useQuizHistoryStore()
+        store.addResult('quiz-1', 8, 10, true)
+        store.addResult('quiz-1', 5, 10, false)
+        store.addResult('quiz-1', 9, 10, true)
+
+        const stats = store.getStatsByQuizId('quiz-1')
+        expect(stats).toEqual({
+          attempts: 3,
+          bestPercentage: 90,
+          averagePercentage: (80 + 50 + 90) / 3,
+          passRate: (2 / 3) * 100,
+        })
+      })
+
+      it('should handle a zero-question result gracefully', () => {
+        const store = useQuizHistoryStore()
+        store.$patch({
+          results: [{ quizId: 'quiz-1', score: 0, totalQuestions: 0, passed: false, date: new Date().toISOString() }],
+        })
+
+        const stats = store.getStatsByQuizId('quiz-1')
+        expect(stats?.bestPercentage).toBe(0)
+        expect(stats?.averagePercentage).toBe(0)
+      })
+    })
   })
 
   describe('actions', () => {

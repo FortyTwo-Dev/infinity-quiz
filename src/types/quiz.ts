@@ -38,6 +38,13 @@ export interface QuizResult {
   passed: boolean
 }
 
+export interface QuizStats {
+  attempts: number
+  bestPercentage: number
+  averagePercentage: number
+  passRate: number
+}
+
 export interface QuizState {
   currentQuizId: string | null
   currentQuestionIndex: number
