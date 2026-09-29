@@ -5,17 +5,15 @@ import { useQuizSessionStore } from './quiz-session-store'
 export const useQuizVerificationStore = defineStore('quizVerification', () => {
   const sessionStore = useQuizSessionStore()
 
-  // State is derived from the session store so it can never go stale when
-  // navigating between questions.
-  const isAnswerVerified = computed(() => {
-    const question = sessionStore.currentQuestion
-    if (!question) return false
-    return sessionStore.verifiedQuestions[question.id] === true
-  })
+  // The session store owns the verification state (`verifiedQuestions`) and the
+  // `isCurrentQuestionVerified` / `canSkipCurrentQuestion` getters. This store
+  // delegates to them instead of reimplementing the logic, so it can never
+  // drift out of sync with the session when navigating between questions.
+  const isAnswerVerified = computed(() => sessionStore.isCurrentQuestionVerified)
 
   const verifiedAnswerCorrect = computed<boolean | null>(() => {
     const question = sessionStore.currentQuestion
-    if (!question || sessionStore.verifiedQuestions[question.id] !== true) return null
+    if (!question || !isAnswerVerified.value) return null
     const userAnswer = sessionStore.getAnswerForQuestion(question.id)
     return userAnswer === question.correctAnswerIndex
   })
@@ -36,9 +34,7 @@ export const useQuizVerificationStore = defineStore('quizVerification', () => {
 
   const isCurrentQuestionVerified = computed(() => isAnswerVerified.value)
 
-  const canSkipCurrentQuestion = computed(() => {
-    return sessionStore.canSkip && !isCurrentQuestionVerified.value
-  })
+  const canSkipCurrentQuestion = computed(() => sessionStore.canSkipCurrentQuestion)
 
   // Actions
   const verifyAnswer = (): boolean => {
