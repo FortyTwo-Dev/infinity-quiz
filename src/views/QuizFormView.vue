@@ -46,7 +46,7 @@ async function handleNext() {
 </script>
 
 <template>
-  <LContainer as="section" size="4xl" padding="md" centered>
+    <LContainer as="section" size="7xl" padding="md" centered>
     <LFlex as="header" align="center" justify="between" class="mb-6">
       <div>
         <h1 class="text-base-content text-2xl font-bold">{{ heading }}</h1>
