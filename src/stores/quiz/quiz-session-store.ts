@@ -286,91 +286,41 @@ export const useQuizSessionStore = defineStore(
       score.value = newScore
     }
 
-    const nextQuestion = () => {
-      if (!hasNextQuestion.value) return
-
+    const moveToQuestion = (index: number) => {
       const quiz = currentQuiz.value
-      // Get current question before changing index
-      const currentQuestionIndexVal = currentQuestionIndex.value
-      const quizQuestions = quiz?.questions
-      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
+      const currentQuestion = quiz?.questions[currentQuestionIndex.value]
 
-      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
+      // A global timer (quiz has timeLimit, current question doesn't) keeps
+      // running independently; only per-question timers are reset on navigation.
       const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
 
-      // For global timer: just change question, timer keeps running independently
-      // For per-question timer: need to clear and restart timer
-      if (hasGlobalTimer) {
-        // Global timer: just change question, timer continues running
-        currentQuestionIndex.value += 1
-      } else {
-        // Per-question timer: clear and restart with fresh time limit
+      if (!hasGlobalTimer) {
         clearTimer()
-        currentQuestionIndex.value += 1
+      }
 
+      currentQuestionIndex.value = index
+
+      if (!hasGlobalTimer) {
         const timeLimit = getCurrentQuestionTimeLimit.value
         if (timeLimit !== null && timeLimit > 0) {
           startTimer(timeLimit)
         }
       }
+    }
+
+    const nextQuestion = () => {
+      if (!hasNextQuestion.value) return
+      moveToQuestion(currentQuestionIndex.value + 1)
     }
 
     const previousQuestion = () => {
       if (!hasPreviousQuestion.value) return
-
-      const quiz = currentQuiz.value
-      // Get current question before changing index
-      const currentQuestionIndexVal = currentQuestionIndex.value
-      const quizQuestions = quiz?.questions
-      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
-
-      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
-      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
-
-      // For global timer: just change question, timer keeps running independently
-      // For per-question timer: need to clear and restart timer
-      if (hasGlobalTimer) {
-        // Global timer: just change question, timer continues running
-        currentQuestionIndex.value -= 1
-      } else {
-        // Per-question timer: clear and restart with fresh time limit
-        clearTimer()
-        currentQuestionIndex.value -= 1
-
-        const timeLimit = getCurrentQuestionTimeLimit.value
-        if (timeLimit !== null && timeLimit > 0) {
-          startTimer(timeLimit)
-        }
-      }
+      moveToQuestion(currentQuestionIndex.value - 1)
     }
 
     const goToQuestion = (index: number) => {
       if (index < 0 || index >= totalQuestions.value) return
-
-      const quiz = currentQuiz.value
-      // Get current question before changing index
-      const currentQuestionIndexVal = currentQuestionIndex.value
-      const quizQuestions = quiz?.questions
-      const currentQuestion = quizQuestions?.[currentQuestionIndexVal]
-
-      // Check if we have a global timer (quiz has timeLimit, current question doesn't)
-      const hasGlobalTimer = quiz?.timeLimit !== undefined && currentQuestion?.timeLimit === undefined
-
-      // For global timer: just change question, timer keeps running independently
-      // For per-question timer: need to clear and restart timer
-      if (hasGlobalTimer) {
-        // Global timer: just change question, timer continues running
-        currentQuestionIndex.value = index
-      } else {
-        // Per-question timer: clear and restart with fresh time limit
-        clearTimer()
-        currentQuestionIndex.value = index
-
-        const timeLimit = getCurrentQuestionTimeLimit.value
-        if (timeLimit !== null && timeLimit > 0) {
-          startTimer(timeLimit)
-        }
-      }
+      moveToQuestion(index)
     }
 
     const completeQuiz = () => {

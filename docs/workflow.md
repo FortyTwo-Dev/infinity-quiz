@@ -98,6 +98,12 @@ Example: `#123 feat/quiz-timer`
 2. Check SonarQube results (if applicable)
 3. Get at least 1 approval
 4. Merge using Squash and Merge or Rebase and Merge
+5. Delete the branch after merge (both local and remote)
+
+```bash
+git branch -d <branch_name>
+git push origin --delete <branch_name>
+```
 
 ---
 
