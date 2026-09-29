@@ -100,42 +100,43 @@ bun format
 
 ```
 src/
-├── assets/                   # Static assets
-│   └── styles/               # CSS variables and global styles
-├── components/               # Reusable Vue components
-│   ├── common/               # Generic components (Button, Card, ProgressBar, etc.)
-│   └── quiz/                 # Quiz-specific components (FeedbackCard, QuestionReviewCard)
-├── composables/              # Vue composables
-│   ├── useFeedback.ts        # Feedback messages and levels
-│   ├── useQuiz.ts            # Quiz session logic
-│   ├── useResults.ts         # Results screen logic
-│   ├── useScore.ts           # Score calculation utilities
-│   └── useTimer.ts           # Timer functionality
-├── constants/                # Application constants
-
+├── assets/                   # Static assets (fonts)
+├── components/
+│   ├── common/               # App-wide components (modal, notification, theme)
+│   ├── daisy-ui/             # daisyUI wrappers (button, card, fieldset, modal, …)
+│   ├── layout/               # Layout components (AppLayout, AppSidebar, containers)
+│   ├── quiz/                 # Quiz-specific components (cards, form, timer)
+│   └── quiz-import-export/   # Import/export components
+├── composables/              # Vue composables (useQuiz, useQuizForm, useResults, …)
+├── constants/                # Application constants (colors, thresholds, storage keys)
+├── css/                      # Global CSS (main.css)
 ├── __tests__/                # Unit tests
 │   ├── composables/          # Composable tests
 │   ├── stores/               # Store tests
 │   └── utils/                # Utility tests
 ├── router/                   # Vue Router configuration
-├── stores/                   # Pinia stores
+├── stores/
+│   ├── notification-store.ts # Notification state
 │   └── quiz/                 # Quiz-related stores
 │       ├── quiz-store.ts         # Quiz CRUD operations
 │       ├── quiz-session-store.ts # Quiz session management
-│       ├── quiz-timer-store.ts   # Timer store
+│       ├── quiz-history-store.ts # Completed quiz results
 │       └── quiz-verification-store.ts # Answer verification
 ├── types/                    # TypeScript type definitions
-├── utils/                    # Utility functions
+├── utils/                    # Utility functions (validation, random, array-utils)
 ├── views/                    # Page-level components (routes)
 │   ├── QuizListView.vue      # Quiz selection
 │   ├── QuizView.vue          # Quiz taking interface
-│   └── ResultsView.vue       # Results display
+│   ├── ResultsView.vue       # Results display
+│   ├── QuizFormView.vue      # Quiz create/edit form
+│   ├── QuizManagementView.vue# Quiz management
+│   ├── QuizImportExportView.vue # Import/export
+│   └── NotFoundView.vue      # 404 page
 ├── App.vue                   # Root component
 └── main.ts                   # Application entry point
 
 docs/
-├── decisions/
-│   └── TEMPLATE.md          # ADR template
+├── decisions/               # ADRs (architecture decision records)
 ├── quiz-format.md           # Quiz data format specification
 ├── roadmap.md               # Development roadmap
 ├── specs.md                 # Technical stack documentation
