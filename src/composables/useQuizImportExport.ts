@@ -61,7 +61,7 @@ export function useQuizImportExport() {
         state.value.successMessage = 'Quiz imported successfully'
         state.value.jsonData = ''
       } else {
-        state.value.error = 'Invalid quiz data'
+        state.value.error = 'Invalid quiz data or duplicate quiz ID'
       }
       return success
     } catch (err) {
@@ -83,7 +83,7 @@ export function useQuizImportExport() {
         state.value.successMessage = 'Quizzes imported successfully'
         state.value.jsonData = ''
       } else {
-        state.value.error = 'Invalid quiz data'
+        state.value.error = 'Invalid quiz data or duplicate quiz ID'
       }
       return success
     } catch (err) {

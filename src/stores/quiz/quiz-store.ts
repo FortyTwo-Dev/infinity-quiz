@@ -98,10 +98,10 @@ export const useQuizStore = defineStore(
 
     const importQuiz = (quizData: string): boolean => {
       const parsedQuiz = parseAndValidateQuizJSON(quizData)
-      if (parsedQuiz === null) {
+      if (parsedQuiz === null || Array.isArray(parsedQuiz)) {
         return false
       }
-      if (Array.isArray(parsedQuiz)) {
+      if (getQuizById.value(parsedQuiz.id)) {
         return false
       }
       addQuiz(parsedQuiz)
@@ -110,12 +110,20 @@ export const useQuizStore = defineStore(
 
     const importQuizzes = (quizzesData: string): boolean => {
       const parsedQuizzes = parseAndValidateQuizJSON(quizzesData)
-      if (parsedQuizzes === null) {
+      if (parsedQuizzes === null || !Array.isArray(parsedQuizzes)) {
         return false
       }
-      if (!Array.isArray(parsedQuizzes)) {
-        return false
+
+      // Reject the whole batch if any id is already present (or duplicated
+      // within the payload) to avoid silent duplicate ids.
+      const seenIds = new Set(quizzes.value.map((q) => q.id))
+      for (const quiz of parsedQuizzes) {
+        if (seenIds.has(quiz.id)) {
+          return false
+        }
+        seenIds.add(quiz.id)
       }
+
       quizzes.value.push(...parsedQuizzes)
       return true
     }
