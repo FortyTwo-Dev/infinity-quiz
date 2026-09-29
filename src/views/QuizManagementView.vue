@@ -46,9 +46,9 @@ const handleDuplicateQuiz = (quizId: string) => {
 
 const confirmDuplicate = () => {
   if (quizToDuplicate.value) {
-    const title = quizStore.getQuizById(quizToDuplicate.value)?.title || 'le quiz'
+    const title = quizStore.getQuizById(quizToDuplicate.value)?.title || 'this quiz'
     duplicateQuiz(quizToDuplicate.value)
-    notificationStore.addNotification(`Quiz "${title}" dupliqué avec succès`, 'success', 3000)
+    notificationStore.addNotification(`Quiz "${title}" duplicated successfully`, 'success', 3000)
     quizToDuplicate.value = null
   }
   showDuplicateModal.value = false
@@ -61,9 +61,9 @@ const handleDeleteQuiz = (quizId: string) => {
 
 const confirmDelete = () => {
   if (quizToDelete.value) {
-    const title = quizStore.getQuizById(quizToDelete.value)?.title || 'le quiz'
+    const title = quizStore.getQuizById(quizToDelete.value)?.title || 'this quiz'
     deleteQuiz(quizToDelete.value)
-    notificationStore.addNotification(`Quiz "${title}" supprimé avec succès`, 'success', 3000)
+    notificationStore.addNotification(`Quiz "${title}" deleted successfully`, 'success', 3000)
     quizToDelete.value = null
   }
   showDeleteModal.value = false

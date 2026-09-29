@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuizList } from '../composables/useQuizList'
 import { getAttemptStatus, type AttemptStatus } from '../composables/useAttempt'
@@ -51,7 +51,10 @@ function showQuizInfo(quizId: string) {
       enableReviewMode: quiz.enableReviewMode,
       feedbackEnabled: quiz.feedbackEnabled,
     }
-    infoModal.value?.open()
+
+    // The modal is mounted via v-if, so it does not exist in the DOM until the
+    // next render. Wait for the template ref before opening it.
+    void nextTick(() => infoModal.value?.open())
   }
 }
 

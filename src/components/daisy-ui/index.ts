@@ -32,6 +32,12 @@ export { DFieldset } from './fieldset'
 // Checkbox
 export { DCheckbox } from './checkbox'
 
+// Radio
+export { DRadio } from './radio'
+
+// Label
+export { DLabel } from './label'
+
 // Toast
 export { DToast } from './toast'
 
@@ -51,5 +57,6 @@ export type {
   IndicatorAlign,
   ProgressColor,
   CheckboxVariant,
+  RadioVariant,
   Direction,
 } from './types'

@@ -71,7 +71,7 @@ describe('useQuizImportExport', () => {
 
       expect(success).toBe(false)
       expect(quizStore.quizzes).toHaveLength(0)
-      expect(state.value.error).toBe('Invalid quiz data')
+      expect(state.value.error).toBe('Invalid quiz data or duplicate quiz ID')
     })
 
     it('should clear previous messages before importing', () => {
@@ -188,7 +188,7 @@ describe('useQuizImportExport', () => {
       const success = importSingleQuiz(JSON.stringify({ id: 'x' }))
 
       expect(success).toBe(false)
-      expect(state.value.error).toBe('Invalid quiz data')
+      expect(state.value.error).toBe('Invalid quiz data or duplicate quiz ID')
       expect(state.value.isImporting).toBe(false)
     })
   })
@@ -211,7 +211,7 @@ describe('useQuizImportExport', () => {
       const { importMultipleQuizzes, state } = useQuizImportExport()
 
       expect(importMultipleQuizzes(JSON.stringify(validQuiz))).toBe(false)
-      expect(state.value.error).toBe('Invalid quiz data')
+      expect(state.value.error).toBe('Invalid quiz data or duplicate quiz ID')
     })
   })
 

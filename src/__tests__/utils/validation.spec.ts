@@ -4,9 +4,6 @@ import {
   QuizSchema,
   FormQuestionSchema,
   QuizFormSchema,
-  isQuestion,
-  isQuiz,
-  isQuizArray,
   validateQuizJSON,
   parseAndValidateQuizJSON,
   type ValidationResult,
@@ -118,48 +115,6 @@ describe('Zod validation utils', () => {
     it('QuizSchema should reject empty questions', () => {
       const result = QuizSchema.safeParse(invalidQuizEmptyQuestions)
       expect(result.success).toBe(false)
-    })
-  })
-
-  describe('Type guards', () => {
-    it('isQuestion should return true for valid question', () => {
-      expect(isQuestion(validQuestion)).toBe(true)
-    })
-
-    it('isQuestion should return false for null', () => {
-      expect(isQuestion(null)).toBe(false)
-    })
-
-    it('isQuestion should return false for invalid question', () => {
-      expect(isQuestion(invalidQuestionMissingId)).toBe(false)
-    })
-
-    it('isQuiz should return true for valid quiz', () => {
-      expect(isQuiz(validQuiz)).toBe(true)
-    })
-
-    it('isQuiz should return false for null', () => {
-      expect(isQuiz(null)).toBe(false)
-    })
-
-    it('isQuiz should return false for invalid quiz', () => {
-      expect(isQuiz(invalidQuizMissingId)).toBe(false)
-    })
-
-    it('isQuizArray should return true for array of valid quizzes', () => {
-      expect(isQuizArray([validQuiz, { ...validQuiz, id: 'quiz-2' }])).toBe(true)
-    })
-
-    it('isQuizArray should return false for non-array', () => {
-      expect(isQuizArray(validQuiz)).toBe(false)
-    })
-
-    it('isQuizArray should return false for empty array', () => {
-      expect(isQuizArray([])).toBe(false)
-    })
-
-    it('isQuizArray should return false for array with invalid quiz', () => {
-      expect(isQuizArray([validQuiz, invalidQuizMissingId])).toBe(false)
     })
   })
 

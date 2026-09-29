@@ -32,10 +32,6 @@ interface Props {
   loading?: boolean
   type?: ButtonType
   soft?: boolean
-  as?: 'button' | 'input-radio' | 'input-checkbox'
-  checked?: boolean
-  name?: string
-  value?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -46,8 +42,6 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   type: 'button',
   soft: false,
-  as: 'button',
-  checked: false,
 })
 
 const buttonClasses = computed(() => [
@@ -62,7 +56,6 @@ const buttonClasses = computed(() => [
 
 interface Emits {
   (e: 'click', event: MouseEvent): void
-  (e: 'change', event: Event): void
 }
 
 const emit = defineEmits<Emits>()
@@ -72,37 +65,16 @@ function handleClick(event: MouseEvent) {
     emit('click', event)
   }
 }
-
-function handleChange(event: Event) {
-  if (!props.disabled && !props.loading) {
-    emit('change', event)
-  }
-}
 </script>
 
 <template>
-  <component
-    :is="props.as === 'button' ? 'button' : 'input'"
-    v-bind="
-      props.as === 'button'
-        ? {
-            type: props.type,
-            disabled: props.disabled || props.loading,
-            onClick: handleClick,
-          }
-        : {
-            type: props.as === 'input-radio' ? 'radio' : 'checkbox',
-            checked: props.checked,
-            name: props.name,
-            value: props.value,
-            disabled: props.disabled || props.loading,
-            onChange: handleChange,
-            'aria-label': props.name || 'button',
-          }
-    "
+  <button
+    :type="props.type"
+    :disabled="props.disabled || props.loading"
     :class="buttonClasses"
+    @click="handleClick"
   >
-    <span v-if="props.as === 'button' && props.loading" class="loading loading-spinner" />
-    <slot v-if="props.as === 'button'" />
-  </component>
+    <span v-if="props.loading" class="loading loading-spinner" />
+    <slot />
+  </button>
 </template>

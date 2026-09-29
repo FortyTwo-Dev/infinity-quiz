@@ -7,8 +7,6 @@ interface Props {
   totalQuestions: number
   percentage: number
   passed: boolean
-  timeTaken?: number
-  timeLimit?: number
 }
 
 defineProps<Props>()
@@ -33,10 +31,6 @@ defineProps<Props>()
         <div>
           <div class="text-sm text-base-content/70">Accuracy</div>
           <div class="font-bold">{{ percentage }}%</div>
-        </div>
-        <div v-if="timeLimit">
-          <div class="text-sm text-base-content/70">Time</div>
-          <div class="font-bold">{{ Math.round(timeTaken || 0) }}s</div>
         </div>
         <div>
           <div class="text-sm text-base-content/70">Result</div>

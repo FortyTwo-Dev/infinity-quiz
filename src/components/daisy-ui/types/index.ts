@@ -42,6 +42,10 @@ export type ProgressColor =
 export type CheckboxVariant =
   'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'warning' | 'info' | 'error'
 
+// Radio specific types - uses subset of ColorVariant (no ghost)
+export type RadioVariant =
+  'primary' | 'secondary' | 'accent' | 'neutral' | 'success' | 'warning' | 'info' | 'error'
+
 // Card specific types
 export type CardSize = 'sm' | 'md' | 'lg' | 'xl'
 export type TextSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'

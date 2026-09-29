@@ -1,5 +1,3 @@
-import { computed, type ComputedRef } from 'vue'
-import { useQuizHistoryStore } from '../stores'
 import type { QuizResult } from '../types/quiz'
 
 export type AttemptStatus = 'not-attempted' | 'failed' | 'partial' | 'passed'
@@ -32,26 +30,4 @@ export function getAttemptStatus(result: QuizResult | null): AttemptStatus {
   if (result.passed) return 'passed'
   if (result.score > 0) return 'partial'
   return 'failed'
-}
-
-export function useAttempt(quizId: ComputedRef<string | null>) {
-  const historyStore = useQuizHistoryStore()
-
-  const latestResult = computed<QuizResult | null>(() => {
-    if (!quizId.value) return null
-    return historyStore.getLatestResultByQuizId(quizId.value) ?? null
-  })
-
-  const status = computed<AttemptStatus>(() => getAttemptStatus(latestResult.value))
-
-  const label = computed(() => ATTEMPT_STATUS_LABELS[status.value])
-
-  const color = computed(() => ATTEMPT_STATUS_COLORS[status.value])
-
-  return {
-    latestResult,
-    status,
-    label,
-    color,
-  }
 }

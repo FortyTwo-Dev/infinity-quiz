@@ -47,17 +47,15 @@ export function useQuiz() {
     const quiz = currentQuiz.value
     const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
 
-    if (shouldShuffle) {
-      return indexedSeededShuffle(options, seed.value ?? quiz?.id ?? '', currentQuestionIndex.value).map(
-        (option) => ({
-          option,
-          originalIndex: question.options.indexOf(option),
-        }),
-      )
-    }
+    // Shuffle the indices (not the text) so duplicate option texts can never
+    // collide on the same `originalIndex` via `indexOf`.
+    const indices = options.map((_, index) => index)
+    const orderedIndices = shouldShuffle
+      ? indexedSeededShuffle(indices, seed.value ?? quiz?.id ?? '', currentQuestionIndex.value)
+      : indices
 
-    return options.map((option, index) => ({
-      option,
+    return orderedIndices.map((index) => ({
+      option: options[index]!,
       originalIndex: index,
     }))
   })

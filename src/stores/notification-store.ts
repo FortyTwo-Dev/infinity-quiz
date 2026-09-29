@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
 
 export type NotificationVariant = 'info' | 'success' | 'warning' | 'error'
 
@@ -18,7 +19,7 @@ export const useNotificationStore = defineStore('notification', () => {
     variant: NotificationVariant = 'info',
     duration: number = 3000,
   ): string => {
-    const id = crypto.randomUUID()
+    const id = uuidv4()
     notifications.value.push({ id, message, variant, duration })
 
     if (duration > 0) {

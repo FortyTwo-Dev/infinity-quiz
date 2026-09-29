@@ -72,7 +72,7 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [x] **Explanations**: Show explanation after answering
 - [ ] **Image Support**: Add images to questions
 - [ ] **Markdown Support**: Rich text formatting for questions and answers
-- [ ] **Custom Themes**: Light/dark mode and color customization
+- [x] **Custom Themes**: Light/dark mode and color customization
 
 ---
 
