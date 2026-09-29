@@ -118,7 +118,7 @@ import { defineStore } from 'pinia'
 import type { Quiz } from '@/types/quiz'
 
 // Relative imports
-import { useTimer } from '@/composables/useTimer'
+import { useQuiz } from '@/composables/useQuiz'
 ```
 
 ### Export Order
@@ -191,9 +191,9 @@ src/
 │       └── ScoreDisplay.vue
 ├── composables/              # Vue composables
 │   ├── useQuiz.ts
-│   ├── useTimer.ts
-│   ├── useLocalStorage.ts
-│   └── useShuffle.ts
+│   ├── useQuiz.ts
+│   ├── useScore.ts
+│   └── useResults.ts
 ├── router/                   # Vue Router configuration
 │   └── index.ts
 ├── stores/                   # Pinia stores
@@ -206,8 +206,8 @@ src/
 │   ├── user.ts
 │   └── index.ts
 ├── utils/                    # Utility functions
-│   ├── quiz-utils.ts
-│   ├── date-utils.ts
+│   ├── array-utils.ts
+│   ├── random.ts
 │   └── validation.ts
 ├── views/                    # Page-level components (routes)
 │   ├── HomeView.vue
