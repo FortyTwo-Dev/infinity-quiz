@@ -11,11 +11,13 @@ import {
   DFieldset,
 } from '@/components/daisy-ui'
 import { LContainer, LGrid } from '@/components/layout'
-import TrendLineChart from '@/components/quiz/TrendLineChart.vue'
-import PassFailDoughnut from '@/components/quiz/PassFailDoughnut.vue'
-import ScoreDistributionChart from '@/components/quiz/ScoreDistributionChart.vue'
-import AverageByQuizChart from '@/components/quiz/AverageByQuizChart.vue'
-import GaugeChart from '@/components/quiz/GaugeChart.vue'
+import {
+  TrendLineChart,
+  PassFailDoughnut,
+  ScoreDistributionChart,
+  AverageByQuizChart,
+  GaugeChart,
+} from '@/components/quiz/charts'
 
 const quizStore = useQuizStore()
 const historyStore = useQuizHistoryStore()
