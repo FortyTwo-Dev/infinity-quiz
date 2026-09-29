@@ -365,6 +365,28 @@ describe('useQuizStore', () => {
       expect(store.quizzes).toHaveLength(0)
     })
 
+    it('importQuiz should return false for a duplicate quiz ID', () => {
+      const store = useQuizStore()
+      const questions = [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }]
+      store.addQuiz({
+        id: 'existing-quiz',
+        title: 'Existing',
+        description: 'Existing',
+        questions,
+      })
+
+      const jsonData = JSON.stringify({
+        id: 'existing-quiz',
+        title: 'Duplicate',
+        description: 'Duplicate',
+        questions,
+      })
+
+      const success = store.importQuiz(jsonData)
+      expect(success).toBe(false)
+      expect(store.quizzes).toHaveLength(1)
+    })
+
     it('importQuizzes should add multiple quizzes from JSON array', () => {
       const store = useQuizStore()
       const questions = [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }]
@@ -401,6 +423,35 @@ describe('useQuizStore', () => {
           // Missing required fields
           title: 'Quiz 2',
         },
+      ])
+
+      const success = store.importQuizzes(jsonData)
+      expect(success).toBe(false)
+      expect(store.quizzes).toHaveLength(0)
+    })
+
+    it('importQuizzes should return false when an id already exists', () => {
+      const store = useQuizStore()
+      const questions = [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }]
+      store.addQuiz({ id: 'quiz-1', title: 'Existing', description: 'Existing', questions })
+
+      const jsonData = JSON.stringify([
+        { id: 'quiz-1', title: 'Dup', description: 'Dup', questions },
+        { id: 'quiz-2', title: 'New', description: 'New', questions },
+      ])
+
+      const success = store.importQuizzes(jsonData)
+      expect(success).toBe(false)
+      expect(store.quizzes).toHaveLength(1)
+    })
+
+    it('importQuizzes should return false when ids are duplicated within the payload', () => {
+      const store = useQuizStore()
+      const questions = [{ id: 'q1', text: 'Q1', options: ['A', 'B'], correctAnswerIndex: 0 }]
+
+      const jsonData = JSON.stringify([
+        { id: 'quiz-1', title: 'A', description: 'A', questions },
+        { id: 'quiz-1', title: 'B', description: 'B', questions },
       ])
 
       const success = store.importQuizzes(jsonData)
