@@ -11,6 +11,10 @@ const props = withDefaults(defineProps<Props>(), {
   position: 'middle',
 })
 
+// The root node is a Teleport (renders nothing in place), so fallthrough
+// listeners must be forwarded explicitly to the <dialog> or they are lost.
+defineOptions({ inheritAttrs: false })
+
 const positionClasses: Record<Position, string> = {
   top: 'modal-top',
   middle: 'modal-middle',
@@ -35,7 +39,13 @@ defineExpose({
 
 <template>
   <Teleport to="body">
-    <dialog :id="props.id" ref="dialog" class="modal" :class="positionClasses[props.position]">
+    <dialog
+      :id="props.id"
+      ref="dialog"
+      class="modal"
+      :class="positionClasses[props.position]"
+      v-bind="$attrs"
+    >
       <slot />
     </dialog>
   </Teleport>
