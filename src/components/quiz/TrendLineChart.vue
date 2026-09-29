@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
-import type { ChartOptions } from 'chart.js'
+import type { ChartOptions, ChartData } from 'chart.js'
 import './chartSetup'
 import { useThemeColor, oklchWithAlpha } from '@/composables'
 
@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const primaryColor = useThemeColor('primary')
 
-const chartData = computed(() => ({
+const chartData = computed<ChartData<'line'>>(() => ({
   labels: props.labels,
   datasets: [
     {
@@ -27,6 +27,7 @@ const chartData = computed(() => ({
       backgroundColor: oklchWithAlpha(primaryColor.value, 0.1),
       fill: true,
       tension: 0.3,
+      clip: false,
     },
   ],
 }))
@@ -35,13 +36,14 @@ const chartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
   layout: {
-    padding: { top: 40, right: 8, bottom: 4 },
+    padding: { top: 24, right: 8, bottom: 4 },
   },
   scales: {
     y: {
       min: 0,
       max: 100,
       ticks: {
+        stepSize: 25,
         callback: (value) => `${value}${props.unit}`,
         padding: 10,
       },
