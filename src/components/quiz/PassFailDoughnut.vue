@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 import type { ChartOptions } from 'chart.js'
 import './chartSetup'
+import { useThemeColor, useThemeRadius } from '@/composables'
 
 interface Props {
   passed: number
@@ -11,13 +12,18 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const successColor = useThemeColor('success')
+const errorColor = useThemeColor('error')
+const radius = useThemeRadius()
+
 const chartData = computed(() => ({
   labels: ['Passed', 'Failed'],
   datasets: [
     {
       data: [props.passed, props.failed],
-      backgroundColor: ['oklch(72% 0.219 149.579)', 'oklch(63% 0.237 25.331)'],
+      backgroundColor: [successColor.value, errorColor.value],
       borderWidth: 0,
+      borderRadius: radius.value,
     },
   ],
 }))

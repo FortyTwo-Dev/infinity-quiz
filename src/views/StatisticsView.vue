@@ -94,7 +94,7 @@ function formatPercentage(value: number | undefined): string {
                 <GaugeChart
                   :value="globalStats.averagePercentage"
                   label="Average"
-                  color="oklch(54% 0.245 262.881)"
+                  color="primary"
                   :size="200"
                 />
               </div>

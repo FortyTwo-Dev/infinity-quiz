@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Line } from 'vue-chartjs'
 import type { ChartOptions } from 'chart.js'
 import './chartSetup'
+import { useThemeColor, oklchWithAlpha } from '@/composables'
 
 interface Props {
   labels: string[]
@@ -14,14 +15,16 @@ const props = withDefaults(defineProps<Props>(), {
   unit: '%',
 })
 
+const primaryColor = useThemeColor('primary')
+
 const chartData = computed(() => ({
   labels: props.labels,
   datasets: [
     {
       label: `Score (${props.unit})`,
       data: props.data,
-      borderColor: 'oklch(54% 0.245 262.881)',
-      backgroundColor: 'oklch(54% 0.245 262.881 / 0.1)',
+      borderColor: primaryColor.value,
+      backgroundColor: oklchWithAlpha(primaryColor.value, 0.1),
       fill: true,
       tension: 0.3,
     },

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Bar } from 'vue-chartjs'
 import type { ChartOptions } from 'chart.js'
 import './chartSetup'
+import { useThemeColor, useThemeRadius, oklchWithAlpha } from '@/composables'
 
 interface Bin {
   label: string
@@ -15,14 +16,18 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const primaryColor = useThemeColor('primary')
+const radius = useThemeRadius()
+
 const chartData = computed(() => ({
   labels: props.bins.map((b) => b.label),
   datasets: [
     {
       label: 'Attempts',
       data: props.bins.map((b) => b.count),
-      backgroundColor: 'oklch(54% 0.245 262.881)',
-      borderRadius: 4,
+      backgroundColor: primaryColor.value,
+      hoverBackgroundColor: oklchWithAlpha(primaryColor.value, 0.85),
+      borderRadius: radius.value,
     },
   ],
 }))

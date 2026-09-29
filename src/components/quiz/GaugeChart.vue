@@ -3,17 +3,22 @@ import { computed } from 'vue'
 import { Doughnut } from 'vue-chartjs'
 import type { ChartOptions } from 'chart.js'
 import './chartSetup'
+import { useThemeColor, useThemeRadius, oklchWithAlpha, type ThemeColorName } from '@/composables'
 
 interface Props {
   value: number
   label: string
-  color: string
+  color?: ThemeColorName
   size?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  color: 'primary',
   size: 160,
 })
+
+const colorValue = useThemeColor(props.color)
+const radius = useThemeRadius()
 
 const clamped = computed(() => Math.min(100, Math.max(0, props.value)))
 
@@ -21,9 +26,9 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: [clamped.value, 100 - clamped.value],
-      backgroundColor: [props.color, 'oklch(0% 0 0 / 0.08)'],
+      backgroundColor: [colorValue.value, oklchWithAlpha(colorValue.value, 0.08)],
       borderWidth: 0,
-      borderRadius: 6,
+      borderRadius: radius.value,
     },
   ],
 }))
