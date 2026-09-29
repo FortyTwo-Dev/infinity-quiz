@@ -54,8 +54,11 @@ export function useThemeColor(name: ThemeColorName): Ref<string> {
 export function useThemeRadius(): Ref<number> {
   const raw = useCssVariable('--radius-box')
   return computed(() => {
-    const match = raw.value.match(/([\d.]+)rem/)
-    return match ? Math.round(parseFloat(match[1]!) * 16) : 0
+    const remIndex = raw.value.indexOf('rem')
+    if (remIndex === -1) return 0
+    const numberStr = raw.value.slice(0, remIndex).trim()
+    const parsed = Number.parseFloat(numberStr)
+    return Number.isNaN(parsed) ? 0 : Math.round(parsed * 16)
   })
 }
 
@@ -65,8 +68,13 @@ export function useThemeRadius(): Ref<number> {
  */
 export function oklchWithAlpha(color: string, alpha: number): string {
   const trimmed = color.trim()
-  if (trimmed.includes('/')) {
-    return trimmed.replace(/\s*\/\s*[\d.]+\)$/, ` / ${alpha})`)
+  const closingParen = trimmed.lastIndexOf(')')
+  if (closingParen === -1) return trimmed
+
+  const head = trimmed.slice(0, closingParen).trimEnd()
+  if (head.includes('/')) {
+    const slashIndex = head.lastIndexOf('/')
+    return `${head.slice(0, slashIndex).trimEnd()} / ${alpha})`
   }
-  return trimmed.replace(/\)$/, ` / ${alpha})`)
+  return `${head} / ${alpha})`
 }
