@@ -133,31 +133,6 @@ describe('useQuizHistoryStore', () => {
       })
     })
 
-    describe('getCumulativeAverages', () => {
-      it('should return an empty array when there are no results', () => {
-        const store = useQuizHistoryStore()
-        expect(store.getCumulativeAverages).toEqual([])
-      })
-
-      it('should compute a running average ordered oldest first', () => {
-        const store = useQuizHistoryStore()
-        const olderDate = new Date(Date.now() - 4000).toISOString()
-        const middleDate = new Date(Date.now() - 2000).toISOString()
-        const newerDate = new Date().toISOString()
-
-        store.$patch({
-          results: [
-            { quizId: 'q1', score: 9, totalQuestions: 10, passed: true, date: newerDate },
-            { quizId: 'q1', score: 5, totalQuestions: 10, passed: false, date: olderDate },
-            { quizId: 'q2', score: 7, totalQuestions: 10, passed: true, date: middleDate },
-          ],
-        })
-
-        const points = store.getCumulativeAverages
-        expect(points.map((p) => p.average)).toEqual([50, 60, 70])
-      })
-    })
-
     describe('getPassFailTotals', () => {
       it('should return zero counts when there are no results', () => {
         const store = useQuizHistoryStore()

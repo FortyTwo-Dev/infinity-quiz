@@ -65,23 +65,6 @@ export const useQuizHistoryStore = defineStore(
       }
     })
 
-    /**
-     * Cumulative average percentage over time (oldest → newest). Each point is
-     * the running mean of all attempts up to that date, producing a smooth
-     * progression curve.
-     */
-    const getCumulativeAverages = computed(() => {
-      const ordered = sortByDateAsc(results.value)
-      let sum = 0
-      return ordered.map((result, index) => {
-        sum += toPercentage(result)
-        return {
-          date: result.date,
-          average: sum / (index + 1),
-        }
-      })
-    })
-
     /** Count of passed vs failed attempts across every quiz. */
     const getPassFailTotals = computed(() => {
       const passed = results.value.filter((r) => r.passed).length
@@ -161,7 +144,6 @@ export const useQuizHistoryStore = defineStore(
       getResultsByQuizId,
       getStatsByQuizId,
       getGlobalStats,
-      getCumulativeAverages,
       getPassFailTotals,
       getScoreDistribution,
       getAverageByQuiz,
