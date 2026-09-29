@@ -34,12 +34,16 @@ const chartData = computed(() => ({
 const chartOptions: ChartOptions<'line'> = {
   responsive: true,
   maintainAspectRatio: false,
+  layout: {
+    padding: { top: 24, right: 8, bottom: 4 },
+  },
   scales: {
     y: {
       min: 0,
-      max: 100,
+      grace: '10%',
       ticks: {
         callback: (value) => `${value}${props.unit}`,
+        padding: 10,
       },
     },
   },
@@ -52,7 +56,7 @@ const chartOptions: ChartOptions<'line'> = {
 </script>
 
 <template>
-  <div class="h-64">
+  <div class="h-96">
     <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
