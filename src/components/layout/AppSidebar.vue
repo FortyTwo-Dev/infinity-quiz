@@ -2,7 +2,7 @@
 import type { Component } from 'vue'
 import {
   PhHouse,
-  PhTrophy,
+  PhChartLine,
   PhPlus,
   PhGear,
   PhArrowSquareIn,
@@ -22,7 +22,9 @@ const managementNavItems: NavItem[] = [
   { label: 'Import / Export', routeName: 'quiz-import-export', icon: PhArrowSquareIn },
 ]
 
-const otherNavItems: NavItem[] = [{ label: 'Results', routeName: 'results', icon: PhTrophy }]
+const otherNavItems: NavItem[] = [
+  { label: 'Statistics', routeName: 'statistics', icon: PhChartLine },
+]
 </script>
 
 <template>
