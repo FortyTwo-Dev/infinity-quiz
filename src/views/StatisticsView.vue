@@ -88,13 +88,14 @@ function formatPercentage(value: number | undefined): string {
         <h2 class="text-base-content mb-4 text-xl font-semibold">Overall performance</h2>
         <LGrid as="div" cols="1 md:2 lg:4" gap="lg">
           <DCard border class="bg-base-100">
-            <DCardBody padding="lg" class="gap-4">
+            <DCardBody padding="lg" class="gap-4 h-full">
               <DCardTitle>Overall</DCardTitle>
-              <div class="flex items-center justify-center">
+              <div class="flex flex-1 items-center justify-center">
                 <GaugeChart
                   :value="globalStats.averagePercentage"
                   label="Average"
                   color="oklch(54% 0.245 262.881)"
+                  :size="200"
                 />
               </div>
             </DCardBody>

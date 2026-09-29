@@ -8,9 +8,12 @@ interface Props {
   value: number
   label: string
   color: string
+  size?: number
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  size: 160,
+})
 
 const clamped = computed(() => Math.min(100, Math.max(0, props.value)))
 
@@ -43,11 +46,11 @@ const chartOptions: ChartOptions<'doughnut'> = {
 </script>
 
 <template>
-  <div class="relative h-32 w-32">
+  <div class="relative" :style="{ width: `${size}px`, height: `${size}px` }">
     <Doughnut :data="chartData" :options="chartOptions" />
     <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-      <span class="text-lg font-bold leading-tight">{{ Math.round(value) }}%</span>
-      <span class="text-xs text-base-content/70 leading-tight">{{ label }}</span>
+      <span class="text-2xl font-bold leading-tight">{{ Math.round(value) }}%</span>
+      <span class="text-sm text-base-content/70 leading-tight">{{ label }}</span>
     </div>
   </div>
 </template>
