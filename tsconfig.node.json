@@ -19,6 +19,9 @@
 
     // Disable emitting output during `vue-tsc --build`, which is used for type-checking only.
     "noEmit": true,
+    // Allow `.ts` extensions in imports (e.g. `./vite.config.ts`), required by
+    // Vite's native config loader. Requires `noEmit`.
+    "allowImportingTsExtensions": true,
     "strict": true,
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
