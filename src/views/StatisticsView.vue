@@ -9,8 +9,11 @@ import {
   DSelectOption,
   DFieldset,
 } from '@/components/daisy-ui'
-import { LContainer } from '@/components/layout'
-import ScoreEvolutionChart from '@/components/quiz/ScoreEvolutionChart.vue'
+import { LContainer, LGrid } from '@/components/layout'
+import TrendLineChart from '@/components/quiz/TrendLineChart.vue'
+import PassFailDoughnut from '@/components/quiz/PassFailDoughnut.vue'
+import ScoreDistributionChart from '@/components/quiz/ScoreDistributionChart.vue'
+import AverageByQuizChart from '@/components/quiz/AverageByQuizChart.vue'
 
 const quizStore = useQuizStore()
 const historyStore = useQuizHistoryStore()
@@ -27,8 +30,10 @@ const selectedQuiz = computed(() =>
 )
 
 const globalStats = computed(() => historyStore.getGlobalStats)
-
 const cumulativeAverages = computed(() => historyStore.getCumulativeAverages)
+const passFailTotals = computed(() => historyStore.getPassFailTotals)
+const scoreDistribution = computed(() => historyStore.getScoreDistribution)
+const averageByQuiz = computed(() => historyStore.getAverageByQuiz)
 
 const cumulativeChart = computed(() => {
   const points = cumulativeAverages.value
@@ -37,6 +42,13 @@ const cumulativeChart = computed(() => {
     data: points.map((p) => Math.round(p.average)),
   }
 })
+
+const averageByQuizChart = computed(() => ({
+  labels: averageByQuiz.value.map(
+    (entry) => quizStore.getQuizById(entry.quizId)?.title ?? 'Unknown',
+  ),
+  data: averageByQuiz.value.map((entry) => Math.round(entry.average)),
+}))
 
 const quizResults = computed(() =>
   selectedQuizId.value ? historyStore.getResultsByQuizId(selectedQuizId.value) : [],
@@ -73,12 +85,10 @@ function formatPercentage(value: number | undefined): string {
 
     <template v-else>
       <!-- Global overview -->
-      <DCard border class="bg-base-100 mb-8">
-        <DCardBody padding="lg" class="gap-4">
-          <DCardTitle>Overall performance</DCardTitle>
-          <ScoreEvolutionChart :labels="cumulativeChart.labels" :data="cumulativeChart.data" />
-
-          <div class="grid grid-cols-3 gap-2 text-center">
+      <div class="mb-8">
+        <h2 class="text-base-content mb-4 text-xl font-semibold">Overall performance</h2>
+        <LGrid as="div" cols="1 md:2 lg:4" gap="lg">
+          <div class="grid grid-cols-3 gap-2 text-center md:col-span-2 lg:col-span-1">
             <div>
               <div class="text-sm text-base-content/70">Attempts</div>
               <div class="font-bold">{{ globalStats.attempts }}</div>
@@ -92,10 +102,42 @@ function formatPercentage(value: number | undefined): string {
               <div class="font-bold">{{ formatPercentage(globalStats.passRate) }}</div>
             </div>
           </div>
+
+          <DCard border class="bg-base-100">
+            <DCardBody padding="lg" class="gap-2">
+              <DCardTitle>Pass / fail</DCardTitle>
+              <PassFailDoughnut :passed="passFailTotals.passed" :failed="passFailTotals.failed" />
+            </DCardBody>
+          </DCard>
+
+          <DCard border class="bg-base-100">
+            <DCardBody padding="lg" class="gap-2">
+              <DCardTitle>Score distribution</DCardTitle>
+              <ScoreDistributionChart :bins="scoreDistribution" />
+            </DCardBody>
+          </DCard>
+
+          <DCard border class="bg-base-100">
+            <DCardBody padding="lg" class="gap-2">
+              <DCardTitle>Average by quiz</DCardTitle>
+              <AverageByQuizChart
+                :labels="averageByQuizChart.labels"
+                :data="averageByQuizChart.data"
+              />
+            </DCardBody>
+          </DCard>
+        </LGrid>
+      </div>
+
+      <!-- Cumulative trend -->
+      <DCard border class="bg-base-100 mb-8">
+        <DCardBody padding="lg" class="gap-4">
+          <DCardTitle>Progression over time</DCardTitle>
+          <TrendLineChart :labels="cumulativeChart.labels" :data="cumulativeChart.data" />
         </DCardBody>
       </DCard>
 
-      <!-- Per-quiz selector -->
+      <!-- Per-quiz details -->
       <DCard border class="bg-base-100">
         <DCardBody padding="lg" class="gap-4">
           <DCardTitle>Quiz details</DCardTitle>
@@ -114,7 +156,7 @@ function formatPercentage(value: number | undefined): string {
           </div>
 
           <template v-else>
-            <ScoreEvolutionChart :labels="quizChart.labels" :data="quizChart.data" />
+            <TrendLineChart :labels="quizChart.labels" :data="quizChart.data" />
 
             <div class="grid grid-cols-3 gap-2 text-center">
               <div>
