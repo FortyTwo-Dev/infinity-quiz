@@ -90,21 +90,12 @@ function formatPercentage(value: number | undefined): string {
           <DCard border class="bg-base-100">
             <DCardBody padding="lg" class="gap-4">
               <DCardTitle>Overall</DCardTitle>
-              <div class="flex items-center justify-center gap-4">
+              <div class="flex items-center justify-center">
                 <GaugeChart
                   :value="globalStats.averagePercentage"
                   label="Average"
                   color="oklch(54% 0.245 262.881)"
                 />
-                <GaugeChart
-                  :value="globalStats.passRate"
-                  label="Pass rate"
-                  color="oklch(72% 0.219 149.579)"
-                />
-              </div>
-              <div class="text-center">
-                <div class="text-sm text-base-content/70">Attempts</div>
-                <div class="font-bold">{{ globalStats.attempts }}</div>
               </div>
             </DCardBody>
           </DCard>
