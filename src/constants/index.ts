@@ -17,4 +17,5 @@ export const STORAGE_KEYS = {
   quizzes: 'infinity-quiz-quizzes',
   session: 'infinity-quiz-session',
   history: 'infinity-quiz-history',
+  theme: 'infinity-quiz-theme',
 } as const

@@ -10,3 +10,5 @@ export {
   type NotificationVariant,
   type Notification,
 } from './notification-store'
+
+export { useThemeStore, type ImportedTheme } from './theme-store'
