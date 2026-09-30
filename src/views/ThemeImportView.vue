@@ -90,10 +90,10 @@ function confirmDelete() {
         </p>
 
         <div class="flex flex-col gap-2">
-          <label class="label justify-start gap-2 py-0">
+          <label class="label justify-start gap-2 py-0" for="theme-name">
             <span class="label-text">Name</span>
           </label>
-          <DInput v-model="nameDraft" placeholder="my-theme" class="w-full" />
+          <DInput id="theme-name" v-model="nameDraft" placeholder="my-theme" class="w-full" />
         </div>
 
         <DTextarea

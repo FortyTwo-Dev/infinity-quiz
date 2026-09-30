@@ -12,17 +12,17 @@ export interface ImportedTheme {
 
 const STYLE_PREFIX = 'iq-imported-theme-'
 
+function writeDomTheme(name: string) {
+  if (typeof document === 'undefined') return
+  document.documentElement.dataset.theme = name
+}
+
 export const useThemeStore = defineStore(
   'theme',
   () => {
     const globalThemeName = ref<string>(DEFAULT_THEME_NAME)
     const importedThemes = ref<ImportedTheme[]>([])
     const temporaryThemeName = ref<string | null>(null)
-
-    function writeDomTheme(name: string) {
-      if (typeof document === 'undefined') return
-      document.documentElement.dataset.theme = name
-    }
 
     function applyTheme(name: string) {
       globalThemeName.value = name
@@ -58,7 +58,7 @@ export const useThemeStore = defineStore(
 
       const style = document.createElement('style')
       style.id = styleId
-      style.setAttribute('data-theme', theme.name)
+      style.dataset.theme = theme.name
       style.textContent = buildThemeCss({
         name: theme.name,
         colorScheme: theme.colorScheme,
