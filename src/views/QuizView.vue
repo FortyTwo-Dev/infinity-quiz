@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch, onMounted, onBeforeUnmount } from 'vue'
 import { useQuiz } from '@/composables'
 import { useRouter } from 'vue-router'
 import { DButton, DProgress } from '@/components/daisy-ui'
 import { AppTimer } from '@/components/quiz'
 import { QuizFeedbackCard as FeedbackCard, QuizQuestionCard } from '@/components/quiz/card'
+import { useThemeStore } from '@/stores'
 
 const {
   currentQuiz,
@@ -36,6 +37,16 @@ const {
 } = useQuiz()
 
 const router = useRouter()
+const themeStore = useThemeStore()
+
+// Apply the quiz theme on mount and restore the global theme on unmount.
+onMounted(() => {
+  themeStore.applyQuizTheme(currentQuiz.value?.theme)
+})
+
+onBeforeUnmount(() => {
+  themeStore.restoreGlobalTheme()
+})
 
 // Auto-navigate to results when quiz is completed (e.g., timer expiry on last question)
 watch(
