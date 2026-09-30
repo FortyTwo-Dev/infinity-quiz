@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { DButton } from '@/components/daisy-ui'
+import { DButton, DSelect, DSelectOption, DInput } from '@/components/daisy-ui'
 
 interface Props {
   searchTerm: string
@@ -21,8 +21,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const localSearchTerm = ref(props.searchTerm)
-const showCategoryDropdown = ref(false)
-const showTagDropdown = ref(false)
 
 // Sync props with local state
 watch(
@@ -36,18 +34,16 @@ watch(localSearchTerm, (value) => {
   emit('update:searchTerm', value)
 })
 
-const handleSearchChange = (e: Event) => {
-  localSearchTerm.value = (e.target as HTMLInputElement).value
+const handleSearchChange = (value: string | number) => {
+  localSearchTerm.value = String(value)
 }
 
-const handleCategorySelect = (category: string | null) => {
-  emit('update:selectedCategory', category)
-  showCategoryDropdown.value = false
+const handleCategorySelect = (category: string | number | null) => {
+  emit('update:selectedCategory', category === null || category === '' ? null : String(category))
 }
 
-const handleTagSelect = (tag: string | null) => {
-  emit('update:selectedTag', tag)
-  showTagDropdown.value = false
+const handleTagSelect = (tag: string | number | null) => {
+  emit('update:selectedTag', tag === null || tag === '' ? null : String(tag))
 }
 
 const handleClear = () => {
@@ -56,107 +52,51 @@ const handleClear = () => {
   emit('update:selectedTag', null)
   emit('clear')
 }
-
-const getCategoryLabel = (category: string | null): string => {
-  return category || 'All categories'
-}
-
-const getTagLabel = (tag: string | null): string => {
-  return tag || 'All tags'
-}
 </script>
 
 <template>
   <div class="flex flex-wrap gap-4 items-center mb-6">
-    <div class="relative flex-1 min-w-[200px]">
-      <input
+    <div class="relative flex-1 min-w-50">
+      <DInput
         id="search-input"
         type="text"
-        :value="localSearchTerm"
-        @input="handleSearchChange"
+        :model-value="localSearchTerm"
         placeholder="Search quizzes..."
-        class="input input-bordered w-full"
+        class="w-full"
         aria-label="Search quizzes"
+        @update:model-value="handleSearchChange"
       />
     </div>
 
-    <div class="flex gap-2 items-center">
-      <div class="relative">
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm flex items-center gap-1"
-          @click="showCategoryDropdown = !showCategoryDropdown"
-          @keydown.enter.stop="showCategoryDropdown = !showCategoryDropdown"
-          @keydown.space.stop="showCategoryDropdown = !showCategoryDropdown"
-        >
-          {{ getCategoryLabel(selectedCategory) }}
-          <span class="text-xs text-base-content/60">{{ showCategoryDropdown ? '▲' : '▼' }}</span>
-        </button>
-        <ul
-          v-if="showCategoryDropdown"
-          class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
-        >
-          <li
-            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
-            @click="handleCategorySelect(null)"
-            @keydown.enter="handleCategorySelect(null)"
-            @keydown.space="handleCategorySelect(null)"
-          >
-            All categories
-          </li>
-          <li
-            v-for="category in categories"
-            :key="category"
-            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
-            @click="handleCategorySelect(category)"
-            @keydown.enter="handleCategorySelect(category)"
-            @keydown.space="handleCategorySelect(category)"
-          >
-            {{ category }}
-          </li>
-        </ul>
-      </div>
+    <div class="flex gap-4 items-center">
+      <DSelect
+        :model-value="selectedCategory"
+        size="md"
+        class="w-48"
+        @update:model-value="handleCategorySelect"
+      >
+        <DSelectOption value="">All categories</DSelectOption>
+        <DSelectOption v-for="category in categories" :key="category" :value="category">
+          {{ category }}
+        </DSelectOption>
+      </DSelect>
 
-      <div class="relative">
-        <button
-          type="button"
-          class="btn btn-ghost btn-sm flex items-center gap-1"
-          @click="showTagDropdown = !showTagDropdown"
-          @keydown.enter.stop="showTagDropdown = !showTagDropdown"
-          @keydown.space.stop="showTagDropdown = !showTagDropdown"
-        >
-          {{ getTagLabel(selectedTag) }}
-          <span class="text-xs text-base-content/60">{{ showTagDropdown ? '▲' : '▼' }}</span>
-        </button>
-        <ul
-          v-if="showTagDropdown"
-          class="absolute top-full left-0 right-0 mt-1 p-1 bg-base-100 border border-base-300 rounded-lg shadow-lg max-h-[200px] overflow-y-auto z-[1000] list-none"
-        >
-          <li
-            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
-            @click="handleTagSelect(null)"
-            @keydown.enter="handleTagSelect(null)"
-            @keydown.space="handleTagSelect(null)"
-          >
-            All tags
-          </li>
-          <li
-            v-for="tag in tags"
-            :key="tag"
-            class="px-4 py-2 text-sm cursor-pointer hover:bg-base-200 hover:text-primary transition-all"
-            @click="handleTagSelect(tag)"
-            @keydown.enter="handleTagSelect(tag)"
-            @keydown.space="handleTagSelect(tag)"
-          >
-            {{ tag }}
-          </li>
-        </ul>
-      </div>
+      <DSelect
+        :model-value="selectedTag"
+        size="md"
+        class="w-44"
+        @update:model-value="handleTagSelect"
+      >
+        <DSelectOption value="">All tags</DSelectOption>
+        <DSelectOption v-for="tag in tags" :key="tag" :value="tag">
+          {{ tag }}
+        </DSelectOption>
+      </DSelect>
 
       <DButton
         type="button"
         variant="secondary"
-        size="sm"
+        size="md"
         @click="handleClear"
         :disabled="!localSearchTerm && !selectedCategory && !selectedTag"
       >

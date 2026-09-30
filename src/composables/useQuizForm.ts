@@ -39,6 +39,7 @@ function createEmptyValues(): QuizFormValues {
     enableReviewMode: false,
     feedbackEnabled: false,
     questions: [createEmptyQuestion()],
+    theme: undefined,
   }
 }
 
@@ -63,6 +64,7 @@ function quizToFormValues(quiz: Quiz): QuizFormValues {
       shuffleAnswers: q.shuffleAnswers,
       explanation: q.explanation,
     })),
+    theme: quiz.theme,
   }
 }
 
@@ -89,6 +91,7 @@ function formValuesToQuiz(values: QuizFormValues, quizId: string): Quiz {
       shuffleAnswers: q.shuffleAnswers,
       explanation: q.explanation,
     })),
+    theme: values.theme || undefined,
   }
 }
 

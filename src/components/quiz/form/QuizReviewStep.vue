@@ -27,6 +27,7 @@ const settings = computed<SettingRow[]>(() => [
   { label: 'Shuffle answers', value: props.values.shuffleAnswers ? 'Yes' : 'No' },
   { label: 'Review mode', value: props.values.enableReviewMode ? 'Yes' : 'No' },
   { label: 'Immediate feedback', value: props.values.feedbackEnabled ? 'Yes' : 'No' },
+  { label: 'Theme', value: props.values.theme ?? 'Default' },
 ])
 </script>
 

@@ -59,6 +59,20 @@ const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
   }
   return undefined
 }
+
+const getLabelClass = (originalIndex: number): string => {
+  if (props.isCurrentQuestionVerified && isCorrectAnswer(originalIndex)) {
+    return 'bg-success'
+  }
+  return 'bg-base-200'
+}
+
+const getOptionTextClass = (originalIndex: number): string => {
+  if (props.isCurrentQuestionVerified && isCorrectAnswer(originalIndex)) {
+    return 'text-success-content'
+  }
+  return 'text-base-content'
+}
 </script>
 
 <template>
@@ -71,7 +85,8 @@ const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
           v-for="(item, displayIndex) in questionOptions"
           :key="displayIndex"
           :for="`${question.id}-${item.originalIndex}`"
-          class="p-2 bg-base-200"
+          class="p-2"
+          :class="getLabelClass(item.originalIndex)"
         >
           <DRadio
             :id="`${question.id}-${item.originalIndex}`"
@@ -79,15 +94,14 @@ const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
             :value="item.originalIndex"
             :checked="selectedAnswer === item.originalIndex"
             :disabled="
-              isCurrentQuestionVerified &&
-              !isCorrectAnswer(item.originalIndex) &&
-              !isOptionSelected(item.originalIndex)
+              isCurrentQuestionVerified ||
+              (isAnswerVerified && !isCorrectAnswer(item.originalIndex))
             "
             :variant="getRadioVariant(item.originalIndex)"
             size="xs"
             @change="!isCurrentQuestionVerified ? emit('select', item.originalIndex) : null"
           />
-          <span class="text-base-content">{{ item.option }}</span>
+          <span :class="getOptionTextClass(item.originalIndex)">{{ item.option }}</span>
         </DLabel>
       </LGrid>
 

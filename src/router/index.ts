@@ -47,6 +47,11 @@ const router = createRouter({
       component: () => import('@/views/QuizImportExportView.vue'),
     },
     {
+      path: '/themes',
+      name: 'theme-import',
+      component: () => import('@/views/ThemeImportView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/views/NotFoundView.vue'),
