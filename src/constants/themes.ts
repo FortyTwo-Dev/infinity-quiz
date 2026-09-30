@@ -14,7 +14,6 @@ export function buildThemeName(color: ThemeColor, variant: ThemeVariant): string
   return `infinity-${color}-${variant}`
 }
 
-/** A valid daisyUI theme name (usable as `data-theme` and `name:`). */
 export function isValidThemeName(name: string): boolean {
   return /^[A-Za-z0-9_-]+$/.test(name)
 }

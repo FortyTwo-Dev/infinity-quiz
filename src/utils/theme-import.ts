@@ -35,7 +35,6 @@ export function parseThemeBlock(css: string): ParsedThemeBlock {
   return { name, colorScheme, variables }
 }
 
-/** Build the `[data-theme="name"] { ... }` rule that daisyUI would generate. */
 export function buildThemeCss(parsed: ParsedThemeBlock): string {
   const declarations = Object.entries(parsed.variables)
     .map(([key, value]) => `  ${key}: ${value};`)

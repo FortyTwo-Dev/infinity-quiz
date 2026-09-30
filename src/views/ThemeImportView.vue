@@ -26,7 +26,7 @@ function onCssInput() {
       nameDraft.value = parsed.name
     }
   } catch {
-    // keep the current name; parse errors surface on import
+    return
   }
 }
 

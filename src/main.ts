@@ -17,7 +17,6 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 
-// Rehydrate imported themes and apply the persisted global theme.
 useThemeStore().rehydrate()
 
 app.mount('#app')

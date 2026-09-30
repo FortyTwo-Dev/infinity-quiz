@@ -15,7 +15,6 @@ const themeStore = useThemeStore()
 
 const activeThemeName = computed(() => themeStore.globalThemeName)
 
-// A built-in theme is `infinity-<color>-<variant>`; anything else is imported.
 const currentColor = computed<ThemeColor | null>(() => {
   const name = activeThemeName.value
   for (const color of THEME_COLORS) {

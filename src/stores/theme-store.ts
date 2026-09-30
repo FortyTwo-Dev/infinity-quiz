@@ -29,7 +29,6 @@ export const useThemeStore = defineStore(
       writeDomTheme(name)
     }
 
-    /** A theme name is valid if it is a built-in theme or an imported one. */
     function resolveTheme(name: string | undefined): string | null {
       if (!name) return null
       if (
@@ -41,14 +40,12 @@ export const useThemeStore = defineStore(
       return null
     }
 
-    /** Apply a quiz's theme temporarily; falls back to the default when unset. */
     function applyQuizTheme(name: string | undefined) {
       const resolved = resolveTheme(name) ?? DEFAULT_THEME_NAME
       temporaryThemeName.value = resolved
       writeDomTheme(resolved)
     }
 
-    /** Restore the global theme after leaving the quiz. */
     function restoreGlobalTheme() {
       temporaryThemeName.value = null
       writeDomTheme(globalThemeName.value)
@@ -105,7 +102,6 @@ export const useThemeStore = defineStore(
       }
     }
 
-    /** Re-inject all imported themes and re-apply the persisted global theme. */
     function rehydrate() {
       for (const theme of importedThemes.value) {
         injectThemeStyle(theme)
