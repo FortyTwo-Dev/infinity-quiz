@@ -8,7 +8,6 @@ export interface ParsedThemeBlock {
 
 const NAME_REGEX = /\bname\s*:\s*["']?([A-Za-z0-9_-]+)["']?\s*;/
 const SCHEME_REGEX = /\bcolor-scheme\s*:\s*["'](light|dark)["']\s*;/
-const VAR_REGEX = /(--[A-Za-z0-9-]+)\s*:\s*([^;]+);/g
 
 function matchFirstGroup(regex: RegExp, input: string): string | undefined {
   return regex.exec(input)?.[1]
@@ -29,9 +28,13 @@ export function parseThemeBlock(css: string): ParsedThemeBlock {
     matchFirstGroup(SCHEME_REGEX, css) === 'dark' ? 'dark' : 'light'
 
   const variables: Record<string, string> = {}
-  let match: RegExpExecArray | null
-  while ((match = VAR_REGEX.exec(css)) !== null) {
-    variables[match[1]!] = match[2]!.trim()
+  for (const declaration of css.split(';')) {
+    const separatorIndex = declaration.indexOf(':')
+    if (separatorIndex === -1) continue
+    const key = declaration.slice(0, separatorIndex).trim()
+    if (key.startsWith('--')) {
+      variables[key] = declaration.slice(separatorIndex + 1).trim()
+    }
   }
 
   if (!Object.keys(variables).some((key) => key.startsWith('--color-'))) {
