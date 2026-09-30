@@ -21,17 +21,22 @@ const routeLabels: Record<string, string> = {
 }
 
 const currentPageLabel = computed(() => routeLabels[route.name as string] || 'IQuiz')
+
+const isQuizRoute = computed(() => route.name === 'quiz')
 </script>
 
 <template>
-  <div class="drawer lg:drawer-open">
+  <div class="drawer lg:drawer-open" :class="{ 'is-quiz-fullscreen': isQuizRoute }">
     <!-- Drawer toggle input -->
     <input id="app-drawer" type="checkbox" class="drawer-toggle inline" />
 
     <!-- Main content -->
     <div class="drawer-content min-h-screen bg-base-300">
       <!-- Navbar -->
-      <nav class="navbar w-full bg-base-300 border-b border-base-200 sticky top-0 z-10">
+      <nav
+        v-if="!isQuizRoute"
+        class="navbar w-full bg-base-300 border-b border-base-200 sticky top-0 z-10"
+      >
         <div class="flex-none">
           <label
             for="app-drawer"
@@ -53,7 +58,7 @@ const currentPageLabel = computed(() => routeLabels[route.name as string] || 'IQ
             {{ currentPageLabel }}
           </h1>
         </div>
-        <div class="flex-none">
+        <div class="flex-none pr-4">
           <ThemeToggle />
         </div>
       </nav>
@@ -66,7 +71,7 @@ const currentPageLabel = computed(() => routeLabels[route.name as string] || 'IQ
     </div>
 
     <!-- Sidebar -->
-    <div class="drawer-side is-drawer-close:overflow-visible z-50">
+    <div v-if="!isQuizRoute" class="drawer-side is-drawer-close:overflow-visible z-50">
       <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay" />
       <div
         class="flex min-h-full flex-col bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 transition-all duration-200 shadow-md"
