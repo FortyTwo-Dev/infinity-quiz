@@ -1,0 +1,307 @@
+{
+  "id": "quiz-informatique-30-questions",
+  "title": "Informatique technique — 30 questions",
+  "description": "30 questions sur les concepts informatiques techniques les plus connus. Questions mélangées, réponses mélangées, feedback instantané.",
+  "category": "Informatique",
+  "tags": ["technique", "général", "web", "hardware", "réseau"],
+  "shuffleQuestions": true,
+  "shuffleAnswers": true,
+  "feedbackEnabled": true,
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Que signifie l'acronyme CPU ?",
+      "options": [
+        "Central Processing Unit",
+        "Computer Personal Unit",
+        "Central Program Utility",
+        "Control Processing Unit"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "CPU = Central Processing Unit, c'est le processeur central qui exécute les instructions."
+    },
+    {
+      "id": "q2",
+      "text": "Que signifie l'acronyme HTML ?",
+      "options": [
+        "HyperText Markup Language",
+        "High Tech Modern Language",
+        "HyperTransfer Media Link",
+        "Home Tool Markup Language"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "HTML = HyperText Markup Language, le langage de balisage des pages web."
+    },
+    {
+      "id": "q3",
+      "text": "Que signifie l'acronyme HTTP ?",
+      "options": [
+        "HyperText Transfer Protocol",
+        "HyperText Transmission Program",
+        "High Transfer Text Protocol",
+        "Hyperlink Transfer Technology"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "HTTP = HyperText Transfer Protocol, le protocole d'échange des pages web."
+    },
+    {
+      "id": "q4",
+      "text": "Que signifie l'acronyme RAM ?",
+      "options": [
+        "Random Access Memory",
+        "Read And Modify",
+        "Rapid Access Module",
+        "Real Address Memory"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "RAM = Random Access Memory, la mémoire vive à accès aléatoire."
+    },
+    {
+      "id": "q5",
+      "text": "Que signifie l'acronyme SQL ?",
+      "options": [
+        "Structured Query Language",
+        "Simple Query Logic",
+        "Standard Question Language",
+        "System Query Level"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "SQL = Structured Query Language, le langage d'interrogation des bases de données."
+    },
+    {
+      "id": "q6",
+      "text": "Quelle entreprise a créé le système d'exploitation Windows ?",
+      "options": ["Microsoft", "Apple", "IBM", "Google"],
+      "correctAnswerIndex": 0,
+      "explanation": "Windows a été créé par Microsoft, lancé en 1985."
+    },
+    {
+      "id": "q7",
+      "text": "Qui a créé le noyau Linux ?",
+      "options": ["Linus Torvalds", "Bill Gates", "Steve Jobs", "Richard Stallman"],
+      "correctAnswerIndex": 0,
+      "explanation": "Linus Torvalds a créé le noyau Linux en 1991."
+    },
+    {
+      "id": "q8",
+      "text": "Que signifie l'acronyme CSS ?",
+      "options": [
+        "Cascading Style Sheets",
+        "Computer Style System",
+        "Creative Style Sheets",
+        "Colorful Style Syntax"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "CSS = Cascading Style Sheets, utilisé pour styliser les pages web."
+    },
+    {
+      "id": "q9",
+      "text": "Combien de bits y a-t-il dans un octet ?",
+      "options": ["8", "4", "16", "32"],
+      "correctAnswerIndex": 0,
+      "explanation": "Un octet (byte) vaut 8 bits."
+    },
+    {
+      "id": "q10",
+      "text": "Que signifie l'acronyme GPU ?",
+      "options": [
+        "Graphics Processing Unit",
+        "General Purpose Unit",
+        "Global Processing Utility",
+        "Graphic Personal Unit"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "GPU = Graphics Processing Unit, spécialisé dans le rendu graphique."
+    },
+    {
+      "id": "q11",
+      "text": "Que signifie l'acronyme URL ?",
+      "options": [
+        "Uniform Resource Locator",
+        "Universal Reference Link",
+        "United Resource Language",
+        "Uniform Retrieval Location"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "URL = Uniform Resource Locator, l'adresse d'une ressource sur le web."
+    },
+    {
+      "id": "q12",
+      "text": "Quelle est la plus petite unité d'information en informatique ?",
+      "options": ["Le bit", "L'octet", "Le pixel", "Le hertz"],
+      "correctAnswerIndex": 0,
+      "explanation": "Le bit (0 ou 1) est la plus petite unité d'information."
+    },
+    {
+      "id": "q13",
+      "text": "Que signifie l'acronyme SSD ?",
+      "options": [
+        "Solid State Drive",
+        "Super Speed Disk",
+        "System Storage Device",
+        "Solid System Drive"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "SSD = Solid State Drive, un stockage à mémoire flash sans pièce mobile."
+    },
+    {
+      "id": "q14",
+      "text": "Que signifie l'acronyme JSON ?",
+      "options": [
+        "JavaScript Object Notation",
+        "Java Standard Object Network",
+        "JavaScript Open Node",
+        "Joint Source Object Notation"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "JSON = JavaScript Object Notation, un format d'échange de données."
+    },
+    {
+      "id": "q15",
+      "text": "Quel protocole sécurise la navigation sur le web ?",
+      "options": ["HTTPS", "FTP", "SMTP", "POP3"],
+      "correctAnswerIndex": 0,
+      "explanation": "HTTPS (HTTP + TLS/SSL) chiffre les échanges web."
+    },
+    {
+      "id": "q16",
+      "text": "Que signifie l'acronyme API ?",
+      "options": [
+        "Application Programming Interface",
+        "Advanced Protocol Integration",
+        "Application Process Index",
+        "Automatic Program Interface"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "API = Application Programming Interface, une interface de programmation."
+    },
+    {
+      "id": "q17",
+      "text": "Que signifie l'acronyme LAN ?",
+      "options": [
+        "Local Area Network",
+        "Large Access Node",
+        "Linked Area Network",
+        "Local Application Network"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "LAN = Local Area Network, un réseau local."
+    },
+    {
+      "id": "q18",
+      "text": "Quel est le port réseau par défaut du protocole HTTP ?",
+      "options": ["80", "443", "21", "25"],
+      "correctAnswerIndex": 0,
+      "explanation": "Le HTTP utilise par défaut le port 80."
+    },
+    {
+      "id": "q19",
+      "text": "Quel est le port réseau par défaut du protocole HTTPS ?",
+      "options": ["443", "80", "22", "8080"],
+      "correctAnswerIndex": 0,
+      "explanation": "Le HTTPS utilise par défaut le port 443."
+    },
+    {
+      "id": "q20",
+      "text": "Quelle structure de données fonctionne selon le principe LIFO ?",
+      "options": ["La pile (stack)", "La file (queue)", "La liste chaînée", "Le tableau"],
+      "correctAnswerIndex": 0,
+      "explanation": "LIFO = Last In, First Out, c'est le principe de la pile (stack)."
+    },
+    {
+      "id": "q21",
+      "text": "Quelle structure de données fonctionne selon le principe FIFO ?",
+      "options": ["La file (queue)", "La pile (stack)", "L'arbre", "Le graphe"],
+      "correctAnswerIndex": 0,
+      "explanation": "FIFO = First In, First Out, c'est le principe de la file (queue)."
+    },
+    {
+      "id": "q22",
+      "text": "Que signifie l'acronyme DNS ?",
+      "options": [
+        "Domain Name System",
+        "Digital Network Service",
+        "Data Name Server",
+        "Dynamic Node System"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "DNS = Domain Name System, il traduit les noms de domaine en adresses IP."
+    },
+    {
+      "id": "q23",
+      "text": "Qui est considéré comme le père de l'informatique moderne ?",
+      "options": ["Alan Turing", "Charles Babbage", "Ada Lovelace", "John von Neumann"],
+      "correctAnswerIndex": 0,
+      "explanation": "Alan Turing est le père de l'informatique théorique (machine de Turing)."
+    },
+    {
+      "id": "q24",
+      "text": "Que désigne le terme « open source » ?",
+      "options": [
+        "Un code source accessible et modifiable",
+        "Un logiciel forcément gratuit",
+        "Un code fermé et propriétaire",
+        "Un type de matériel"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Open source : le code source est public, modifiable et redistribuable."
+    },
+    {
+      "id": "q25",
+      "text": "Lequel de ces systèmes est une base de données relationnelle ?",
+      "options": ["PostgreSQL", "MongoDB", "Redis", "Cassandra"],
+      "correctAnswerIndex": 0,
+      "explanation": "PostgreSQL est une base de données relationnelle (SQL)."
+    },
+    {
+      "id": "q26",
+      "text": "Que signifie l'acronyme SSH ?",
+      "options": [
+        "Secure Shell",
+        "Secure Socket Host",
+        "System Secure Hub",
+        "Simple Secure Home"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "SSH = Secure Shell, un protocole de connexion distante chiffrée."
+    },
+    {
+      "id": "q27",
+      "text": "Que signifie l'acronyme FTP ?",
+      "options": [
+        "File Transfer Protocol",
+        "Fast Transmission Protocol",
+        "File Transport Program",
+        "Fiber Transfer Process"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "FTP = File Transfer Protocol, utilisé pour transférer des fichiers."
+    },
+    {
+      "id": "q28",
+      "text": "Que signifie l'acronyme IoT ?",
+      "options": [
+        "Internet of Things",
+        "Internet of Technology",
+        "Index of Things",
+        "Input Output Terminal"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "IoT = Internet of Things, l'Internet des objets connectés."
+    },
+    {
+      "id": "q29",
+      "text": "Qui a inventé le World Wide Web ?",
+      "options": ["Tim Berners-Lee", "Bill Gates", "Steve Wozniak", "Vint Cerf"],
+      "correctAnswerIndex": 0,
+      "explanation": "Tim Berners-Lee a inventé le World Wide Web en 1989 au CERN."
+    },
+    {
+      "id": "q30",
+      "text": "Quel langage est principalement exécuté côté navigateur (client) ?",
+      "options": ["JavaScript", "Python", "PHP", "C++"],
+      "correctAnswerIndex": 0,
+      "explanation": "JavaScript est le langage de script exécuté nativement par les navigateurs."
+    }
+  ]
+}
