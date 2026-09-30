@@ -6,6 +6,7 @@ import {
   PhPlus,
   PhGear,
   PhArrowSquareIn,
+  PhPalette,
 } from '@phosphor-icons/vue'
 
 interface NavItem {
@@ -20,6 +21,7 @@ const managementNavItems: NavItem[] = [
   { label: 'Management', routeName: 'quiz-management', icon: PhGear },
   { label: 'Create', routeName: 'quiz-create', icon: PhPlus },
   { label: 'Import / Export', routeName: 'quiz-import-export', icon: PhArrowSquareIn },
+  { label: 'Themes', routeName: 'theme-import', icon: PhPalette },
 ]
 
 const otherNavItems: NavItem[] = [
