@@ -1,56 +1,60 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, computed } from 'vue'
+import { computed } from 'vue'
 import { PhSun, PhMoon } from '@phosphor-icons/vue'
 import { DButton } from '@/components/daisy-ui'
+import { useThemeStore } from '@/stores'
+import {
+  THEME_COLORS,
+  THEME_VARIANTS,
+  buildThemeName,
+  type ThemeColor,
+  type ThemeVariant,
+} from '@/constants/themes'
 
-// Thèmes disponibles (sans suffixe -light/-dark)
-const themes = ['blue', 'yellow', 'red'] as const
-type Theme = (typeof themes)[number]
-type Variant = 'light' | 'dark'
+const themeStore = useThemeStore()
 
-const currentTheme = ref<Theme>('blue')
-const currentVariant = ref<Variant>('light')
+const activeThemeName = computed(() => themeStore.globalThemeName)
 
-// Nom complet du thème
-const fullThemeName = computed(() => `infinity-${currentTheme.value}-${currentVariant.value}`)
-
-// Appliquer le thème
-function applyTheme() {
-  document.documentElement.dataset.theme = fullThemeName.value
-  localStorage.setItem('theme', fullThemeName.value)
-}
-
-// Charger au montage
-onMounted(() => {
-  const saved = localStorage.getItem('theme')
-  if (saved && saved.startsWith('infinity-')) {
-    const parts = saved.replace('infinity-', '').split('-')
-    if (parts.length === 2) {
-      const [theme, variant] = parts
-      if (themes.includes(theme as Theme) && (variant === 'light' || variant === 'dark')) {
-        currentTheme.value = theme as Theme
-        currentVariant.value = variant as Variant
-      }
+// A built-in theme is `infinity-<color>-<variant>`; anything else is imported.
+const currentColor = computed<ThemeColor | null>(() => {
+  const name = activeThemeName.value
+  for (const color of THEME_COLORS) {
+    if (THEME_VARIANTS.some((variant) => buildThemeName(color, variant) === name)) {
+      return color
     }
   }
-  applyTheme()
+  return null
 })
 
-// Réappliquer quand ça change
-watch([currentTheme, currentVariant], applyTheme)
+const currentVariant = computed<ThemeVariant>(() => {
+  const name = activeThemeName.value
+  if (name.endsWith('-dark')) return 'dark'
+  return 'light'
+})
 
-// Toggle light/dark
+const isImportedActive = computed(() => currentColor.value === null)
+
+function applyColor(color: ThemeColor) {
+  themeStore.applyTheme(buildThemeName(color, currentVariant.value))
+}
+
+function applyImported(name: string) {
+  themeStore.applyTheme(name)
+}
+
 function toggleVariant() {
-  currentVariant.value = currentVariant.value === 'light' ? 'dark' : 'light'
+  if (!currentColor.value) return
+  const next: ThemeVariant = currentVariant.value === 'light' ? 'dark' : 'light'
+  themeStore.applyTheme(buildThemeName(currentColor.value, next))
 }
 </script>
 
 <template>
-  <div class="flex items-center gap-3">
-    <!-- Dropdown pour choisir le thème de base -->
+  <div class="flex items-center gap-4">
+    <!-- Dropdown pour choisir le thème -->
     <div class="dropdown">
       <button type="button" tabindex="0" class="btn btn-sm">
-        {{ currentTheme }}
+        {{ activeThemeName }}
         <svg
           width="12"
           height="12"
@@ -61,24 +65,40 @@ function toggleVariant() {
           <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z" />
         </svg>
       </button>
-      <ul tabindex="-1" class="dropdown-content z-1 p-2 shadow-2xl bg-base-300 rounded-box w-40">
-        <li v-for="theme in themes" :key="theme">
+      <ul tabindex="-1" class="dropdown-content z-1 p-2 shadow-2xl bg-base-300 rounded-box w-48">
+        <li class="menu-title text-xs"><span>Colors</span></li>
+        <li v-for="color in THEME_COLORS" :key="`color-${color}`">
           <button
             type="button"
             class="btn btn-sm btn-block justify-start"
-            :class="currentTheme === theme ? 'btn-primary' : 'btn-ghost'"
-            @click="currentTheme = theme"
+            :class="currentColor === color ? 'btn-primary' : 'btn-ghost'"
+            @click="applyColor(color)"
           >
-            {{ theme }}
+            {{ color }}
           </button>
         </li>
+
+        <template v-if="themeStore.importedThemes.length > 0">
+          <li class="menu-title text-xs mt-1"><span>Imported</span></li>
+          <li v-for="theme in themeStore.importedThemes" :key="theme.name">
+            <button
+              type="button"
+              class="btn btn-sm btn-block justify-start"
+              :class="activeThemeName === theme.name ? 'btn-primary' : 'btn-ghost'"
+              @click="applyImported(theme.name)"
+            >
+              {{ theme.name }}
+            </button>
+          </li>
+        </template>
       </ul>
     </div>
 
-    <!-- Toggle Light/Dark -->
+    <!-- Toggle Light/Dark (uniquement pour les thèmes built-in) -->
     <DButton
       variant="ghost"
       size="sm"
+      :disabled="isImportedActive"
       @click="toggleVariant"
       :title="currentVariant === 'light' ? 'Dark mode' : 'Light mode'"
     >
