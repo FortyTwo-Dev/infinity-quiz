@@ -38,6 +38,7 @@ export const QuizSchema = z.object({
   feedbackEnabled: z.boolean().optional(),
   category: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  theme: z.string().optional(),
 })
 
 // ============================================================================
@@ -86,6 +87,7 @@ export const QuizFormSchema = z.object({
   enableReviewMode: z.boolean(),
   feedbackEnabled: z.boolean(),
   questions: z.array(FormQuestionSchema).min(1, 'At least one question is required'),
+  theme: z.string().optional(),
 })
 
 export type FormQuestion = z.infer<typeof FormQuestionSchema>
