@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -14,6 +17,7 @@ jobs:
   quality:
     name: Lint, type-check, build & tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       # Actions are pinned to full commit SHAs (with the version as comment) to
       # prevent supply-chain attacks through mutable tags.
@@ -21,7 +25,14 @@ jobs:
 
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
-          bun-version: '1.4.2'
+          bun-version: '1.4.4'
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
@@ -42,3 +53,91 @@ jobs:
 
       - name: Tests & coverage
         run: bun test:coverage
+
+  container:
+    name: Container build & smoke test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Build the image
+        run: podman build --format docker -f container/Containerfile -t infinity-quiz:ci .
+
+      - name: Smoke test the image
+        run: |
+          podman run -d --name infinity-quiz-ci -p 8080:8080 infinity-quiz:ci
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8080/healthz; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/ | grep -q "Infinity Quiz"
+          podman rm -f infinity-quiz-ci
+
+  stage-image:
+    name: Publish the image
+    needs: quality
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/fortytwo-dev/infinity-quiz
+      SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Read the version
+        id: version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push the immutable image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          file: container/Containerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ env.IMAGE }}:sha-${{ env.SHA }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/FortyTwo-Dev/infinity-quiz
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+            org.opencontainers.image.revision=${{ env.SHA }}
+            org.opencontainers.image.licenses=MIT
+          provenance: true
+          sbom: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test the pushed image
+        run: |
+          set -euo pipefail
+          image="$IMAGE:sha-$SHA"
+          container=infinity-quiz-stage
+          cleanup() {
+            docker rm -f "$container" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+          docker pull "$image"
+          docker run -d --name "$container" -p 8080:8080 "$image"
+          for attempt in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:8080/healthz; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/ -o /tmp/infinity-quiz-index.html
+          grep -q "Infinity Quiz" /tmp/infinity-quiz-index.html

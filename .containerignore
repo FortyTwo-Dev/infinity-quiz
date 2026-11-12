@@ -1,0 +1,14 @@
+node_modules
+dist
+.git
+.github
+.ai
+.agents
+.ibrain
+.idea
+.vscode
+.eslintcache
+coverage
+docs
+ibrain
+*.log
