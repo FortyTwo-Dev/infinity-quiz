@@ -112,8 +112,8 @@ describe('useThemeStore', () => {
       const store = useThemeStore()
       store.rehydrate()
 
-      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'mint' })
-      expect(rootTheme()).toEqual({ mode: 'light', accent: 'mint' })
+      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'green' })
+      expect(rootTheme()).toEqual({ mode: 'light', accent: 'green' })
     })
   })
 

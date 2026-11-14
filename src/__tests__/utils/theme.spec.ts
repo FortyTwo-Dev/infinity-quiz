@@ -55,11 +55,11 @@ describe('normalizeGlobalTheme', () => {
   })
 
   it('falls back to the default for anything else', () => {
-    expect(normalizeGlobalTheme('imported-theme')).toEqual({ mode: 'light', accent: 'mint' })
-    expect(normalizeGlobalTheme(undefined)).toEqual({ mode: 'light', accent: 'mint' })
+    expect(normalizeGlobalTheme('imported-theme')).toEqual({ mode: 'light', accent: 'green' })
+    expect(normalizeGlobalTheme(undefined)).toEqual({ mode: 'light', accent: 'green' })
     expect(normalizeGlobalTheme({ mode: 'sepia', accent: 'mint' })).toEqual({
       mode: 'light',
-      accent: 'mint',
+      accent: 'green',
     })
   })
 })
@@ -101,7 +101,7 @@ describe('migrateThemeStorage', () => {
   })
 
   it('falls back to the default on malformed JSON or an empty payload', () => {
-    const expected = JSON.stringify({ globalTheme: { mode: 'light', accent: 'mint' } })
+    const expected = JSON.stringify({ globalTheme: { mode: 'light', accent: 'green' } })
     expect(migrateThemeStorage('not json')).toBe(expected)
     expect(migrateThemeStorage(null)).toBe(expected)
     expect(migrateThemeStorage(JSON.stringify({ globalThemeName: 'gone' }))).toBe(expected)

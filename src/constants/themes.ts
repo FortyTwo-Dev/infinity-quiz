@@ -30,7 +30,7 @@ export interface ThemeSelection {
   accent: ThemeAccent
 }
 
-export const DEFAULT_THEME: ThemeSelection = { mode: 'light', accent: 'mint' }
+export const DEFAULT_THEME: ThemeSelection = { mode: 'light', accent: 'green' }
 
 /**
  * Theme names written by the daisyUI build. They are still in `localStorage` of

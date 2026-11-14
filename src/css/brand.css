@@ -74,12 +74,14 @@
     --it-accent-fg: oklch(18% 0 0);
   }
 
-  /* The pure green of the charte: hue 146 at saturation 100 % and lightness
+  /* The pure green of the charte: hue 155 at saturation 100 % and lightness
    * 50 % in HSL, the same recipe as the blue of the libraries and the yellow
-   * of the QR code app. */
+   * of the QR code app. Its ink is mixed harder towards the text colour
+   * because the accent is bright enough to fall under 4.5:1 otherwise. */
   :root[data-accent='green'] {
-    --it-accent: oklch(87% 0.262 146);
+    --it-accent: #00ff96;
     --it-accent-fg: oklch(18% 0 0);
+    --iq-accent-ink: color-mix(in oklab, var(--it-accent) 45%, var(--it-fg));
   }
 
 }
