@@ -1,9 +1,15 @@
 import { z } from 'zod'
 import type { Quiz } from '../types/quiz'
+import { normalizeQuizTheme } from './theme'
 
 // ============================================================================
 // Schemas Zod
 // ============================================================================
+
+export const ThemeSelectionSchema = z.object({
+  mode: z.enum(['light', 'dark']),
+  accent: z.enum(['blue', 'yellow', 'red']),
+})
 
 export const QuestionSchema = z
   .object({
@@ -38,7 +44,9 @@ export const QuizSchema = z.object({
   feedbackEnabled: z.boolean().optional(),
   category: z.string().optional(),
   tags: z.array(z.string()).optional(),
-  theme: z.string().optional(),
+  // Storage and imports carry names written by the daisyUI build; an
+  // unrecognised value resets the theme instead of rejecting the quiz.
+  theme: z.preprocess(normalizeQuizTheme, ThemeSelectionSchema.optional()),
 })
 
 // ============================================================================
@@ -87,6 +95,7 @@ export const QuizFormSchema = z.object({
   enableReviewMode: z.boolean(),
   feedbackEnabled: z.boolean(),
   questions: z.array(FormQuestionSchema).min(1, 'At least one question is required'),
+  // A `<mode>-<accent>` option value, or empty for the default theme.
   theme: z.string().optional(),
 })
 

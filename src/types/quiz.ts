@@ -1,3 +1,5 @@
+import type { ThemeSelection } from '../constants/themes'
+
 export interface Question {
   id: string
   text: string
@@ -21,7 +23,7 @@ export interface Quiz {
   feedbackEnabled?: boolean // Whether to show immediate feedback after answer selection
   category?: string // Quiz category for organization
   tags?: string[] // Additional tags for filtering and search
-  theme?: string // daisyUI theme name (built-in or imported); falls back to the default theme
+  theme?: ThemeSelection // Mode and accent this quiz is played with; falls back to the default theme
 }
 
 export interface QuestionResult {

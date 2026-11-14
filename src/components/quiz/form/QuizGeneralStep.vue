@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Field } from 'vee-validate'
-import { DBadge, DButton, DFieldset, DInput, DTextarea, DSelect, DSelectOption } from '@/components/daisy-ui'
+import {
+  DBadge,
+  DButton,
+  DFieldset,
+  DInput,
+  DTextarea,
+  DSelect,
+  DSelectOption,
+} from '@/components/daisy-ui'
 import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 import { PhPlus } from '@phosphor-icons/vue'
-import { BUILT_IN_THEMES, DEFAULT_THEME_NAME } from '@/constants/themes'
+import { DEFAULT_THEME, THEME_OPTIONS } from '@/constants/themes'
 
 interface Props {
   tagSuggestions: string[]
@@ -82,9 +90,15 @@ function submitTag() {
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           >
-            <DSelectOption value="">Default ({{ DEFAULT_THEME_NAME }})</DSelectOption>
-            <DSelectOption v-for="name in BUILT_IN_THEMES" :key="name" :value="name">
-              {{ name }}
+            <DSelectOption value="">
+              Default ({{ DEFAULT_THEME.mode }}, {{ DEFAULT_THEME.accent }})
+            </DSelectOption>
+            <DSelectOption
+              v-for="option in THEME_OPTIONS"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.mode }} · {{ option.accent }}
             </DSelectOption>
           </DSelect>
         </DFieldset>

@@ -3,50 +3,28 @@ import { computed } from 'vue'
 import { PhSun, PhMoon } from '@phosphor-icons/vue'
 import { DButton } from '@/components/daisy-ui'
 import { useThemeStore } from '@/stores'
-import {
-  THEME_COLORS,
-  THEME_VARIANTS,
-  buildThemeName,
-  type ThemeColor,
-  type ThemeVariant,
-} from '@/constants/themes'
+import { THEME_ACCENTS, type ThemeAccent } from '@/constants/themes'
 
 const themeStore = useThemeStore()
 
-const activeThemeName = computed(() => themeStore.globalThemeName)
+const mode = computed(() => themeStore.globalTheme.mode)
+const accent = computed(() => themeStore.globalTheme.accent)
 
-const currentColor = computed<ThemeColor | null>(() => {
-  const name = activeThemeName.value
-  for (const color of THEME_COLORS) {
-    if (THEME_VARIANTS.some((variant) => buildThemeName(color, variant) === name)) {
-      return color
-    }
-  }
-  return null
-})
-
-const currentVariant = computed<ThemeVariant>(() => {
-  const name = activeThemeName.value
-  if (name.endsWith('-dark')) return 'dark'
-  return 'light'
-})
-
-function applyColor(color: ThemeColor) {  themeStore.applyTheme(buildThemeName(color, currentVariant.value))
+function applyAccent(next: ThemeAccent) {
+  themeStore.applyTheme({ mode: mode.value, accent: next })
 }
 
-function toggleVariant() {
-  if (!currentColor.value) return
-  const next: ThemeVariant = currentVariant.value === 'light' ? 'dark' : 'light'
-  themeStore.applyTheme(buildThemeName(currentColor.value, next))
+function toggleMode() {
+  themeStore.applyTheme({ mode: mode.value === 'light' ? 'dark' : 'light', accent: accent.value })
 }
 </script>
 
 <template>
   <div class="flex items-center gap-4">
-    <!-- Dropdown pour choisir le thème -->
+    <!-- Accent picker -->
     <div class="dropdown">
       <button type="button" tabindex="0" class="btn btn-sm">
-        {{ activeThemeName }}
+        {{ accent }}
         <svg
           width="12"
           height="12"
@@ -58,28 +36,28 @@ function toggleVariant() {
         </svg>
       </button>
       <ul tabindex="-1" class="dropdown-content z-1 p-2 shadow-2xl bg-base-300 rounded-box w-48">
-        <li class="menu-title text-xs"><span>Colors</span></li>
-        <li v-for="color in THEME_COLORS" :key="`color-${color}`">
+        <li class="menu-title text-xs"><span>Accents</span></li>
+        <li v-for="option in THEME_ACCENTS" :key="`accent-${option}`">
           <button
             type="button"
             class="btn btn-sm btn-block justify-start"
-            :class="currentColor === color ? 'btn-primary' : 'btn-ghost'"
-            @click="applyColor(color)"
+            :class="accent === option ? 'btn-primary' : 'btn-ghost'"
+            @click="applyAccent(option)"
           >
-            {{ color }}
+            {{ option }}
           </button>
         </li>
       </ul>
     </div>
 
-    <!-- Toggle Light/Dark -->
+    <!-- Light/dark switch -->
     <DButton
       variant="ghost"
       size="sm"
-      @click="toggleVariant"
-      :title="currentVariant === 'light' ? 'Dark mode' : 'Light mode'"
+      @click="toggleMode"
+      :title="mode === 'light' ? 'Dark mode' : 'Light mode'"
     >
-      <PhSun v-if="currentVariant === 'light'" :size="24" weight="duotone" />
+      <PhSun v-if="mode === 'light'" :size="24" weight="duotone" />
       <PhMoon v-else :size="24" weight="duotone" />
     </DButton>
   </div>

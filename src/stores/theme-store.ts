@@ -1,47 +1,50 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { BUILT_IN_THEMES, DEFAULT_THEME_NAME } from '../constants/themes'
+import { DEFAULT_THEME, type ThemeSelection } from '../constants/themes'
 import { STORAGE_KEYS } from '../constants'
+import { normalizeGlobalTheme, normalizeQuizTheme } from '../utils/theme'
 
-function writeDomTheme(name: string) {
+function writeDomTheme(selection: ThemeSelection) {
   if (typeof document === 'undefined') return
-  document.documentElement.dataset.theme = name
+  document.documentElement.dataset.theme = selection.mode
+  document.documentElement.dataset.accent = selection.accent
 }
 
 export const useThemeStore = defineStore(
   'theme',
   () => {
-    const globalThemeName = ref<string>(DEFAULT_THEME_NAME)
-    const temporaryThemeName = ref<string | null>(null)
+    const globalTheme = ref<ThemeSelection>({ ...DEFAULT_THEME })
+    const temporaryTheme = ref<ThemeSelection | null>(null)
 
-    function applyTheme(name: string) {
-      globalThemeName.value = name
-      writeDomTheme(name)
+    function applyTheme(selection: ThemeSelection) {
+      globalTheme.value = normalizeGlobalTheme(selection)
+      writeDomTheme(globalTheme.value)
     }
 
-    function resolveTheme(name: string | undefined): string | null {
-      if (!name) return null
-      return BUILT_IN_THEMES.includes(name) ? name : null
-    }
-
-    function applyQuizTheme(name: string | undefined) {
-      const resolved = resolveTheme(name) ?? DEFAULT_THEME_NAME
-      temporaryThemeName.value = resolved
+    /**
+     * Apply the theme of the quiz being played without touching the global
+     * one. Anything the store cannot resolve plays the quiz with the default.
+     */
+    function applyQuizTheme(selection: unknown) {
+      const resolved = normalizeQuizTheme(selection) ?? { ...DEFAULT_THEME }
+      temporaryTheme.value = resolved
       writeDomTheme(resolved)
     }
 
     function restoreGlobalTheme() {
-      temporaryThemeName.value = null
-      writeDomTheme(globalThemeName.value)
+      temporaryTheme.value = null
+      writeDomTheme(globalTheme.value)
     }
 
+    /** Apply the rehydrated theme, normalized: storage is untrusted. */
     function rehydrate() {
-      writeDomTheme(globalThemeName.value)
+      globalTheme.value = normalizeGlobalTheme(globalTheme.value)
+      writeDomTheme(globalTheme.value)
     }
 
     return {
-      globalThemeName,
-      temporaryThemeName,
+      globalTheme,
+      temporaryTheme,
       applyTheme,
       applyQuizTheme,
       restoreGlobalTheme,
@@ -51,7 +54,7 @@ export const useThemeStore = defineStore(
   {
     persist: {
       key: STORAGE_KEYS.theme,
-      pick: ['globalThemeName'],
+      pick: ['globalTheme'],
     },
   },
 )

@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import {
-  PhHouse,
-  PhChartLine,
-  PhPlus,
-  PhGear,
-  PhArrowSquareIn,
-} from '@phosphor-icons/vue'
+import { PhHouse, PhChartLine, PhPlus, PhGear, PhArrowSquareIn } from '@phosphor-icons/vue'
 
 interface NavItem {
   label: string
