@@ -9,11 +9,14 @@
     gap: var(--it-space-4);
     block-size: 100%;
     min-block-size: 0;
+    /* Two longhands, not a shorthand: `overflow: hidden` would override the
+     * vertical scrolling the rail needs when the navigation is taller than
+     * the viewport. */
+    overflow-x: hidden;
     overflow-y: auto;
     padding: var(--it-space-3);
     border-inline-end: var(--it-border-width) solid var(--it-border);
     background-color: var(--it-surface);
-    overflow: hidden;
   }
 
   /* The brand is the way home: logo, then the name. Collapsed, only the logo
