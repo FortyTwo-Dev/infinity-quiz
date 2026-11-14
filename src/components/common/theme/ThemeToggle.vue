@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { PhSun, PhMoon } from '@phosphor-icons/vue'
-import { DButton } from '@/components/daisy-ui'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 import { useThemeStore } from '@/stores'
 import { THEME_ACCENTS, type ThemeAccent } from '@/constants/themes'
 
@@ -51,7 +51,7 @@ function toggleMode() {
     </div>
 
     <!-- Light/dark switch -->
-    <DButton
+    <ItButton
       variant="ghost"
       size="sm"
       @click="toggleMode"
@@ -59,6 +59,6 @@ function toggleMode() {
     >
       <PhSun v-if="mode === 'light'" :size="24" weight="duotone" />
       <PhMoon v-else :size="24" weight="duotone" />
-    </DButton>
+    </ItButton>
   </div>
 </template>
