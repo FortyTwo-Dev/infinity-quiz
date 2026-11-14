@@ -21,19 +21,19 @@ describe('useThemeStore', () => {
   describe('applyTheme', () => {
     it('writes both attributes on the document element', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'yellow' })
+      store.applyTheme({ mode: 'dark', accent: 'fresh' })
 
-      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'yellow' })
-      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'yellow' })
+      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'fresh' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'fresh' })
     })
 
     it('persists the pair under the theme storage key', async () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'red' })
+      store.applyTheme({ mode: 'dark', accent: 'emerald' })
       await nextTick()
 
       expect(JSON.parse(readStorage(STORAGE_KEYS.theme) ?? '{}')).toEqual({
-        globalTheme: { mode: 'dark', accent: 'red' },
+        globalTheme: { mode: 'dark', accent: 'emerald' },
       })
     })
   })
@@ -41,24 +41,24 @@ describe('useThemeStore', () => {
   describe('applyQuizTheme / restoreGlobalTheme', () => {
     it('keeps the global theme when the quiz carries no theme', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'red' })
+      store.applyTheme({ mode: 'dark', accent: 'emerald' })
 
       store.applyQuizTheme(undefined)
 
       expect(store.temporaryTheme).toBeNull()
-      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'red' })
-      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'red' })
+      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'emerald' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'emerald' })
     })
 
     it('changes both attributes without touching the global theme', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'light', accent: 'red' })
+      store.applyTheme({ mode: 'light', accent: 'emerald' })
 
-      store.applyQuizTheme({ mode: 'dark', accent: 'blue' })
+      store.applyQuizTheme({ mode: 'dark', accent: 'mint' })
 
-      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'blue' })
-      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'red' })
-      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'blue' })
+      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'mint' })
+      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'emerald' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'mint' })
     })
 
     it('accepts a legacy name left in an older quiz', () => {
@@ -66,39 +66,39 @@ describe('useThemeStore', () => {
 
       store.applyQuizTheme('infinity-yellow-dark')
 
-      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'yellow' })
+      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'fresh' })
     })
 
     it('keeps the global theme for a quiz whose theme is unknown', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'yellow' })
+      store.applyTheme({ mode: 'dark', accent: 'fresh' })
 
       store.applyQuizTheme('removed-theme')
 
       expect(store.temporaryTheme).toBeNull()
-      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'yellow' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'fresh' })
     })
 
     it('restores the global theme', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'light', accent: 'red' })
-      store.applyQuizTheme({ mode: 'dark', accent: 'yellow' })
+      store.applyTheme({ mode: 'light', accent: 'emerald' })
+      store.applyQuizTheme({ mode: 'dark', accent: 'fresh' })
 
       store.restoreGlobalTheme()
 
       expect(store.temporaryTheme).toBeNull()
-      expect(rootTheme()).toEqual({ mode: 'light', accent: 'red' })
+      expect(rootTheme()).toEqual({ mode: 'light', accent: 'emerald' })
     })
   })
 
   describe('rehydrate', () => {
     it('writes the rehydrated theme on the document element', () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'yellow' })
+      store.applyTheme({ mode: 'dark', accent: 'fresh' })
 
       store.rehydrate()
 
-      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'yellow' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'fresh' })
     })
 
     it('normalizes an unsupported stored selection back to a valid one', () => {
@@ -112,21 +112,21 @@ describe('useThemeStore', () => {
       const store = useThemeStore()
       store.rehydrate()
 
-      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'blue' })
-      expect(rootTheme()).toEqual({ mode: 'light', accent: 'blue' })
+      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'mint' })
+      expect(rootTheme()).toEqual({ mode: 'light', accent: 'mint' })
     })
   })
 
   describe('persistence', () => {
     it('keeps the mode and accent across a simulated reload', async () => {
       const store = useThemeStore()
-      store.applyTheme({ mode: 'dark', accent: 'yellow' })
+      store.applyTheme({ mode: 'dark', accent: 'fresh' })
       await nextTick()
 
       installTestPinia()
       const fresh = useThemeStore()
 
-      expect(fresh.globalTheme).toEqual({ mode: 'dark', accent: 'yellow' })
+      expect(fresh.globalTheme).toEqual({ mode: 'dark', accent: 'fresh' })
     })
   })
 })

@@ -55,33 +55,25 @@
   }
 
   /*
-   * Accents. The mode-specific blocks come after the plain accent blocks: they
-   * share the same specificity, so source order is what selects them.
+   * Accents: three greens, from the lightest to the deepest. A bright accent
+   * takes a dark foreground on its fill; the ink used as text is derived from
+   * the accent itself above, so no per-accent table is needed.
    */
-  :root[data-accent='blue'] {
-    --it-accent: oklch(54% 0.245 262.881);
-    --it-accent-fg: oklch(100% 0 0);
+  :root[data-accent='mint'] {
+    --it-accent: oklch(80% 0.16 150);
+    --it-accent-fg: oklch(18% 0 0);
   }
 
-  :root[data-accent='yellow'] {
-    --it-accent: oklch(85% 0.2 100);
-    --it-accent-fg: oklch(0% 0 0);
+  :root[data-accent='fresh'] {
+    --it-accent: oklch(72% 0.18 152);
+    --it-accent-fg: oklch(18% 0 0);
   }
 
-  [data-theme='dark'][data-accent='yellow'] {
-    --it-accent: oklch(75% 0.2 100);
+  :root[data-accent='emerald'] {
+    --it-accent: oklch(62% 0.14 160);
+    --it-accent-fg: oklch(18% 0 0);
   }
 
-
-  :root[data-accent='red'] {
-    --it-accent: oklch(65% 0.25 25);
-    --it-accent-fg: oklch(100% 0 0);
-  }
-
-  [data-theme='dark'][data-accent='red'] {
-    --it-accent: oklch(55% 0.25 25);
-    --it-accent-fg: oklch(0% 0 0);
-  }
 }
 
 /*

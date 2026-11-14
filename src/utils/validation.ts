@@ -1,14 +1,15 @@
 import { z } from 'zod'
 import type { Quiz } from '../types/quiz'
 import { normalizeQuizTheme } from './theme'
+import { THEME_ACCENTS, THEME_MODES } from '../constants/themes'
 
 // ============================================================================
 // Schemas Zod
 // ============================================================================
 
 export const ThemeSelectionSchema = z.object({
-  mode: z.enum(['light', 'dark']),
-  accent: z.enum(['blue', 'yellow', 'red']),
+  mode: z.enum(THEME_MODES),
+  accent: z.enum(THEME_ACCENTS),
 })
 
 export const QuestionSchema = z

@@ -115,7 +115,7 @@ describe('Zod validation utils', () => {
     it('QuizSchema should convert a legacy theme name into a selection', () => {
       const result = QuizSchema.parse({ ...validQuiz, theme: 'infinity-red-dark' })
 
-      expect(result.theme).toEqual({ mode: 'dark', accent: 'red' })
+      expect(result.theme).toEqual({ mode: 'dark', accent: 'emerald' })
     })
 
     it('QuizSchema should drop an unknown theme instead of rejecting the quiz', () => {
@@ -126,9 +126,9 @@ describe('Zod validation utils', () => {
     })
 
     it('QuizSchema should keep an already normalized theme', () => {
-      const result = QuizSchema.parse({ ...validQuiz, theme: { mode: 'light', accent: 'yellow' } })
+      const result = QuizSchema.parse({ ...validQuiz, theme: { mode: 'light', accent: 'fresh' } })
 
-      expect(result.theme).toEqual({ mode: 'light', accent: 'yellow' })
+      expect(result.theme).toEqual({ mode: 'light', accent: 'fresh' })
     })
 
     it('QuizSchema should reject empty questions', () => {

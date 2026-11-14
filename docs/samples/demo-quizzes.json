@@ -127,7 +127,7 @@
     "description": "Bones, blood and a few numbers worth remembering.",
     "category": "Science",
     "tags": ["biology", "anatomy", "health"],
-    "theme": { "mode": "dark", "accent": "yellow" },
+    "theme": { "mode": "dark", "accent": "fresh" },
     "questions": [
       {
         "id": "sci-1",
