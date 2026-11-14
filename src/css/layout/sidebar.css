@@ -76,6 +76,11 @@
     text-overflow: ellipsis;
   }
 
+  /* An icon is not a fluid box: it must keep its size when the row narrows. */
+  .app-nav-link svg {
+    flex-shrink: 0;
+  }
+
   /* Desktop collapsed: icon only, label hidden but the link keeps its name. */
   @media (min-width: 64rem) {
     .app-sidebar[data-collapsed='true'] .app-nav-label,
@@ -88,8 +93,19 @@
       display: inline;
     }
 
+    /* Collapsed, the row is only as wide as the icon: the inline padding of
+     * the expanded row would leave a 6px box and squeeze the icon. */
+    .app-sidebar[data-collapsed='true'] {
+      padding-inline: var(--it-space-2);
+    }
+
     .app-sidebar[data-collapsed='true'] .app-nav-link {
       justify-content: center;
+      padding-inline: 0;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-sidebar-brand {
+      text-align: center;
     }
 
     .app-sidebar[data-collapsed='true'] .app-nav-title {

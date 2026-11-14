@@ -5,7 +5,7 @@
 @layer it.tokens {
   :where(.it-theme) {
     --app-sidebar-width: 16rem;
-    --app-sidebar-width-collapsed: 3.5rem;
+    --app-sidebar-width-collapsed: 4rem;
     --app-topbar-height: 4rem;
     --app-backdrop: oklch(0% 0 0 / 0.45);
   }
