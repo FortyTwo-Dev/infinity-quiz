@@ -17,7 +17,6 @@ const routeLabels: Record<string, string> = {
   'quiz-create': 'Create',
   'quiz-edit': 'Edit',
   'quiz-import-export': 'Import / Export',
-  'theme-import': 'Themes',
 }
 
 const currentPageLabel = computed(() => routeLabels[route.name as string] || 'IQuiz')

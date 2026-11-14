@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { Field } from 'vee-validate'
 import { DBadge, DButton, DFieldset, DInput, DTextarea, DSelect, DSelectOption } from '@/components/daisy-ui'
 import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
 import { PhPlus } from '@phosphor-icons/vue'
-import { useThemeStore } from '@/stores'
 import { BUILT_IN_THEMES, DEFAULT_THEME_NAME } from '@/constants/themes'
 
 interface Props {
@@ -20,11 +19,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const themeStore = useThemeStore()
-
 const tagDraft = ref('')
-
-const importedThemeNames = computed(() => themeStore.importedThemes.map((t) => t.name))
 
 function submitTag() {
   const value = tagDraft.value.trim()
@@ -89,9 +84,6 @@ function submitTag() {
           >
             <DSelectOption value="">Default ({{ DEFAULT_THEME_NAME }})</DSelectOption>
             <DSelectOption v-for="name in BUILT_IN_THEMES" :key="name" :value="name">
-              {{ name }}
-            </DSelectOption>
-            <DSelectOption v-for="name in importedThemeNames" :key="name" :value="name">
               {{ name }}
             </DSelectOption>
           </DSelect>

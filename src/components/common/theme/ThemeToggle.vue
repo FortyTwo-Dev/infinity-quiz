@@ -31,14 +31,7 @@ const currentVariant = computed<ThemeVariant>(() => {
   return 'light'
 })
 
-const isImportedActive = computed(() => currentColor.value === null)
-
-function applyColor(color: ThemeColor) {
-  themeStore.applyTheme(buildThemeName(color, currentVariant.value))
-}
-
-function applyImported(name: string) {
-  themeStore.applyTheme(name)
+function applyColor(color: ThemeColor) {  themeStore.applyTheme(buildThemeName(color, currentVariant.value))
 }
 
 function toggleVariant() {
@@ -76,28 +69,13 @@ function toggleVariant() {
             {{ color }}
           </button>
         </li>
-
-        <template v-if="themeStore.importedThemes.length > 0">
-          <li class="menu-title text-xs mt-1"><span>Imported</span></li>
-          <li v-for="theme in themeStore.importedThemes" :key="theme.name">
-            <button
-              type="button"
-              class="btn btn-sm btn-block justify-start"
-              :class="activeThemeName === theme.name ? 'btn-primary' : 'btn-ghost'"
-              @click="applyImported(theme.name)"
-            >
-              {{ theme.name }}
-            </button>
-          </li>
-        </template>
       </ul>
     </div>
 
-    <!-- Toggle Light/Dark (uniquement pour les thèmes built-in) -->
+    <!-- Toggle Light/Dark -->
     <DButton
       variant="ghost"
       size="sm"
-      :disabled="isImportedActive"
       @click="toggleVariant"
       :title="currentVariant === 'light' ? 'Dark mode' : 'Light mode'"
     >

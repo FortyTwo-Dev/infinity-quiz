@@ -11,4 +11,4 @@ export {
   type Notification,
 } from './notification-store'
 
-export { useThemeStore, type ImportedTheme } from './theme-store'
+export { useThemeStore } from './theme-store'
