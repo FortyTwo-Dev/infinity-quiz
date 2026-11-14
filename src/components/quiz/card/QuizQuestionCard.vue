@@ -80,7 +80,7 @@ const getOptionTextClass = (originalIndex: number): string => {
     <DCardBody padding="lg" class="gap-4">
       <DCardTitle>{{ question.text }}</DCardTitle>
 
-      <LGrid as="div" cols="1 md:2 lg:3" gap="4">
+      <LGrid as="div" cols="1 md:2 lg:3" gap="md">
         <DLabel
           v-for="(item, displayIndex) in questionOptions"
           :key="displayIndex"

@@ -84,7 +84,7 @@ function goToManagement() {
         Manage quizzes
       </DButton>
     </LFlex>
-    <LGrid as="div" cols="1 md:2 lg:3" gap="4">
+    <LGrid as="div" cols="1 md:2 lg:3" gap="md">
       <QuizLaunchCard
         v-for="quiz in quizzes"
         :key="quiz.id"

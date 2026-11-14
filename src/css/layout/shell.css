@@ -1,0 +1,140 @@
+/*
+ * Application shell: top bar, content area, sidebar column and the mobile
+ * drawer behaviour. Widths on the desktop, off-canvas on small screens.
+ */
+@layer it.tokens {
+  :where(.it-theme) {
+    --app-sidebar-width: 16rem;
+    --app-sidebar-width-collapsed: 3.5rem;
+    --app-topbar-height: 4rem;
+    --app-backdrop: oklch(0% 0 0 / 0.45);
+  }
+}
+
+@layer components {
+  .app-shell {
+    display: grid;
+    grid-template-columns: var(--app-sidebar-width) minmax(0, 1fr);
+    min-height: 100vh;
+    background-color: var(--it-bg);
+    color: var(--it-fg);
+    transition: grid-template-columns 0.2s ease;
+  }
+
+  .app-shell[data-sidebar='closed'] {
+    grid-template-columns: var(--app-sidebar-width-collapsed) minmax(0, 1fr);
+  }
+
+  /* The play route hides the shell around the quiz. */
+  .app-shell.app-shell-fullscreen {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .app-topbar {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
+    min-height: var(--app-topbar-height);
+    padding-inline: var(--it-space-4);
+    border-block-end: var(--it-border-width) solid var(--it-border);
+    background-color: var(--it-bg);
+  }
+
+  .app-topbar-title {
+    margin: 0;
+    font-size: var(--it-font-size-4);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .app-topbar-end {
+    margin-inline-start: auto;
+  }
+
+  .app-content {
+    flex: 1;
+    padding: var(--it-space-4);
+  }
+
+  .app-icon-button {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--it-control-height-md);
+    block-size: var(--it-control-height-md);
+    border: var(--it-border-width) solid transparent;
+    border-radius: var(--it-radius);
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .app-icon-button:hover {
+    background-color: var(--it-surface);
+  }
+
+  .app-icon-button:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .app-skip-link {
+    position: absolute;
+    inset-inline-start: var(--it-space-2);
+    inset-block-start: -100%;
+    z-index: 60;
+    padding: var(--it-space-2) var(--it-space-3);
+    border-radius: var(--it-radius);
+    background-color: var(--it-surface);
+    color: var(--it-surface-fg);
+  }
+
+  .app-skip-link:focus-visible {
+    inset-block-start: var(--it-space-2);
+  }
+
+  /* ---- Mobile: the sidebar becomes an overlay drawer --------------------- */
+  @media (max-width: 63.9375rem) {
+    .app-shell,
+    .app-shell[data-sidebar='closed'] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .app-sidebar {
+      position: fixed;
+      inset-block: 0;
+      inset-inline-start: 0;
+      z-index: 40;
+      width: var(--app-sidebar-width);
+      translate: -100% 0;
+      transition: translate 0.2s ease;
+      box-shadow: 0 0 2rem oklch(0% 0 0 / 0.25);
+    }
+
+    .app-shell[data-sidebar='open'] .app-sidebar {
+      translate: 0 0;
+    }
+
+    .app-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      border: 0;
+      background-color: var(--app-backdrop);
+      cursor: pointer;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .app-sidebar-backdrop {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,282 @@
+/*
+ * Layout primitives: the closed set of classes the L* components emit.
+ *
+ * Values are carried over from the Tailwind scale the components used before
+ * the migration, so a page keeps its proportions. The `it-*` spacing tokens are
+ * used wherever the scale matches.
+ */
+@layer components {
+  /* ---- Container -------------------------------------------------------- */
+  .l-container {
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .l-container-fluid {
+    max-width: none;
+  }
+
+  .l-container-none {
+    max-width: none;
+  }
+
+  .l-container-xs {
+    max-width: 20rem;
+  }
+
+  .l-container-sm {
+    max-width: 24rem;
+  }
+
+  .l-container-md {
+    max-width: 28rem;
+  }
+
+  .l-container-lg {
+    max-width: 32rem;
+  }
+
+  .l-container-xl {
+    max-width: 36rem;
+  }
+
+  .l-container-2xl {
+    max-width: 42rem;
+  }
+
+  .l-container-3xl {
+    max-width: 48rem;
+  }
+
+  .l-container-4xl {
+    max-width: 56rem;
+  }
+
+  .l-container-5xl {
+    max-width: 64rem;
+  }
+
+  .l-container-6xl {
+    max-width: 72rem;
+  }
+
+  .l-container-7xl {
+    max-width: 80rem;
+  }
+
+  .l-container-pad-none {
+    padding: 0;
+  }
+
+  .l-container-pad-xs {
+    padding: var(--it-space-1);
+  }
+
+  .l-container-pad-sm {
+    padding: var(--it-space-2);
+  }
+
+  .l-container-pad-md {
+    padding: var(--it-space-4);
+  }
+
+  .l-container-pad-lg {
+    padding: var(--it-space-6);
+  }
+
+  .l-container-pad-xl {
+    padding: var(--it-space-8);
+  }
+
+  /* ---- Grid ------------------------------------------------------------- */
+  .l-grid {
+    display: grid;
+  }
+
+  .l-grid-cols-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+
+  .l-grid-cols-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  }
+
+  .l-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .l-grid-cols-12 {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  /* A column count that only applies from the desktop breakpoint up. */
+  @media (min-width: 48rem) {
+    .l-grid-md-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .l-grid-md-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .l-grid-md-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .l-grid-md-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .l-grid-md-cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .l-grid-lg-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .l-grid-lg-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .l-grid-lg-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .l-grid-lg-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .l-grid-lg-cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+
+  /* ---- Flex ------------------------------------------------------------- */
+  .l-flex {
+    display: flex;
+  }
+
+  .l-flex-inline {
+    display: inline-flex;
+  }
+
+  .l-flex-row {
+    flex-direction: row;
+  }
+
+  .l-flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  .l-flex-col {
+    flex-direction: column;
+  }
+
+  .l-flex-col-reverse {
+    flex-direction: column-reverse;
+  }
+
+  .l-flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  .l-flex-nowrap {
+    flex-wrap: nowrap;
+  }
+
+  .l-flex-full {
+    width: 100%;
+  }
+
+  .l-items-start {
+    align-items: flex-start;
+  }
+
+  .l-items-center {
+    align-items: center;
+  }
+
+  .l-items-end {
+    align-items: flex-end;
+  }
+
+  .l-items-stretch {
+    align-items: stretch;
+  }
+
+  .l-items-baseline {
+    align-items: baseline;
+  }
+
+  .l-justify-start {
+    justify-content: flex-start;
+  }
+
+  .l-justify-center {
+    justify-content: center;
+  }
+
+  .l-justify-end {
+    justify-content: flex-end;
+  }
+
+  .l-justify-between {
+    justify-content: space-between;
+  }
+
+  .l-justify-around {
+    justify-content: space-around;
+  }
+
+  .l-justify-evenly {
+    justify-content: space-evenly;
+  }
+
+  /* ---- Gap -------------------------------------------------------------- */
+  .l-gap-none {
+    gap: 0;
+  }
+
+  .l-gap-xs {
+    gap: var(--it-space-1);
+  }
+
+  .l-gap-sm {
+    gap: var(--it-space-2);
+  }
+
+  .l-gap-md {
+    gap: var(--it-space-4);
+  }
+
+  .l-gap-lg {
+    gap: var(--it-space-6);
+  }
+
+  .l-gap-xl {
+    gap: var(--it-space-8);
+  }
+}

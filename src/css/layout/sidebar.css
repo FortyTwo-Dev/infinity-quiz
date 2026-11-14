@@ -1,0 +1,75 @@
+/*
+ * Sidebar navigation. Collapsed on desktop, the labels disappear and the links
+ * keep their accessible name through `aria-label`.
+ */
+@layer components {
+  .app-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-4);
+    min-height: 100vh;
+    padding: var(--it-space-3);
+    border-inline-end: var(--it-border-width) solid var(--it-border);
+    background-color: var(--it-surface);
+    overflow: hidden;
+  }
+
+  .app-sidebar-brand {
+    padding: var(--it-space-2);
+    font-size: var(--it-font-size-4);
+    font-weight: var(--it-font-weight-semibold);
+    white-space: nowrap;
+  }
+
+  .app-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .app-nav-grow {
+    margin-block-start: auto;
+  }
+
+  .app-nav-title {
+    padding: var(--it-space-2);
+    color: var(--it-muted);
+    font-size: var(--it-font-size-1);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .app-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-3);
+    padding: var(--it-space-2) var(--it-space-3);
+    border-radius: var(--it-radius);
+    white-space: nowrap;
+  }
+
+  .app-nav-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Desktop collapsed: icon only, label hidden but the link keeps its name. */
+  @media (min-width: 64rem) {
+    .app-sidebar[data-collapsed='true'] .app-nav-label,
+    .app-sidebar[data-collapsed='true'] .app-nav-title,
+    .app-sidebar[data-collapsed='true'] .app-sidebar-brand-full {
+      display: none;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-nav-link {
+      justify-content: center;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-nav-title {
+      visibility: hidden;
+    }
+  }
+}

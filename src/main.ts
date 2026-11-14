@@ -13,6 +13,7 @@ import { migrateQuizCatalogue, migrateThemeStorage } from './utils/theme'
 import '@infinitylib/infinity-theme'
 import './css/brand.css'
 import './css/itheme/index.css'
+import './css/layout/index.css'
 
 /**
  * Rewrite the theme payloads written by the daisyUI build before any store

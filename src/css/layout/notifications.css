@@ -1,0 +1,47 @@
+/* Notification stack: layout of the region and its transition. */
+@layer components {
+  .app-toast-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-toast-gap);
+  }
+
+  .app-toast {
+    inline-size: min(var(--it-toast-width), calc(100vw - 2 * var(--it-toast-inset)));
+    box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.18);
+  }
+
+  .app-toast-enter-active,
+  .app-toast-leave-active,
+  .app-toast-move {
+    transition:
+      opacity 0.2s ease,
+      translate 0.2s ease;
+  }
+
+  .app-toast-enter-from,
+  .app-toast-leave-to {
+    opacity: 0;
+    translate: 1rem 0;
+  }
+
+  .app-toast-leave-active {
+    position: absolute;
+  }
+
+  .app-toast-close {
+    margin-inline-start: auto;
+    padding: 0 var(--it-space-1);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: var(--it-font-size-4);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .app-toast-close:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+}

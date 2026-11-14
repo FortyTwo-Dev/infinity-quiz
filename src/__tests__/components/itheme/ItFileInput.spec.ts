@@ -32,7 +32,8 @@ describe('ItFileInput', () => {
 
     const emitted = wrapper.emitted('change')
     expect(emitted).toHaveLength(1)
-    expect((emitted?.[0]?.[0] as File[])[0]?.name).toBe('quiz.json')
+    const files = emitted?.[0]?.[0] as File[] | undefined
+    expect(files?.[0]?.name).toBe('quiz.json')
   })
 
   it('emits an empty selection when the dialog is cancelled', async () => {

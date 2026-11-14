@@ -15,45 +15,14 @@ interface Props {
 const props = defineProps<Props>()
 
 const flexClasses = computed(() => {
-  const classes: string[] = []
+  const classes = [props.inline ? 'l-flex-inline' : 'l-flex']
 
-  if (props.inline) {
-    classes.push('inline-flex')
-  } else {
-    classes.push('flex')
-  }
-
-  if (props.direction) {
-    classes.push(`flex-${props.direction}`)
-  }
-
-  if (props.wrap !== undefined) {
-    classes.push(props.wrap ? 'flex-wrap' : 'flex-nowrap')
-  }
-
-  if (props.gap) {
-    const gapMap: Record<string, string> = {
-      none: 'gap-0',
-      xs: 'gap-1',
-      sm: 'gap-2',
-      md: 'gap-4',
-      lg: 'gap-6',
-      xl: 'gap-8',
-    }
-    classes.push(gapMap[props.gap] || 'gap-4')
-  }
-
-  if (props.align) {
-    classes.push(`items-${props.align}`)
-  }
-
-  if (props.justify) {
-    classes.push(`justify-${props.justify}`)
-  }
-
-  if (props.fullWidth) {
-    classes.push('w-full')
-  }
+  if (props.direction) classes.push(`l-flex-${props.direction}`)
+  if (props.wrap !== undefined) classes.push(props.wrap ? 'l-flex-wrap' : 'l-flex-nowrap')
+  if (props.gap) classes.push(`l-gap-${props.gap}`)
+  if (props.align) classes.push(`l-items-${props.align}`)
+  if (props.justify) classes.push(`l-justify-${props.justify}`)
+  if (props.fullWidth) classes.push('l-flex-full')
 
   return classes
 })
