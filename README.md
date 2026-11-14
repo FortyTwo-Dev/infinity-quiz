@@ -5,6 +5,7 @@
 ## Features
 
 ### Current (Phase 3 - Quiz Management)
+
 - Quiz list with local storage
 - Quiz selection and question navigation
 - Multiple choice questions
@@ -24,22 +25,23 @@
 - Light/dark mode with multiple color themes
 
 ### Roadmap
+
 See [docs/roadmap.md](./docs/roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
 
 ## Tech Stack
 
-| Category | Tools |
-|----------|-------|
-| **Runtime** | Bun 1.3.14 |
-| **Framework** | Vue 3.5.40 |
-| **Language** | TypeScript 6.0 |
-| **State Management** | Pinia 4.0.2 + pinia-plugin-persistedstate |
-| **Router** | Vue Router 5.2.0 |
-| **Build Tool** | Vite 8.1.5 |
-| **Testing** | Vitest 4.1.10, @vue/test-utils 2.4.11 |
-| **Linting** | ESLint 10.7.0, Oxlint 1.74.0 |
-| **Formatting** | Prettier 3.9.5 |
-| **Icons** | [Phosphor Icons](https://phosphoricons.com/) |
+| Category             | Tools                                        |
+| -------------------- | -------------------------------------------- |
+| **Runtime**          | Bun 1.3.14                                   |
+| **Framework**        | Vue 3.5.40                                   |
+| **Language**         | TypeScript 6.0                               |
+| **State Management** | Pinia 4.0.2 + pinia-plugin-persistedstate    |
+| **Router**           | Vue Router 5.2.0                             |
+| **Build Tool**       | Vite 8.1.5                                   |
+| **Testing**          | Vitest 4.1.10, @vue/test-utils 2.4.11        |
+| **Linting**          | ESLint 10.7.0, Oxlint 1.74.0                 |
+| **Formatting**       | Prettier 3.9.5                               |
+| **Icons**            | [Phosphor Icons](https://phosphoricons.com/) |
 
 See [docs/specs.md](./docs/specs.md) for the full technical stack details.
 
@@ -108,13 +110,13 @@ src/
 ├── assets/                   # Static assets (fonts)
 ├── components/
 │   ├── common/               # App-wide components (modal, notification, theme)
-│   ├── daisy-ui/             # daisyUI wrappers (button, card, fieldset, modal, …)
+│   ├── itheme/               # Local widgets the theme package does not ship yet
 │   ├── layout/               # Layout components (AppLayout, AppSidebar, containers)
 │   ├── quiz/                 # Quiz-specific components (cards, form, timer)
 │   └── quiz-import-export/   # Import/export components
 ├── composables/              # Vue composables (useQuiz, useQuizForm, useResults, …)
 ├── constants/                # Application constants (colors, thresholds, storage keys)
-├── css/                      # Global CSS (main.css)
+├── css/                      # Cascade order, brand layer, widgets and screen CSS
 ├── __tests__/                # Unit tests
 │   ├── composables/          # Composable tests
 │   ├── stores/               # Store tests
@@ -183,3 +185,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 Powered by Mistral Vibe. Created by FortyTwo_Dev.
+```

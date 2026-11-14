@@ -1,119 +1,102 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DCard, DCardBody } from '@/components/daisy-ui/card'
-import { DButton, DCardActions, DCardTitle, DInputFile, DTextarea } from '@/components/daisy-ui'
-import { useQuizImportExport } from '@/composables'
 import { PhUpload, PhTrash } from '@phosphor-icons/vue'
+import { ItAlert, ItCard, ItCardBody, ItCardTitle, ItFileInput } from '@/components/itheme'
+import { ItButton, ItTextarea } from '@infinitylib/infinity-theme-vue'
+import { useQuizImportExport } from '@/composables'
 
-const { state, validateJSON, clearMessages, importFromJson, importFromFile } =
+const { state, validateJSON, clearMessages, importFromJson, importFile } =
   useQuizImportExport()
 
-const handleFileSelect = async (event: Event) => {
-  await importFromFile(event)
+async function handleFileSelect(files: File[]) {
+  const file = files[0]
+  if (!file) return
+  await importFile(file)
 }
 
-const handleImportFromText = () => {
+function handleImportFromText() {
   importFromJson(state.value.jsonData)
 }
 
-const handleClearText = () => {
+function handleClearText() {
   clearMessages()
   state.value.jsonData = ''
 }
 
 const previewText = computed(() => {
-  if (state.value.jsonData) {
-    try {
-      const parsed = JSON.parse(state.value.jsonData)
-      if (Array.isArray(parsed)) {
-        return `Ready to import ${parsed.length} quizzes`
-      } else {
-        return `Ready to import: ${parsed.title || 'Untitled quiz'}`
-      }
-    } catch {
-      return 'Invalid JSON'
-    }
+  if (!state.value.jsonData) return 'Paste your JSON here…'
+  try {
+    const parsed = JSON.parse(state.value.jsonData)
+    return Array.isArray(parsed)
+      ? `Ready to import ${parsed.length} quizzes`
+      : `Ready to import: ${parsed.title || 'Untitled quiz'}`
+  } catch {
+    return 'Invalid JSON'
   }
-  return 'Paste your JSON here...'
 })
 
-const isJsonValid = computed(() => {
-  return state.value.jsonData ? validateJSON(state.value.jsonData) : false
-})
+const isJsonValid = computed(() =>
+  state.value.jsonData ? validateJSON(state.value.jsonData) : false,
+)
 </script>
 
 <template>
-  <DCard border class="bg-base-100">
-    <DCardBody>
-      <DCardTitle tag="h2" size="xl">
-        <PhUpload :size="24" />
+  <ItCard border class="import-card">
+    <ItCardBody size="lg">
+      <ItCardTitle as="h2">
+        <PhUpload :size="24" aria-hidden="true" />
         Import
-      </DCardTitle>
-      <DCard>
-        <DCardBody>
-          <DCardTitle tag="h3" size="lg" class="w-full">From a file</DCardTitle>
-          <DInputFile
-            accept=".json"
-            @change="handleFileSelect"
-            aria-label="Select a JSON file"
-            class="w-full"
-          />
-        </DCardBody>
-      </DCard>
+      </ItCardTitle>
 
-      <div class="divider">OR</div>
+      <section class="import-section">
+        <h3 class="import-section-title">From a file</h3>
+        <ItFileInput label="Select a JSON file" accept=".json" @change="handleFileSelect" />
+      </section>
 
-      <DCard>
-        <DCardBody>
-          <DCardTitle tag="h3" size="lg">From JSON text</DCardTitle>
-          <DTextarea
-            v-model="state.jsonData"
-            placeholder="Paste your JSON here..."
-            :rows="6"
-            :variant="state.error && !state.jsonData ? 'error' : isJsonValid ? 'success' : undefined"
-            class="font-mono text-sm resize-y w-full"
-            aria-label="Quizzes JSON to import"
-          />
-          <div class="text-xs">
-            <span :class="{ 'text-success': isJsonValid, 'text-error': state.error }">
-              {{ previewText }}
-            </span>
-          </div>
-          <DCardActions justify="start">
-            <DButton
-              type="reset"
-              variant="error"
-              @click="handleClearText"
-              :disabled="!state.jsonData"
-            >
-              <PhTrash :size="18" />
-              Clear
-            </DButton>
-            <DButton
-              type="button"
-              variant="primary"
-              @click="handleImportFromText"
-              :disabled="!state.jsonData || !isJsonValid"
-              :loading="state.isImporting"
-            >
-              <PhUpload :size="18" />
-              Import
-            </DButton>
-          </DCardActions>
-        </DCardBody>
-      </DCard>
+      <p class="import-or">or</p>
 
-      <div class="grid gap-4">
-        <div class="flex gap-4 flex-wrap"></div>
+      <section class="import-section">
+        <h3 class="import-section-title">From JSON text</h3>
+        <ItTextarea
+          v-model="state.jsonData"
+          placeholder="Paste your JSON here…"
+          :rows="6"
+          class="import-json"
+          aria-label="Quizzes JSON to import"
+        />
+        <p class="import-preview" :class="{ 'import-preview-valid': isJsonValid }">
+          {{ previewText }}
+        </p>
 
-        <!-- Messages -->
-        <div v-if="state.successMessage" class="mt-4 p-2 rounded text-sm alert alert-success">
-          {{ state.successMessage }}
+        <div class="import-actions">
+          <ItButton
+            type="reset"
+            variant="danger"
+            :disabled="!state.jsonData"
+            @click="handleClearText"
+          >
+            <PhTrash :size="18" aria-hidden="true" />
+            Clear
+          </ItButton>
+          <ItButton
+            type="button"
+            variant="primary"
+            :disabled="!state.jsonData || !isJsonValid"
+            :loading="state.isImporting"
+            @click="handleImportFromText"
+          >
+            <PhUpload :size="18" aria-hidden="true" />
+            Import
+          </ItButton>
         </div>
-        <div v-if="state.error" class="mt-4 p-2 rounded text-sm alert alert-error">
-          {{ state.error }}
-        </div>
-      </div>
-    </DCardBody>
-  </DCard>
+      </section>
+
+      <ItAlert v-if="state.successMessage" variant="success" live>
+        {{ state.successMessage }}
+      </ItAlert>
+      <ItAlert v-if="state.error" variant="danger" live>
+        {{ state.error }}
+      </ItAlert>
+    </ItCardBody>
+  </ItCard>
 </template>

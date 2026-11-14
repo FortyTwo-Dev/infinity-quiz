@@ -661,3 +661,32 @@
     flex: 1;
   }
 }
+
+@layer components {
+  /* ---- Gauge ------------------------------------------------------------ */
+  .quiz-gauge {
+    position: relative;
+  }
+
+  .quiz-gauge-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .quiz-gauge-value {
+    font-size: var(--it-font-size-5);
+    font-weight: var(--it-font-weight-semibold);
+    line-height: var(--it-line-height-tight);
+  }
+
+  .quiz-gauge-label {
+    color: var(--it-muted);
+    font-size: var(--it-font-size-2);
+    line-height: var(--it-line-height-tight);
+  }
+}

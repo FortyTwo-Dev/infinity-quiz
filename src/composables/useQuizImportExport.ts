@@ -111,6 +111,18 @@ export function useQuizImportExport() {
       : importSingleQuiz(jsonData)
   }
 
+  /** Read a selected file and import its content. */
+  const importFile = async (file: File): Promise<boolean> => {
+    try {
+      const text = await file.text()
+      state.value.jsonData = text
+      return importFromJson(text)
+    } catch (err) {
+      state.value.error = 'File read error: ' + (err as Error).message
+      return false
+    }
+  }
+
   const importFromFile = async (event: Event): Promise<boolean> => {
     const input = event.target as HTMLInputElement
     const file = input.files?.[0]
@@ -121,15 +133,10 @@ export function useQuizImportExport() {
     }
 
     try {
-      const text = await file.text()
-      state.value.jsonData = text
-      return importFromJson(text)
-    } catch (err) {
-      state.value.error = 'File read error: ' + (err as Error).message
-      return false
+      return await importFile(file)
     } finally {
-      // Reset file input
-      if (input) input.value = ''
+      // Reset the input so choosing the same file twice fires a change event.
+      input.value = ''
     }
   }
 
@@ -152,6 +159,7 @@ export function useQuizImportExport() {
     importSingleQuiz,
     importMultipleQuizzes,
     importFromJson,
+    importFile,
     importFromFile,
     validateJSON,
     clearMessages,

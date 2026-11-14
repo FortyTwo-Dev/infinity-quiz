@@ -41,6 +41,9 @@
   }
 
   .it-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
     margin: 0;
     font-size: var(--it-font-size-5);
     font-weight: var(--it-font-weight-semibold);

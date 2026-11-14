@@ -7,16 +7,15 @@ const notificationStore = useNotificationStore()
 const { exportSingleQuiz, exportAllQuizzes, downloadQuiz, downloadAllQuizzes } =
   useQuizImportExport()
 
-// Export handlers
-const handleExportSingle = (quizId: string) => {
+function handleExportSingle(quizId: string) {
   downloadQuiz(quizId)
 }
 
-const handleExportAll = () => {
+function handleExportAll() {
   downloadAllQuizzes()
 }
 
-const handleCopyToClipboard = async (quizId: string | null) => {
+async function handleCopyToClipboard(quizId: string | null) {
   try {
     const jsonData = quizId ? exportSingleQuiz(quizId) || '' : exportAllQuizzes()
     await navigator.clipboard.writeText(jsonData)
@@ -28,22 +27,20 @@ const handleCopyToClipboard = async (quizId: string | null) => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-4">
-    <div class="mb-8">
-      <h1 class="text-base-content mb-2 text-3xl font-bold">Import / Export Quizzes</h1>
-      <p class="text-base-content/70 m-0">
-        Share your quizzes with other users or import existing ones
-      </p>
-    </div>
+  <section class="import-export-view">
+    <header class="quiz-page-header">
+      <div>
+        <h1 class="quiz-page-title">Import / Export</h1>
+        <p class="quiz-page-subtitle">Share your quizzes, or bring someone else's in</p>
+      </div>
+    </header>
 
-    <div class="grid gap-6">
-      <ExportQuizCard
-        @export-single="handleExportSingle"
-        @export-all="handleExportAll"
-        @copy="handleCopyToClipboard"
-      />
+    <ExportQuizCard
+      @export-single="handleExportSingle"
+      @export-all="handleExportAll"
+      @copy="handleCopyToClipboard"
+    />
 
-      <ImportQuizCard />
-    </div>
-  </div>
+    <ImportQuizCard />
+  </section>
 </template>

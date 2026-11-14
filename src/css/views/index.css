@@ -1,2 +1,7 @@
 @import './quiz-list.css';
 @import './quiz-form.css';
+@import './quiz-play.css';
+@import './results.css';
+@import './stats.css';
+@import './not-found.css';
+@import './import-export.css';
