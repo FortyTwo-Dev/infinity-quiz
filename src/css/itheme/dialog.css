@@ -1,0 +1,60 @@
+/* Dialog: candidate for upstream. Native <dialog>, so modality, Escape and
+ * focus containment come from the platform and not from script. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-dialog-bg: var(--it-surface);
+    --it-dialog-fg: var(--it-surface-fg);
+    --it-dialog-border: var(--it-border);
+    --it-dialog-border-width: var(--it-border-width);
+    --it-dialog-radius: var(--it-radius);
+    --it-dialog-padding: var(--it-space-6);
+    --it-dialog-gap: var(--it-space-4);
+    --it-dialog-width: 32rem;
+    --it-dialog-inset: var(--it-space-4);
+    --it-dialog-backdrop: oklch(0% 0 0 / 0.55);
+  }
+}
+
+@layer components {
+  .it-dialog {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--it-dialog-fg);
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  .it-dialog::backdrop {
+    background-color: var(--it-dialog-backdrop);
+  }
+
+  .it-dialog-box {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-dialog-gap);
+    width: min(var(--it-dialog-width), calc(100vw - 2 * var(--it-dialog-inset)));
+    max-height: calc(100vh - 2 * var(--it-dialog-inset));
+    overflow-y: auto;
+    padding: var(--it-dialog-padding);
+    border: var(--it-dialog-border-width) solid var(--it-dialog-border);
+    border-radius: var(--it-dialog-radius);
+    background-color: var(--it-dialog-bg);
+  }
+
+  /* The dialog itself is centred by the UA; these move it inside the viewport. */
+  .it-dialog-top {
+    margin-block: var(--it-dialog-inset) auto;
+  }
+
+  .it-dialog-bottom {
+    margin-block: auto var(--it-dialog-inset);
+  }
+
+  .it-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--it-space-3);
+  }
+}

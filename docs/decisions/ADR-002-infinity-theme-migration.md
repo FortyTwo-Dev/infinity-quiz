@@ -97,7 +97,7 @@ Feature-named classes in `@layer components`, one file per concern:
 | --- | --- |
 | `src/css/style.css` | The layer-order declaration, the body reset. Loaded first. |
 | `src/css/brand.css` | `@font-face`, `--it-font-sans`, the accent bindings, the contrast guards, the `--iq-*` tokens. |
-| `src/css/components/*.css` | The widgets the package does not ship yet, one file per widget. |
+| `src/css/itheme/*.css` | The widgets the package does not ship yet, one file per widget. |
 | `src/css/layout/*.css` | The application shell, the sidebar, the shared page compositions. |
 
 Class names describe the domain, not a generic widget: `.quiz-review-card`,
@@ -109,10 +109,11 @@ daisyUI one selector at a time.
 The widgets the package lacks are written here in its shape, so that promoting
 them is a copy and not a rewrite:
 
-- `it-*` class names, one CSS file per widget under `src/css/components/`.
+- `it-*` class names, one CSS file per widget under `src/css/itheme/`.
 - Vue wrappers `ItCard`, `ItBadge`, `ItAlert`, `ItDialog`, `ItProgress`,
-  `ItToast`, `ItSteps`, `ItFileInput`, `ItFieldset`, `ItLabel` in
-  `src/components/theme/`, each carrying a `candidate for upstream` header.
+  `ItToast`, `ItSteps`, `ItFileInput` in `src/components/itheme/`, each carrying
+  a `candidate for upstream` header. The fieldset and the label come from the
+  package (`ItField`, `it-label`), so no local copy is kept.
 - Only `--it-*` tokens, no literal colour, no store, no domain type, accessible
   by default: an accessible name, a visible focus, keyboard operation.
 - The local files are imported after the package and live in the same

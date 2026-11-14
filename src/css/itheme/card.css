@@ -1,0 +1,80 @@
+/* Card: candidate for upstream. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-card-bg: var(--it-surface);
+    --it-card-fg: var(--it-surface-fg);
+    --it-card-border: var(--it-border);
+    --it-card-border-width: var(--it-border-width);
+    --it-card-radius: var(--it-radius);
+    --it-card-padding: var(--it-space-5);
+    --it-card-gap: var(--it-space-4);
+  }
+}
+
+@layer components {
+  .it-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-card-gap);
+    background-color: var(--it-card-bg);
+    color: var(--it-card-fg);
+    border-radius: var(--it-card-radius);
+  }
+
+  .it-card-border {
+    border: var(--it-card-border-width) solid var(--it-card-border);
+  }
+
+  .it-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-card-gap);
+    padding: var(--it-card-padding);
+  }
+
+  .it-card-body-sm {
+    padding: var(--it-space-2);
+  }
+
+  .it-card-body-lg {
+    padding: var(--it-space-6);
+  }
+
+  .it-card-title {
+    margin: 0;
+    font-size: var(--it-font-size-5);
+    font-weight: var(--it-font-weight-semibold);
+    line-height: var(--it-line-height-tight);
+  }
+
+  .it-card-title-sm {
+    font-size: var(--it-font-size-3);
+  }
+
+  .it-card-title-lg {
+    font-size: var(--it-font-size-6);
+  }
+
+  .it-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-3);
+    justify-content: flex-end;
+  }
+
+  .it-card-actions-start {
+    justify-content: flex-start;
+  }
+
+  .it-card-actions-center {
+    justify-content: center;
+  }
+
+  .it-card-actions-end {
+    justify-content: flex-end;
+  }
+
+  .it-card-actions-between {
+    justify-content: space-between;
+  }
+}

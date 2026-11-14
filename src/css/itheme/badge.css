@@ -1,0 +1,99 @@
+/* Badge: candidate for upstream. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-badge-gap: var(--it-space-1);
+    --it-badge-padding: var(--it-space-2);
+    --it-badge-radius: var(--it-radius-full);
+    --it-badge-font-size: var(--it-font-size-1);
+    --it-badge-border-width: var(--it-border-width);
+    --it-badge-bg: var(--it-surface);
+    --it-badge-fg: var(--it-surface-fg);
+    --it-badge-border: var(--it-border);
+  }
+}
+
+@layer components {
+  .it-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--it-badge-gap);
+    padding-inline: var(--it-badge-padding);
+    border: var(--it-badge-border-width) solid var(--it-badge-border);
+    border-radius: var(--it-badge-radius);
+    background-color: var(--it-badge-bg);
+    color: var(--it-badge-fg);
+    font-size: var(--it-badge-font-size);
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .it-badge-neutral {
+    --it-badge-bg: var(--it-surface);
+    --it-badge-fg: var(--it-surface-fg);
+    --it-badge-border: var(--it-border);
+  }
+
+  .it-badge-accent {
+    --it-badge-bg: var(--it-accent);
+    --it-badge-fg: var(--it-accent-fg);
+    --it-badge-border: var(--it-accent);
+  }
+
+  .it-badge-success {
+    --it-badge-bg: var(--it-success);
+    --it-badge-fg: var(--it-success-fg);
+    --it-badge-border: var(--it-success);
+  }
+
+  .it-badge-warning {
+    --it-badge-bg: var(--it-warning);
+    --it-badge-fg: var(--it-warning-fg);
+    --it-badge-border: var(--it-warning);
+  }
+
+  .it-badge-danger {
+    --it-badge-bg: var(--it-danger);
+    --it-badge-fg: var(--it-danger-fg);
+    --it-badge-border: var(--it-danger);
+  }
+
+  .it-badge-info {
+    --it-badge-bg: var(--it-info);
+    --it-badge-fg: var(--it-info-fg);
+    --it-badge-border: var(--it-info);
+  }
+
+  .it-badge-ghost {
+    --it-badge-bg: transparent;
+    --it-badge-fg: var(--it-muted);
+    --it-badge-border: transparent;
+  }
+
+  .it-badge-outline {
+    background-color: transparent;
+    color: var(--it-badge-bg);
+  }
+
+  /* A tint of the variant colour on the page background, text in the
+   * foreground colour: readable without a filled block. */
+  .it-badge-soft {
+    background-color: color-mix(in oklch, var(--it-badge-bg) 20%, var(--it-bg));
+    color: var(--it-fg);
+    border-color: transparent;
+  }
+
+  .it-badge-sm {
+    padding-inline: var(--it-space-1);
+    font-size: var(--it-font-size-1);
+  }
+
+  .it-badge-remove {
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+}

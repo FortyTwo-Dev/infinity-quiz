@@ -1,0 +1,58 @@
+/* Steps: candidate for upstream. An ordered list; the current step is marked
+ * with aria-current="step", never only with a colour. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-steps-gap: var(--it-space-4);
+    --it-steps-marker-size: 1.75rem;
+    --it-steps-font-size: var(--it-font-size-2);
+  }
+}
+
+@layer components {
+  .it-steps {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--it-steps-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: it-step;
+  }
+
+  .it-step {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
+    color: var(--it-muted);
+    font-size: var(--it-steps-font-size);
+  }
+
+  .it-step::before {
+    counter-increment: it-step;
+    content: counter(it-step);
+    display: grid;
+    place-items: center;
+    inline-size: var(--it-steps-marker-size);
+    block-size: var(--it-steps-marker-size);
+    border: var(--it-border-width) solid var(--it-border);
+    border-radius: var(--it-radius-full);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .it-step[aria-current='step'] {
+    color: var(--it-fg);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .it-step[aria-current='step']::before {
+    border-color: var(--it-accent);
+    background-color: var(--it-accent);
+    color: var(--it-accent-fg);
+  }
+
+  .it-steps-vertical {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,55 @@
+/* Progress: candidate for upstream. Styles the native <progress> element. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-progress-height: var(--it-space-2);
+    --it-progress-radius: var(--it-radius-full);
+    --it-progress-track: color-mix(in oklch, var(--it-fg) 12%, transparent);
+    --it-progress-color: var(--it-accent);
+  }
+}
+
+@layer components {
+  .it-progress {
+    appearance: none;
+    width: 100%;
+    height: var(--it-progress-height);
+    border: 0;
+    border-radius: var(--it-progress-radius);
+    background-color: var(--it-progress-track);
+    overflow: hidden;
+  }
+
+  .it-progress::-webkit-progress-bar {
+    background-color: transparent;
+  }
+
+  .it-progress::-webkit-progress-value {
+    background-color: var(--it-progress-color);
+    border-radius: inherit;
+  }
+
+  .it-progress::-moz-progress-bar {
+    background-color: var(--it-progress-color);
+    border-radius: inherit;
+  }
+
+  .it-progress-accent {
+    --it-progress-color: var(--it-accent);
+  }
+
+  .it-progress-success {
+    --it-progress-color: var(--it-success);
+  }
+
+  .it-progress-warning {
+    --it-progress-color: var(--it-warning);
+  }
+
+  .it-progress-danger {
+    --it-progress-color: var(--it-danger);
+  }
+
+  .it-progress-neutral {
+    --it-progress-color: var(--it-fg);
+  }
+}
