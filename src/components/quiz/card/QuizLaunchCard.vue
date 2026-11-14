@@ -56,7 +56,7 @@ const status = computed(() =>
           <PhPlay :size="16" weight="fill" />
         </ItButton>
         <ItButton type="button" variant="ghost" @click.stop="emit('info')">
-          More information
+          Details
         </ItButton>
       </ItCardActions>
     </ItCardBody>

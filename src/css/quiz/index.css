@@ -638,3 +638,26 @@
     }
   }
 }
+
+@layer components {
+  /* The two card actions stay on one row: wrapping turns a footer into a
+   * stack of buttons that reads like a menu. */
+  .quiz-launch-card .it-card-actions,
+  .quiz-manage-card .it-card-actions {
+    flex-wrap: nowrap;
+    gap: var(--it-space-2);
+    /* Pinned to the bottom so the actions of cards in the same row line up. */
+    margin-block-start: auto;
+  }
+
+  /* Cards share the height of their row instead of hugging their content. */
+  .quiz-launch-card,
+  .quiz-manage-card {
+    block-size: 100%;
+  }
+
+  .quiz-launch-card .it-card-body,
+  .quiz-manage-card .it-card-body {
+    flex: 1;
+  }
+}

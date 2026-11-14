@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { DButton, DStep, DSteps } from '@/components/daisy-ui'
-import { LContainer, LFlex } from '@/components/layout'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
+import { ItSteps } from '@/components/itheme'
 import { useQuizManagement } from '@/composables/useQuizManagement'
 import { useQuizForm } from '@/composables/useQuizForm'
 import {
@@ -36,7 +36,7 @@ const {
 
 const { navigateToImportExport } = useQuizManagement()
 
-const STEP_LABELS = ['General', 'Questions', 'Settings', 'Review'] as const
+const STEP_LABELS = ['General', 'Questions', 'Settings', 'Review']
 
 const heading = computed(() => (isEditing.value ? 'Edit quiz' : 'Create a quiz'))
 
@@ -46,26 +46,17 @@ async function handleNext() {
 </script>
 
 <template>
-    <LContainer as="section" size="7xl" padding="md" centered>
-    <LFlex as="header" align="center" justify="between" class="mb-6">
+  <section class="quiz-form-view">
+    <header class="quiz-page-header">
       <div>
-        <h1 class="text-base-content text-2xl font-bold">{{ heading }}</h1>
-        <p class="text-base-content/70">Step {{ currentStepIndex + 1 }} of {{ stepCount }}</p>
+        <h1 class="quiz-page-title">{{ heading }}</h1>
+        <p class="quiz-page-subtitle">Step {{ currentStepIndex + 1 }} of {{ stepCount }}</p>
       </div>
-    </LFlex>
+    </header>
 
-    <DSteps class="mb-6">
-      <DStep
-        v-for="(label, index) in STEP_LABELS"
-        :key="label"
-        :content="String(index + 1)"
-        :color="index <= currentStepIndex ? 'primary' : undefined"
-      >
-        {{ label }}
-      </DStep>
-    </DSteps>
+    <ItSteps :steps="STEP_LABELS" :current="currentStepIndex" />
 
-    <form class="flex flex-col gap-6" @submit.prevent="submit">
+    <form class="quiz-form" @submit.prevent="submit">
       <QuizGeneralStep
         v-if="currentStep === 'general'"
         :tag-suggestions="tagSuggestions"
@@ -84,35 +75,24 @@ async function handleNext() {
 
       <QuizReviewStep v-else :values="values" />
 
-      <div class="flex justify-between gap-4">
-        <DButton
-          type="button"
-          variant="ghost"
-          size="md"
-          :disabled="isFirstStep"
-          @click="goToPreviousStep"
-        >
+      <div class="quiz-form-footer">
+        <ItButton type="button" variant="ghost" :disabled="isFirstStep" @click="goToPreviousStep">
           Previous
-        </DButton>
+        </ItButton>
 
-        <div class="flex gap-4">
-          <DButton
-            type="button"
-            variant="secondary"
-            size="md"
-            @click="navigateToImportExport"
-          >
+        <div class="quiz-form-footer-actions">
+          <ItButton type="button" variant="secondary" @click="navigateToImportExport">
             Import / Export
-          </DButton>
+          </ItButton>
 
-          <DButton v-if="!isLastStep" type="button" variant="primary" size="md" @click="handleNext">
+          <ItButton v-if="!isLastStep" type="button" variant="primary" @click="handleNext">
             Next
-          </DButton>
-          <DButton v-else type="submit" variant="primary" size="md">
+          </ItButton>
+          <ItButton v-else type="submit" variant="primary">
             {{ isEditing ? 'Save changes' : 'Create quiz' }}
-          </DButton>
+          </ItButton>
         </div>
       </div>
     </form>
-  </LContainer>
+  </section>
 </template>

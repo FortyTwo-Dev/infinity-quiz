@@ -8,7 +8,7 @@
   .quiz-page-header {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: var(--it-space-4);
   }
@@ -27,9 +27,9 @@
 
   .quiz-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
     gap: var(--it-space-4);
-    align-items: start;
+    align-items: stretch;
   }
 
   .quiz-empty {

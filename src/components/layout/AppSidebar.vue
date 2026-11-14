@@ -24,7 +24,7 @@ const otherNavItems: NavItem[] = [
 <template>
   <div class="app-sidebar-brand">
     <span class="app-sidebar-brand-full">IQuiz</span>
-    <span class="app-nav-label">IQ</span>
+    <span class="app-sidebar-brand-short">IQ</span>
   </div>
 
   <nav aria-label="Sections">

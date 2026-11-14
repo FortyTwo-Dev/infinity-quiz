@@ -21,6 +21,10 @@
     white-space: nowrap;
   }
 
+  .app-sidebar-brand-short {
+    display: none;
+  }
+
   .app-nav {
     display: flex;
     flex-direction: column;
@@ -49,6 +53,22 @@
     padding: var(--it-space-2) var(--it-space-3);
     border-radius: var(--it-radius);
     white-space: nowrap;
+    text-decoration: none;
+    color: var(--it-fg);
+    transition: background-color 0.15s ease;
+  }
+
+  .app-nav-link:hover {
+    background-color: color-mix(in oklch, var(--it-fg) 8%, transparent);
+  }
+
+  /* The current page is carried by a filled row, not by an underline: a
+   * sidebar row is a surface, a link in running text is not. */
+  .app-nav-link[aria-current='page'] {
+    background-color: color-mix(in oklch, var(--it-accent) 14%, transparent);
+    color: var(--it-accent);
+    font-weight: var(--it-font-weight-semibold);
+    text-decoration: none;
   }
 
   .app-nav-label {
@@ -62,6 +82,10 @@
     .app-sidebar[data-collapsed='true'] .app-nav-title,
     .app-sidebar[data-collapsed='true'] .app-sidebar-brand-full {
       display: none;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-sidebar-brand-short {
+      display: inline;
     }
 
     .app-sidebar[data-collapsed='true'] .app-nav-link {
