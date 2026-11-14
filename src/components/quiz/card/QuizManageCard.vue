@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { DCard, DCardBody, DCardTitle, DCardActions } from '@/components/daisy-ui/card'
-import { DBadge, DButton, DIndicator } from '@/components/daisy-ui'
-import { LFlex } from '@/components/layout'
 import { PhCopy, PhPencil, PhTrash } from '@phosphor-icons/vue'
+import { ItBadge, ItCard, ItCardActions, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 
 interface Quiz {
   id: string
@@ -13,84 +12,68 @@ interface Quiz {
   questions: unknown[]
 }
 
-interface Props {
-  quiz: Quiz
-}
+const props = defineProps<{ quiz: Quiz }>()
 
-const props = defineProps<Props>()
+const emit = defineEmits<{
+  edit: [quizId: string]
+  duplicate: [quizId: string]
+  delete: [quizId: string]
+}>()
 
-interface Emits {
-  (e: 'edit', quizId: string): void
-  (e: 'duplicate', quizId: string): void
-  (e: 'delete', quizId: string): void
-}
-
-const emit = defineEmits<Emits>()
-
-const handleEdit = () => {
+function handleEdit() {
   emit('edit', props.quiz.id)
 }
 
-const handleDuplicate = (e: Event) => {
-  e.stopPropagation()
+function handleDuplicate() {
   emit('duplicate', props.quiz.id)
 }
 
-const handleDelete = (e: Event) => {
-  e.stopPropagation()
+function handleDelete() {
   emit('delete', props.quiz.id)
 }
 </script>
 
 <template>
-  <DIndicator class="w-full transition-transform hover:-rotate-1">
-    <DCard border class="w-full bg-base-100 cursor-pointer" @click="handleEdit">
-      <DCardBody padding="lg" class="gap-3">
-        <LFlex as="div" justify="center" align="start" gap="sm" fullWidth>
-          <DBadge soft variant="primary" class="uppercase font-bold text-nowrap">
-            {{ quiz.category || 'Uncategorized' }}
-          </DBadge>
-          <span v-if="quiz.tags && quiz.tags.length > 0" class="text-neutral mt-0.5">|</span>
-          <LFlex as="div" justify="start" align="center" gap="sm" fullWidth class="overflow-hidden">
-            <DBadge
-              v-for="tag in quiz.tags"
-              :key="tag"
-              class="badge badge-soft badge-primary text-nowrap"
-            >
-              {{ tag }}
-            </DBadge>
-          </LFlex>
-        </LFlex>
-        <DCardTitle>{{ quiz.title }}</DCardTitle>
-        <p>{{ quiz.description }}</p>
-        <DCardActions justify="between">
-          <DButton type="button" size="md" variant="primary" soft @click="handleEdit">
-            <PhPencil :size="16" />
-            Edit
-          </DButton>
-          <LFlex as="div" justify="end" align="center" gap="sm">
-            <DButton
-              type="button"
-              size="md"
-              variant="neutral"
-              @click="handleDuplicate"
-              title="Duplicate"
-            >
-              <PhCopy :size="16" />
-            </DButton>
-            <DButton
-              type="button"
-              size="md"
-              variant="error"
-              soft
-              @click="handleDelete"
-              title="Delete"
-            >
-              <PhTrash :size="16" />
-            </DButton>
-          </LFlex>
-        </DCardActions>
-      </DCardBody>
-    </DCard>
-  </DIndicator>
+  <ItCard border class="quiz-manage-card" @click="handleEdit">
+    <ItCardBody size="lg">
+      <div class="quiz-card-meta">
+        <ItBadge variant="accent" soft class="quiz-card-category">
+          {{ quiz.category || 'Uncategorized' }}
+        </ItBadge>
+        <span class="quiz-manage-count">{{ quiz.questions.length }} questions</span>
+      </div>
+
+      <ItCardTitle as="h3">{{ quiz.title }}</ItCardTitle>
+      <p class="quiz-card-description">{{ quiz.description }}</p>
+
+      <div v-if="quiz.tags && quiz.tags.length > 0" class="quiz-card-tags">
+        <ItBadge v-for="tag in quiz.tags" :key="tag" variant="neutral">{{ tag }}</ItBadge>
+      </div>
+
+      <ItCardActions justify="between">
+        <ItButton type="button" variant="primary" @click.stop="handleEdit">
+          <PhPencil :size="16" />
+          Edit
+        </ItButton>
+        <div class="quiz-manage-actions">
+          <ItButton
+            type="button"
+            variant="ghost"
+            :aria-label="`Duplicate ${quiz.title}`"
+            @click.stop="handleDuplicate"
+          >
+            <PhCopy :size="16" />
+          </ItButton>
+          <ItButton
+            type="button"
+            variant="danger"
+            :aria-label="`Delete ${quiz.title}`"
+            @click.stop="handleDelete"
+          >
+            <PhTrash :size="16" />
+          </ItButton>
+        </div>
+      </ItCardActions>
+    </ItCardBody>
+  </ItCard>
 </template>

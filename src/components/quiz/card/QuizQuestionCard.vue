@@ -1,17 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { ItCard, ItCardActions, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 import type { Question } from '@/types'
 import type { QuestionOption } from '@/composables/useQuiz'
-import {
-  DButton,
-  DRadio,
-  DLabel,
-  DCardTitle,
-  DCard,
-  DCardBody,
-  DCardActions,
-} from '@/components/daisy-ui'
-import type { RadioVariant } from '@/components/daisy-ui/types'
-import { LGrid } from '@/components/layout'
 
 interface Props {
   question: Question
@@ -28,131 +20,88 @@ interface Props {
 
 const props = defineProps<Props>()
 
-interface Emits {
-  (e: 'select', answerIndex: number): void
-  (e: 'previous'): void
-  (e: 'skip'): void
-  (e: 'verify'): void
-  (e: 'continue'): void
-  (e: 'submit'): void
-}
+const emit = defineEmits<{
+  select: [answerIndex: number]
+  previous: []
+  skip: []
+  verify: []
+  continue: []
+  submit: []
+}>()
 
-const emit = defineEmits<Emits>()
-
-const isCorrectAnswer = (originalIndex: number): boolean => {
-  return originalIndex === props.question.correctAnswerIndex
-}
-
-const isOptionSelected = (originalIndex: number): boolean => {
-  return props.selectedAnswer === originalIndex
-}
-
-const getRadioVariant = (originalIndex: number): RadioVariant | undefined => {
+/** The state of an option is a single value, so the template stays declarative. */
+function optionState(originalIndex: number): string {
   if (!props.isAnswerVerified) {
-    return undefined
+    return props.selectedAnswer === originalIndex ? 'selected' : 'plain'
   }
-  if (isCorrectAnswer(originalIndex)) {
-    return 'success'
-  }
-  if (isOptionSelected(originalIndex) && !isCorrectAnswer(originalIndex)) {
-    return 'error'
-  }
-  return undefined
+  if (originalIndex === props.question.correctAnswerIndex) return 'correct'
+  if (props.selectedAnswer === originalIndex) return 'wrong'
+  return 'plain'
 }
 
-const getLabelClass = (originalIndex: number): string => {
-  if (props.isCurrentQuestionVerified && isCorrectAnswer(originalIndex)) {
-    return 'bg-success'
-  }
-  return 'bg-base-200'
-}
+const primaryLabel = computed(() => {
+  if (props.hasFeedbackEnabled && !props.isCurrentQuestionVerified && props.selectedAnswer !== null)
+    return 'Check'
+  return props.hasNextQuestion ? 'Next' : 'Finish'
+})
 
-const getOptionTextClass = (originalIndex: number): string => {
-  if (props.isCurrentQuestionVerified && isCorrectAnswer(originalIndex)) {
-    return 'text-success-content'
-  }
-  return 'text-base-content'
+const primaryDisabled = computed(() =>
+  props.hasFeedbackEnabled
+    ? props.selectedAnswer === null && !props.isCurrentQuestionVerified
+    : props.selectedAnswer === null,
+)
+
+function handlePrimary() {
+  if (props.hasFeedbackEnabled && !props.isCurrentQuestionVerified) emit('verify')
+  else if (props.hasFeedbackEnabled) emit('continue')
+  else emit('submit')
 }
 </script>
 
 <template>
-  <DCard border size="lg" class="bg-base-100 w-full">
-    <DCardBody padding="lg" class="gap-4">
-      <DCardTitle>{{ question.text }}</DCardTitle>
+  <ItCard border class="quiz-question-card">
+    <ItCardBody size="lg">
+      <ItCardTitle as="h2" size="lg">{{ question.text }}</ItCardTitle>
 
-      <LGrid as="div" cols="1 md:2 lg:3" gap="md">
-        <DLabel
-          v-for="(item, displayIndex) in questionOptions"
-          :key="displayIndex"
-          :for="`${question.id}-${item.originalIndex}`"
-          class="p-2"
-          :class="getLabelClass(item.originalIndex)"
+      <fieldset class="quiz-answer-grid">
+        <legend class="it-sr-only">Answers</legend>
+        <label
+          v-for="item in questionOptions"
+          :key="item.originalIndex"
+          class="quiz-answer"
+          :data-state="optionState(item.originalIndex)"
         >
-          <DRadio
-            :id="`${question.id}-${item.originalIndex}`"
+          <input
+            type="radio"
+            class="it-radio-primary"
             :name="question.id"
             :value="item.originalIndex"
             :checked="selectedAnswer === item.originalIndex"
             :disabled="
               isCurrentQuestionVerified ||
-              (isAnswerVerified && !isCorrectAnswer(item.originalIndex))
+              (isAnswerVerified && item.originalIndex !== question.correctAnswerIndex)
             "
-            :variant="getRadioVariant(item.originalIndex)"
-            size="xs"
             @change="!isCurrentQuestionVerified ? emit('select', item.originalIndex) : null"
           />
-          <span :class="getOptionTextClass(item.originalIndex)">{{ item.option }}</span>
-        </DLabel>
-      </LGrid>
+          <span>{{ item.option }}</span>
+        </label>
+      </fieldset>
 
-      <div class="divider"></div>
-
-      <DCardActions justify="between" class="mt-0">
-        <DButton
-          variant="accent"
-          size="md"
-          :disabled="!hasPreviousQuestion || props.question.timeLimit !== undefined"
+      <ItCardActions justify="between" class="quiz-question-actions">
+        <ItButton
+          variant="secondary"
+          :disabled="!hasPreviousQuestion || question.timeLimit !== undefined"
           @click="emit('previous')"
-          class="flex-1"
         >
           Previous
-        </DButton>
-        <DButton
-          v-if="canSkip"
-          variant="ghost"
-          size="md"
-          :disabled="!canSkip"
-          @click="emit('skip')"
-          class="flex-1"
-        >
+        </ItButton>
+        <ItButton v-if="canSkip" variant="ghost" :disabled="!canSkip" @click="emit('skip')">
           Skip{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
-        </DButton>
-        <DButton
-          variant="primary"
-          size="md"
-          :disabled="
-            hasFeedbackEnabled
-              ? selectedAnswer === null && !isCurrentQuestionVerified
-              : selectedAnswer === null
-          "
-          @click="
-            hasFeedbackEnabled && !isCurrentQuestionVerified
-              ? emit('verify')
-              : hasFeedbackEnabled
-                ? emit('continue')
-                : emit('submit')
-          "
-          class="flex-1"
-        >
-          {{
-            hasFeedbackEnabled && !isCurrentQuestionVerified && selectedAnswer !== null
-              ? 'Check'
-              : hasNextQuestion
-                ? 'Next'
-                : 'Finish'
-          }}
-        </DButton>
-      </DCardActions>
-    </DCardBody>
-  </DCard>
+        </ItButton>
+        <ItButton variant="primary" :disabled="primaryDisabled" @click="handlePrimary">
+          {{ primaryLabel }}
+        </ItButton>
+      </ItCardActions>
+    </ItCardBody>
+  </ItCard>
 </template>

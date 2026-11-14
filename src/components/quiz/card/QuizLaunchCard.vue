@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { PhPlay } from '@phosphor-icons/vue'
-import { DCard, DCardBody, DCardTitle, DCardActions } from '@/components/daisy-ui/card'
-import { DBadge, DButton, DIndicator } from '@/components/daisy-ui'
-import { LFlex } from '@/components/layout'
+import { ItBadge, ItCard, ItCardActions, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 import {
   ATTEMPT_STATUS_COLORS,
+  ATTEMPT_STATUS_LABELS,
   type AttemptStatus,
 } from '@/composables/useAttempt'
 
@@ -20,56 +20,45 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const statusColor = computed(() =>
-  props.status ? ATTEMPT_STATUS_COLORS[props.status] : null,
+const emit = defineEmits<{ click: []; info: [] }>()
+
+/** The status colour is also carried by a label, never by colour alone. */
+const status = computed(() =>
+  props.status
+    ? { color: ATTEMPT_STATUS_COLORS[props.status], label: ATTEMPT_STATUS_LABELS[props.status] }
+    : null,
 )
-
-interface Emits {
-  (e: 'click'): void
-  (e: 'info'): void
-}
-
-const emit = defineEmits<Emits>()
-
-function handleInfoClick() {
-  emit('info')
-}
 </script>
 
 <template>
-  <DIndicator class="w-full transition-transform hover:-rotate-1">
-    <template #indicator>
-      <span v-if="statusColor" class="status" :class="`status-${statusColor}`"></span>
-    </template>
-    <DCard border class="w-full bg-base-100 cursor-pointer" @click="emit('click')">
-      <DCardBody padding="lg" class="gap-3">
-        <LFlex as="div" justify="center" align="start" gap="sm" fullWidth>
-          <DBadge soft variant="primary" class="uppercase font-bold text-nowrap">{{
-            primaryTag || 'Uncategorized'
-          }}</DBadge>
-          <span v-if="tags && tags.length > 0" class="text-neutral mt-0.5">|</span>
-          <LFlex as="div" justify="start" align="center" gap="sm" fullWidth class="overflow-hidden">
-            <DBadge
-              v-for="tag in tags"
-              :key="tag"
-              class="badge badge-soft badge-primary text-nowrap"
-            >
-              {{ tag }}
-            </DBadge>
-          </LFlex>
-        </LFlex>
-        <DCardTitle>{{ title }}</DCardTitle>
-        <p>{{ description }}</p>
-        <DCardActions justify="between">
-          <DButton type="button" size="md" variant="primary" @click.stop="emit('click')">
-            Launch
-            <PhPlay size="16" weight="fill" />
-          </DButton>
-          <DButton type="button" size="md" variant="neutral" @click.stop="handleInfoClick">
-            More Information
-          </DButton>
-        </DCardActions>
-      </DCardBody>
-    </DCard>
-  </DIndicator>
+  <ItCard border class="quiz-launch-card" @click="emit('click')">
+    <ItCardBody size="lg">
+      <div class="quiz-card-meta">
+        <ItBadge variant="accent" soft class="quiz-card-category">
+          {{ primaryTag || 'Uncategorized' }}
+        </ItBadge>
+        <span v-if="status" class="quiz-status" :data-status="status.color">
+          <span class="quiz-status-dot" aria-hidden="true" />
+          {{ status.label }}
+        </span>
+      </div>
+
+      <ItCardTitle as="h3" size="lg">{{ title }}</ItCardTitle>
+      <p class="quiz-card-description">{{ description }}</p>
+
+      <div v-if="tags && tags.length > 0" class="quiz-card-tags">
+        <ItBadge v-for="tag in tags" :key="tag" variant="neutral">{{ tag }}</ItBadge>
+      </div>
+
+      <ItCardActions justify="between">
+        <ItButton type="button" variant="primary" @click.stop="emit('click')">
+          Launch
+          <PhPlay :size="16" weight="fill" />
+        </ItButton>
+        <ItButton type="button" variant="ghost" @click.stop="emit('info')">
+          More information
+        </ItButton>
+      </ItCardActions>
+    </ItCardBody>
+  </ItCard>
 </template>

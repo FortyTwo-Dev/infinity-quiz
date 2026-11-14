@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { QuestionResult } from '@/types'
-import { DBadge } from '@/components/daisy-ui'
-import { DCard, DCardBody } from '@/components/daisy-ui/card'
+import { computed } from 'vue'
 import { PhCheckCircle, PhXCircle, PhArrowClockwise } from '@phosphor-icons/vue'
+import { ItBadge, ItCard, ItCardBody } from '@/components/itheme'
+import type { WidgetVariant } from '@/components/itheme'
+import type { QuestionResult } from '@/types'
 
 interface Props {
   questionResult: QuestionResult
@@ -11,107 +12,71 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { questionResult, showFeedback = true } = props
+const showFeedback = computed(() => props.showFeedback ?? true)
 
-const { question, userAnswer, isCorrect, isSkipped } = questionResult
+const status = computed<{ variant: WidgetVariant; label: string; icon: unknown }>(() => {
+  const { isSkipped, isCorrect } = props.questionResult
+  if (isSkipped) return { variant: 'warning', label: 'Skipped', icon: PhArrowClockwise }
+  if (isCorrect) return { variant: 'success', label: 'Correct', icon: PhCheckCircle }
+  return { variant: 'danger', label: 'Incorrect', icon: PhXCircle }
+})
 
-// Determine the status for display
-const getStatusVariant = () => {
-  if (isSkipped) return 'warning'
-  if (isCorrect) return 'success'
-  return 'error'
+function isSelected(optionIndex: number): boolean {
+  return props.questionResult.userAnswer === optionIndex
 }
 
-const getStatusLabel = () => {
-  if (isSkipped) return 'Skipped'
-  if (isCorrect) return 'Correct'
-  return 'Incorrect'
+function isCorrectOption(optionIndex: number): boolean {
+  return optionIndex === props.questionResult.question.correctAnswerIndex
 }
 
-const getStatusIcon = () => {
-  if (isCorrect) return PhCheckCircle
-  if (isSkipped) return PhArrowClockwise
-  return PhXCircle
+/** A row is in one of four states; the state drives the styling, not a stack
+ * of conditionals. */
+function optionState(optionIndex: number): string {
+  const { isSkipped, isCorrect } = props.questionResult
+  if (isCorrectOption(optionIndex)) return 'correct'
+  if (isSelected(optionIndex) && !isSkipped) return 'wrong'
+  if (isSelected(optionIndex)) return 'skipped'
+  return 'plain'
 }
 
-const isOptionSelected = (optionIndex: number) => {
-  return userAnswer === optionIndex
-}
-
-const isOptionCorrect = (optionIndex: number) => {
-  return optionIndex === question.correctAnswerIndex
-}
+const correctAnswerText = computed(
+  () =>
+    props.questionResult.question.options[props.questionResult.question.correctAnswerIndex] ?? '',
+)
 </script>
 
 <template>
-  <DCard
-    size="md"
-    class="mb-4 transition-all duration-200"
-    :class="{
-      'border-2 border-success bg-base-300': isCorrect && !isSkipped,
-      'border-2 border-error bg-error/10': !isCorrect && !isSkipped,
-      'border-2 border-warning bg-warning/10 opacity-85': isSkipped,
-    }"
-  >
-    <DCardBody padding="md">
-      <!-- Header with status badge -->
-      <div class="flex items-center gap-3 mb-4">
-        <DBadge :variant="getStatusVariant()" size="sm" class="inline-flex items-center">
-          <component :is="getStatusIcon()" :size="14" weight="fill" class="mr-1" />
-          <span>{{ getStatusLabel() }}</span>
-        </DBadge>
-        <h3 class="m-0 text-lg flex-1 truncate">{{ question.text }}</h3>
+  <ItCard border class="quiz-review-card" :data-state="status.variant">
+    <ItCardBody>
+      <div class="quiz-review-head">
+        <ItBadge :variant="status.variant">
+          <component :is="status.icon" :size="14" weight="fill" />
+          {{ status.label }}
+        </ItBadge>
+        <h3 class="quiz-review-question-title">{{ questionResult.question.text }}</h3>
       </div>
 
-      <!-- Options -->
-      <div class="space-y-2">
-        <div
-          v-for="(option, index) in question.options"
+      <ul class="quiz-review-answer-list">
+        <li
+          v-for="(option, index) in questionResult.question.options"
           :key="index"
-          class="flex items-center gap-2 p-2 rounded transition-all cursor-default"
-          :class="{
-            'border-2 border-success bg-success/10': isOptionCorrect(index),
-            'border-2 border-error bg-error/10':
-              isOptionSelected(index) && !isOptionCorrect(index) && !isSkipped,
-            'border border-primary bg-primary/10 font-bold':
-              isOptionSelected(index) && !isSkipped && !isCorrect,
-            'border border-base-300': !isOptionSelected(index) && !isOptionCorrect(index),
-          }"
+          class="quiz-review-answer"
+          :data-state="optionState(index)"
         >
-          <span
-            class="font-bold min-w-[24px] inline-flex items-center justify-center"
-            :class="{
-              'text-success': isOptionCorrect(index),
-              'text-error': isOptionSelected(index) && !isOptionCorrect(index) && !isSkipped,
-              'text-primary': isOptionSelected(index) && !isSkipped,
-              'text-base-content/60': !isOptionSelected(index) && !isOptionCorrect(index),
-            }"
-          >
-            {{ String.fromCharCode(65 + index) }}.
+          <span class="quiz-review-answer-letter">
+            {{ String.fromCharCode(65 + index) }}
           </span>
-          <span
-            class="flex-1 break-words"
-            :class="{
-              'text-success': isOptionCorrect(index),
-              'text-error': isOptionSelected(index) && !isOptionCorrect(index) && !isSkipped,
-            }"
-          >
-            {{ option }}
-          </span>
-        </div>
-      </div>
+          <span class="quiz-review-answer-text">{{ option }}</span>
+        </li>
+      </ul>
 
-      <!-- Feedback for incorrect answers -->
-      <div
-        v-if="showFeedback && !isSkipped && !isCorrect"
-        class="alert alert-success mt-3 text-sm inline-flex items-center gap-1"
+      <p
+        v-if="showFeedback && !questionResult.isSkipped && !questionResult.isCorrect"
+        class="quiz-review-correct"
       >
         <PhCheckCircle :size="16" weight="fill" />
-        <span>
-          The correct answer was:
-          <strong>{{ question.options[question.correctAnswerIndex] }}</strong>
-        </span>
-      </div>
-    </DCardBody>
-  </DCard>
+        The correct answer was <strong>{{ correctAnswerText }}</strong>
+      </p>
+    </ItCardBody>
+  </ItCard>
 </template>
