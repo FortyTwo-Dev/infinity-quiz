@@ -5,4 +5,4 @@ Decisions taken in this repository, newest last. Each record follows
 
 | ADR | Title | Status |
 | --- | --- | --- |
-| - | *(no records yet)* | - |
+| [ADR-001](./ADR-001-tailwind-class-detection.md) | Tailwind CSS class detection strategy | Accepted |
