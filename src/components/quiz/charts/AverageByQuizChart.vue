@@ -12,7 +12,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const primaryColor = useThemeColor('primary')
+const accentColor = useThemeColor('accent')
 const radius = useThemeRadius()
 
 const chartData = computed(() => ({
@@ -21,8 +21,8 @@ const chartData = computed(() => ({
     {
       label: 'Average score (%)',
       data: props.data,
-      backgroundColor: primaryColor.value,
-      hoverBackgroundColor: oklchWithAlpha(primaryColor.value, 0.85),
+      backgroundColor: accentColor.value,
+      hoverBackgroundColor: oklchWithAlpha(accentColor.value, 0.85),
       borderRadius: radius.value,
     },
   ],

@@ -1,3 +1,19 @@
+/** A semantic colour published by `@infinitylib/infinity-theme` (`--it-<name>`). */
+export const THEME_COLOR_NAMES = [
+  'fg',
+  'surface',
+  'surface-fg',
+  'muted',
+  'border',
+  'accent',
+  'accent-fg',
+  'danger',
+  'success',
+  'warning',
+  'info',
+] as const
+export type ThemeColorName = (typeof THEME_COLOR_NAMES)[number]
+
 /**
  * A theme is a mode shipped by `@infinitylib/infinity-theme` and a brand accent
  * bound by the application (see `docs/decisions/ADR-002`). The two are

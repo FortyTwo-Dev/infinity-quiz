@@ -13,7 +13,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  color: 'primary',
+  color: 'accent',
   size: 160,
 })
 

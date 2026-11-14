@@ -75,9 +75,7 @@ function formatPercentage(value: number | undefined): string {
   <LContainer as="section" size="7xl" padding="md" centered>
     <div class="mb-8">
       <h1 class="text-base-content mb-2 text-3xl font-bold">Statistics</h1>
-      <p class="text-base-content/70 m-0">
-        Track your performance and review your quiz history
-      </p>
+      <p class="text-base-content/70 m-0">Track your performance and review your quiz history</p>
     </div>
 
     <div v-if="!globalStats" class="text-center p-8 text-base-content/70">
@@ -96,7 +94,7 @@ function formatPercentage(value: number | undefined): string {
                 <GaugeChart
                   :value="globalStats.averagePercentage"
                   label="Average"
-                  color="primary"
+                  color="accent"
                   :size="200"
                 />
               </div>
@@ -156,7 +154,11 @@ function formatPercentage(value: number | undefined): string {
           <DCardTitle>Quiz details</DCardTitle>
 
           <DFieldset label="Select a quiz">
-            <DSelect v-model="selectedQuizId" :disabled="attemptedQuizzes.length === 0" class="w-full">
+            <DSelect
+              v-model="selectedQuizId"
+              :disabled="attemptedQuizzes.length === 0"
+              class="w-full"
+            >
               <DSelectOption value="">All quizzes</DSelectOption>
               <DSelectOption v-for="quiz in attemptedQuizzes" :key="quiz.id" :value="quiz.id">
                 {{ quiz.title }}

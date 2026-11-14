@@ -1,20 +1,7 @@
 import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue'
+import type { ThemeColorName } from '../constants/themes'
 
-export type ThemeColorName =
-  | 'primary'
-  | 'primary-content'
-  | 'secondary'
-  | 'accent'
-  | 'neutral'
-  | 'neutral-content'
-  | 'success'
-  | 'warning'
-  | 'error'
-  | 'info'
-  | 'base-100'
-  | 'base-200'
-  | 'base-300'
-  | 'base-content'
+export type { ThemeColorName } from '../constants/themes'
 
 function readCssVar(name: string): string {
   if (typeof document === 'undefined') return ''
@@ -22,8 +9,9 @@ function readCssVar(name: string): string {
 }
 
 /**
- * Reactive CSS custom property. Re-reads whenever the daisyUI theme changes
- * (the `data-theme` attribute is set by ThemeToggle).
+ * Reactive CSS custom property of the theme. Re-reads whenever the mode or the
+ * accent changes: the theme store writes both attributes, and an accent-only
+ * change leaves the mode untouched.
  */
 export function useCssVariable(name: string): Ref<string> {
   const value = ref(readCssVar(name))
@@ -36,7 +24,7 @@ export function useCssVariable(name: string): Ref<string> {
     })
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme'],
+      attributeFilter: ['data-theme', 'data-accent'],
     })
   })
 
@@ -45,14 +33,14 @@ export function useCssVariable(name: string): Ref<string> {
   return value
 }
 
-/** Reactive daisyUI theme color (e.g. `--color-primary`). */
+/** Reactive semantic colour of the theme package (e.g. `--it-accent`). */
 export function useThemeColor(name: ThemeColorName): Ref<string> {
-  return useCssVariable(`--color-${name}`)
+  return useCssVariable(`--it-${name}`)
 }
 
-/** Reactive daisyUI box radius (`--radius-box`), converted to pixels. */
+/** Reactive box radius of the theme package (`--it-radius`), in pixels. */
 export function useThemeRadius(): Ref<number> {
-  const raw = useCssVariable('--radius-box')
+  const raw = useCssVariable('--it-radius')
   return computed(() => {
     const remIndex = raw.value.indexOf('rem')
     if (remIndex === -1) return 0
@@ -63,8 +51,8 @@ export function useThemeRadius(): Ref<number> {
 }
 
 /**
- * Append an alpha channel to a daisyUI oklch color (e.g.
- * `oklch(54% 0.245 262.881)` → `oklch(54% 0.245 262.881 / 0.1)`).
+ * Append an alpha channel to an oklch colour the theme package publishes
+ * (e.g. `oklch(54% 0.245 262.881)` → `oklch(54% 0.245 262.881 / 0.1)`).
  */
 export function oklchWithAlpha(color: string, alpha: number): string {
   const trimmed = color.trim()

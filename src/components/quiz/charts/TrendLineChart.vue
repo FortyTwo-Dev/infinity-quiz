@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<Props>(), {
   unit: '%',
 })
 
-const primaryColor = useThemeColor('primary')
+const accentColor = useThemeColor('accent')
 
 const chartData = computed<ChartData<'line'>>(() => ({
   labels: props.labels,
@@ -23,8 +23,8 @@ const chartData = computed<ChartData<'line'>>(() => ({
     {
       label: `Score (${props.unit})`,
       data: props.data,
-      borderColor: primaryColor.value,
-      backgroundColor: oklchWithAlpha(primaryColor.value, 0.1),
+      borderColor: accentColor.value,
+      backgroundColor: oklchWithAlpha(accentColor.value, 0.1),
       fill: true,
       tension: 0.3,
       clip: false,

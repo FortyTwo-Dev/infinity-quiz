@@ -13,7 +13,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const successColor = useThemeColor('success')
-const errorColor = useThemeColor('error')
+const dangerColor = useThemeColor('danger')
 const radius = useThemeRadius()
 
 const chartData = computed(() => ({
@@ -21,7 +21,7 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: [props.passed, props.failed],
-      backgroundColor: [successColor.value, errorColor.value],
+      backgroundColor: [successColor.value, dangerColor.value],
       borderWidth: 0,
       borderRadius: radius.value,
     },
