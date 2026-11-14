@@ -40,12 +40,6 @@
     overflow: hidden;
   }
 
-  .quiz-card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--it-space-1);
-  }
-
   .quiz-status {
     display: inline-flex;
     align-items: center;

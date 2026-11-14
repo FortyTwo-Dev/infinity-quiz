@@ -82,7 +82,6 @@ function getStatus(quizId: string): AttemptStatus {
         :title="quiz.title"
         :description="quiz.description"
         :primary-tag="quiz.category"
-        :tags="quiz.tags"
         :status="getStatus(quiz.id)"
         @click="startQuiz(quiz.id)"
         @info="showQuizInfo(quiz.id)"

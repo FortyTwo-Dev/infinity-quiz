@@ -14,7 +14,6 @@ interface Props {
   title: string
   description: string
   primaryTag?: string
-  tags?: string[]
   status?: AttemptStatus
 }
 
@@ -45,10 +44,6 @@ const status = computed(() =>
 
       <ItCardTitle as="h3">{{ title }}</ItCardTitle>
       <p class="quiz-card-description">{{ description }}</p>
-
-      <div v-if="tags && tags.length > 0" class="quiz-card-tags">
-        <ItBadge v-for="tag in tags" :key="tag" variant="neutral">{{ tag }}</ItBadge>
-      </div>
 
       <ItCardActions justify="between">
         <ItButton type="button" variant="primary" @click.stop="emit('click')">
