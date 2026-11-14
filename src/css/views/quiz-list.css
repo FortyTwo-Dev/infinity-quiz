@@ -28,7 +28,7 @@
   .quiz-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
-    gap: var(--it-space-4);
+    gap: var(--it-space-5);
     align-items: stretch;
   }
 

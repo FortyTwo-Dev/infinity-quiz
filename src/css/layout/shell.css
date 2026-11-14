@@ -8,6 +8,10 @@
     --app-sidebar-width-collapsed: 4rem;
     --app-topbar-height: 4rem;
     --app-backdrop: oklch(0% 0 0 / 0.45);
+    /* The breathing room around the content, and the width it stops growing
+     * at on a wide screen. Both grow with the viewport. */
+    --app-gutter: var(--it-space-4);
+    --app-content-max: 90rem;
   }
 }
 
@@ -44,7 +48,7 @@
     align-items: center;
     gap: var(--it-space-2);
     min-height: var(--app-topbar-height);
-    padding-inline: var(--it-space-4);
+    padding-inline: var(--app-gutter);
     border-block-end: var(--it-border-width) solid var(--it-border);
     background-color: var(--it-bg);
   }
@@ -61,7 +65,26 @@
 
   .app-content {
     flex: 1;
-    padding: var(--it-space-4);
+    padding: var(--app-gutter);
+  }
+
+  /* A page keeps its measure on a wide screen instead of stretching the
+   * cards across the whole viewport. */
+  .app-content > * {
+    max-inline-size: var(--app-content-max);
+    margin-inline: auto;
+  }
+
+  @media (min-width: 48rem) {
+    :where(.it-theme) {
+      --app-gutter: var(--it-space-5);
+    }
+  }
+
+  @media (min-width: 80rem) {
+    :where(.it-theme) {
+      --app-gutter: var(--it-space-6);
+    }
   }
 
   /* The theme package styles every bare <button> as a text button, padding
