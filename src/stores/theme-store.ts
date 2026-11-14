@@ -23,12 +23,13 @@ export const useThemeStore = defineStore(
 
     /**
      * Apply the theme of the quiz being played without touching the global
-     * one. Anything the store cannot resolve plays the quiz with the default.
+     * one. A quiz that carries no theme keeps the global selection: forcing
+     * the default here would drop a dark-mode reader into a light quiz.
      */
     function applyQuizTheme(selection: unknown) {
-      const resolved = normalizeQuizTheme(selection) ?? { ...DEFAULT_THEME }
+      const resolved = normalizeQuizTheme(selection) ?? null
       temporaryTheme.value = resolved
-      writeDomTheme(resolved)
+      if (resolved) writeDomTheme(resolved)
     }
 
     function restoreGlobalTheme() {

@@ -68,11 +68,7 @@ watch(
       </div>
 
       <div class="quiz-play-progress">
-        <AppTimer
-          v-if="hasTimer"
-          :time-left="timeLeft"
-          :time-limit="getCurrentQuestionTimeLimit"
-        />
+        <AppTimer v-if="hasTimer" :time-left="timeLeft" :time-limit="getCurrentQuestionTimeLimit" />
         <ItProgress :value="progress" :max="100" label="Quiz progress" />
         <span class="quiz-play-counter">
           Question {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}

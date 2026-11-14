@@ -52,7 +52,7 @@ const chartOptions: ChartOptions<'bar'> = {
 </script>
 
 <template>
-  <div class="h-64">
+  <div class="quiz-chart">
     <Bar :data="chartData" :options="chartOptions" />
   </div>
 </template>

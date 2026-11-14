@@ -690,3 +690,14 @@
     line-height: var(--it-line-height-tight);
   }
 }
+
+@layer components {
+  /* ---- Charts ----------------------------------------------------------- */
+  .quiz-chart {
+    block-size: 16rem;
+  }
+
+  .quiz-chart-tall {
+    block-size: 22rem;
+  }
+}

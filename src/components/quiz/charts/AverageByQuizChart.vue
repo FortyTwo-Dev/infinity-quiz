@@ -32,12 +32,25 @@ const chartOptions: ChartOptions<'bar'> = {
   indexAxis: 'y',
   responsive: true,
   maintainAspectRatio: false,
+  layout: {
+    padding: { left: 4, right: 8 },
+  },
   scales: {
     x: {
       min: 0,
       max: 100,
       ticks: {
         callback: (value) => `${value}%`,
+      },
+    },
+    y: {
+      ticks: {
+        autoSkip: false,
+        // The card is narrow: a clipped label is worse than a shortened one.
+        callback(value) {
+          const label = this.getLabelForValue(value as number)
+          return label.length > 14 ? `${label.slice(0, 13)}…` : label
+        },
       },
     },
   },
@@ -50,7 +63,7 @@ const chartOptions: ChartOptions<'bar'> = {
 </script>
 
 <template>
-  <div class="h-64">
+  <div class="quiz-chart">
     <Bar :data="chartData" :options="chartOptions" />
   </div>
 </template>

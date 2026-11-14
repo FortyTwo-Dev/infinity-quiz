@@ -41,7 +41,7 @@ const chartOptions: ChartOptions<'doughnut'> = {
 </script>
 
 <template>
-  <div class="h-64">
+  <div class="quiz-chart">
     <Doughnut :data="chartData" :options="chartOptions" />
   </div>
 </template>

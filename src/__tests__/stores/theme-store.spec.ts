@@ -39,14 +39,15 @@ describe('useThemeStore', () => {
   })
 
   describe('applyQuizTheme / restoreGlobalTheme', () => {
-    it('applies the default theme when the quiz has no theme', () => {
+    it('keeps the global theme when the quiz carries no theme', () => {
       const store = useThemeStore()
       store.applyTheme({ mode: 'dark', accent: 'red' })
 
       store.applyQuizTheme(undefined)
 
-      expect(store.temporaryTheme).toEqual({ mode: 'light', accent: 'blue' })
+      expect(store.temporaryTheme).toBeNull()
       expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'red' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'red' })
     })
 
     it('changes both attributes without touching the global theme', () => {
@@ -68,12 +69,14 @@ describe('useThemeStore', () => {
       expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'yellow' })
     })
 
-    it('falls back to the default for an unknown theme', () => {
+    it('keeps the global theme for a quiz whose theme is unknown', () => {
       const store = useThemeStore()
+      store.applyTheme({ mode: 'dark', accent: 'yellow' })
 
       store.applyQuizTheme('removed-theme')
 
-      expect(store.temporaryTheme).toEqual({ mode: 'light', accent: 'blue' })
+      expect(store.temporaryTheme).toBeNull()
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'yellow' })
     })
 
     it('restores the global theme', () => {

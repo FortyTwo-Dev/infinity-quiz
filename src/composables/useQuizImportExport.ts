@@ -106,9 +106,7 @@ export function useQuizImportExport() {
       return false
     }
 
-    return Array.isArray(parsed)
-      ? importMultipleQuizzes(jsonData)
-      : importSingleQuiz(jsonData)
+    return Array.isArray(parsed) ? importMultipleQuizzes(jsonData) : importSingleQuiz(jsonData)
   }
 
   /** Read a selected file and import its content. */

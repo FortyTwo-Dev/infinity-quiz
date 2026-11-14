@@ -5,8 +5,7 @@ import { ItAlert, ItCard, ItCardBody, ItCardTitle, ItFileInput } from '@/compone
 import { ItButton, ItTextarea } from '@infinitylib/infinity-theme-vue'
 import { useQuizImportExport } from '@/composables'
 
-const { state, validateJSON, clearMessages, importFromJson, importFile } =
-  useQuizImportExport()
+const { state, validateJSON, clearMessages, importFromJson, importFile } = useQuizImportExport()
 
 async function handleFileSelect(files: File[]) {
   const file = files[0]

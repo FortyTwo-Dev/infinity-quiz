@@ -58,7 +58,7 @@ const chartOptions: ChartOptions<'line'> = {
 </script>
 
 <template>
-  <div class="h-96">
+  <div class="quiz-chart quiz-chart-tall">
     <Line :data="chartData" :options="chartOptions" />
   </div>
 </template>
