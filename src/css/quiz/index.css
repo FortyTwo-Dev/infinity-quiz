@@ -3,6 +3,49 @@
  * from the theme tokens.
  */
 @layer components {
+  /* ---- Quiz form --------------------------------------------------------- */
+  .quiz-form-card {
+    width: 100%;
+  }
+
+  .quiz-tag-row {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
+  }
+
+  .quiz-tag-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .quiz-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-2);
+    margin-block-start: var(--it-space-2);
+  }
+
+  .quiz-tag-suggestion {
+    padding: var(--it-space-1) var(--it-space-2);
+    border: var(--it-border-width) solid var(--it-border);
+    border-radius: var(--it-radius-full);
+    background-color: transparent;
+    color: var(--it-muted);
+    font: inherit;
+    font-size: var(--it-font-size-1);
+    cursor: pointer;
+  }
+
+  .quiz-tag-suggestion:hover {
+    color: var(--it-fg);
+  }
+
+  .quiz-tag-suggestion:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
   /* ---- Quiz information dialog ------------------------------------------ */
   .quiz-info-dialog {
     --it-dialog-width: 42rem;
