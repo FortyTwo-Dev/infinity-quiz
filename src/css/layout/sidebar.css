@@ -21,6 +21,10 @@
     white-space: nowrap;
   }
 
+  .app-sidebar-brand-full {
+    display: inline;
+  }
+
   .app-sidebar-brand-short {
     display: none;
   }

@@ -25,6 +25,13 @@
     color: var(--it-muted);
   }
 
+  /* Actions of a page header: they sit side by side, never glued. */
+  .quiz-page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-3);
+  }
+
   /* Each card spans four row tracks and hands them to its own blocks, so the
    * title, the description and the actions line up across a row even when one
    * card wraps further than its neighbours. */

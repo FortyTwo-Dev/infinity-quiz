@@ -54,7 +54,7 @@ function handleDelete() {
         <div class="quiz-manage-actions">
           <ItButton
             type="button"
-            variant="ghost"
+            variant="secondary"
             :aria-label="`Duplicate ${quiz.title}`"
             @click.stop="handleDuplicate"
           >
