@@ -3,7 +3,7 @@
   :where(.it-theme) {
     --it-badge-gap: var(--it-space-1);
     --it-badge-padding: var(--it-space-2);
-    --it-badge-radius: var(--it-radius-full);
+    --it-badge-radius: var(--it-radius);
     --it-badge-font-size: var(--it-font-size-1);
     --it-badge-border-width: var(--it-border-width);
     --it-badge-bg: var(--it-surface);

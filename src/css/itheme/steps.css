@@ -36,7 +36,7 @@
     inline-size: var(--it-steps-marker-size);
     block-size: var(--it-steps-marker-size);
     border: var(--it-border-width) solid var(--it-border);
-    border-radius: var(--it-radius-full);
+    border-radius: var(--it-radius);
     font-variant-numeric: tabular-nums;
   }
 

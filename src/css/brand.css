@@ -44,7 +44,6 @@
   }
 
   [data-theme='dark'] {
-    --it-radius: 0rem;
     --it-info: oklch(68% 0.169 237.323);
     --it-info-fg: oklch(0% 0 0);
     --it-success: oklch(72% 0.219 149.579);

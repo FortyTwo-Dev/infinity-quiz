@@ -564,7 +564,7 @@
   .quiz-tag-suggestion {
     padding: var(--it-space-1) var(--it-space-2);
     border: var(--it-border-width) solid var(--it-border);
-    border-radius: var(--it-radius-full);
+    border-radius: var(--it-radius);
     background-color: transparent;
     color: var(--it-muted);
     font: inherit;
