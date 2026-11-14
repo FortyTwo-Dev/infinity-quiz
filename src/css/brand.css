@@ -24,7 +24,7 @@
   /* Carried over from the daisyUI theme blocks: 2px frames, 0.25rem boxes. */
   :root {
     --it-border-width: 2px;
-    --it-radius: 0.09375rem;
+    --it-radius: 0.125rem;
 
     /* The accent as an ink: a fill colour is tuned for blocks, not for small
      * text. Mixing it towards the foreground darkens it on light surfaces and
