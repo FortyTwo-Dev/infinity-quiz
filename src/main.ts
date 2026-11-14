@@ -15,6 +15,7 @@ import './css/brand.css'
 import './css/itheme/index.css'
 import './css/layout/index.css'
 import './css/quiz/index.css'
+import './css/views/index.css'
 
 /**
  * Rewrite the theme payloads written by the daisyUI build before any store

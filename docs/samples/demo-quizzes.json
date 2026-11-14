@@ -1,0 +1,197 @@
+[
+  {
+    "id": "demo-geography",
+    "title": "European capitals",
+    "description": "Five capitals to warm up. A short quiz, the kind you finish on the train.",
+    "category": "Geography",
+    "tags": ["europe", "capitals"],
+    "shuffleQuestions": true,
+    "feedbackEnabled": true,
+    "enableReviewMode": true,
+    "questions": [
+      {
+        "id": "geo-1",
+        "text": "What is the capital of Portugal?",
+        "options": ["Porto", "Lisbon", "Braga"],
+        "correctAnswerIndex": 1,
+        "explanation": "Lisbon has been the capital since 1255."
+      },
+      {
+        "id": "geo-2",
+        "text": "What is the capital of Norway?",
+        "options": ["Bergen", "Oslo", "Trondheim"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "geo-3",
+        "text": "What is the capital of Poland?",
+        "options": ["Kraków", "Gdańsk", "Warsaw"],
+        "correctAnswerIndex": 2
+      },
+      {
+        "id": "geo-4",
+        "text": "What is the capital of Ireland?",
+        "options": ["Cork", "Dublin", "Galway"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "geo-5",
+        "text": "What is the capital of Croatia?",
+        "options": ["Split", "Zagreb", "Rijeka"],
+        "correctAnswerIndex": 1
+      }
+    ]
+  },
+  {
+    "id": "demo-javascript",
+    "title": "JavaScript fundamentals",
+    "description": "Equality, scope, prototypes and the two or three things every interview asks about.",
+    "category": "Development",
+    "tags": ["javascript", "web", "basics"],
+    "feedbackEnabled": true,
+    "maxSkips": 1,
+    "questions": [
+      {
+        "id": "js-1",
+        "text": "What does `===` compare that `==` does not?",
+        "options": ["Only the type", "Type and value", "Only the value"],
+        "correctAnswerIndex": 1,
+        "explanation": "`==` coerces, `===` does not: `'1' == 1` is true, `'1' === 1` is false."
+      },
+      {
+        "id": "js-2",
+        "text": "What is the value of `typeof null`?",
+        "options": ["'null'", "'object'", "'undefined'"],
+        "correctAnswerIndex": 1,
+        "explanation": "A historical bug kept for compatibility."
+      },
+      {
+        "id": "js-3",
+        "text": "Which declaration is hoisted without being initialised?",
+        "options": ["const", "let", "var"],
+        "correctAnswerIndex": 2
+      },
+      {
+        "id": "js-4",
+        "text": "What does `Array.prototype.map` return?",
+        "options": ["The same array, mutated", "A new array", "The number of items"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "js-5",
+        "text": "What is a Promise in the pending state?",
+        "options": ["Neither fulfilled nor rejected", "Already resolved", "Cancelled"],
+        "correctAnswerIndex": 0
+      }
+    ]
+  },
+  {
+    "id": "demo-history",
+    "title": "French history, in dates",
+    "description": "A timed run through four dates that shaped the country. Three minutes, no more.",
+    "category": "History",
+    "tags": ["france", "dates"],
+    "timeLimit": 180,
+    "shuffleAnswers": true,
+    "questions": [
+      {
+        "id": "hist-1",
+        "text": "In which year did the French Revolution begin?",
+        "options": ["1789", "1799", "1769"],
+        "correctAnswerIndex": 0
+      },
+      {
+        "id": "hist-2",
+        "text": "In which year was the Fifth Republic founded?",
+        "options": ["1946", "1958", "1962"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "hist-3",
+        "text": "In which year did the Paris Commune fall?",
+        "options": ["1848", "1871", "1889"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "hist-4",
+        "text": "In which year were women granted the vote in France?",
+        "options": ["1936", "1944", "1958"],
+        "correctAnswerIndex": 1,
+        "explanation": "The ordinance of 21 April 1944, applied from the municipal elections of 1945."
+      }
+    ]
+  },
+  {
+    "id": "demo-science",
+    "title": "The human body",
+    "description": "Bones, blood and a few numbers worth remembering.",
+    "category": "Science",
+    "tags": ["biology", "anatomy", "health"],
+    "theme": { "mode": "dark", "accent": "yellow" },
+    "questions": [
+      {
+        "id": "sci-1",
+        "text": "How many bones does an adult skeleton have?",
+        "options": ["186", "206", "226"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "sci-2",
+        "text": "Which organ produces insulin?",
+        "options": ["The liver", "The pancreas", "The spleen"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "sci-3",
+        "text": "How many chambers does the heart have?",
+        "options": ["Two", "Three", "Four"],
+        "correctAnswerIndex": 2
+      },
+      {
+        "id": "sci-4",
+        "text": "What carries oxygen in the blood?",
+        "options": ["White blood cells", "Platelets", "Red blood cells"],
+        "correctAnswerIndex": 2
+      }
+    ]
+  },
+  {
+    "id": "demo-general",
+    "title": "General knowledge: a very long title to see how the card holds up under pressure",
+    "description": "A deliberately long description, because a card needs to survive a paragraph that runs on for two or three lines without the layout collapsing or the buttons drifting away from the text they belong to.",
+    "category": "General knowledge",
+    "tags": ["mixed", "trivia", "long-title", "layout", "card"],
+    "questions": [
+      {
+        "id": "gen-1",
+        "text": "Which planet has the most moons?",
+        "options": ["Jupiter", "Saturn", "Neptune"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "gen-2",
+        "text": "Who composed The Four Seasons?",
+        "options": ["Vivaldi", "Bach", "Handel"],
+        "correctAnswerIndex": 0
+      },
+      {
+        "id": "gen-3",
+        "text": "What is the hardest natural material?",
+        "options": ["Quartz", "Diamond", "Topaz"],
+        "correctAnswerIndex": 1
+      },
+      {
+        "id": "gen-4",
+        "text": "How many strings does a standard violin have?",
+        "options": ["Four", "Five", "Six"],
+        "correctAnswerIndex": 0
+      },
+      {
+        "id": "gen-5",
+        "text": "Which language has the most native speakers?",
+        "options": ["English", "Mandarin Chinese", "Spanish"],
+        "correctAnswerIndex": 1
+      }
+    ]
+  }
+]
