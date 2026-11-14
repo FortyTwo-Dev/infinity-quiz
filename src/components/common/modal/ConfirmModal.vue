@@ -31,12 +31,6 @@ function close() {
   emit('update:modelValue', false)
 }
 
-function handleClose() {
-  if (props.persistent) return
-  close()
-  emit('cancel')
-}
-
 function handleCancel() {
   if (props.persistent) return
   close()
@@ -58,7 +52,7 @@ function handleKeydown(event: KeyboardEvent) {
     :open="props.modelValue"
     :persistent="props.persistent"
     labelled-by="confirm-dialog-title"
-    @close="handleClose"
+    @close="handleCancel"
     @keydown="handleKeydown"
   >
     <h2 v-if="props.title" id="confirm-dialog-title" class="it-h3">{{ props.title }}</h2>
