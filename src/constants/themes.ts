@@ -22,7 +22,7 @@ export type ThemeColorName = (typeof THEME_COLOR_NAMES)[number]
 export const THEME_MODES = ['light', 'dark'] as const
 export type ThemeMode = (typeof THEME_MODES)[number]
 
-export const THEME_ACCENTS = ['mint', 'fresh', 'emerald'] as const
+export const THEME_ACCENTS = ['mint', 'fresh', 'emerald', 'green'] as const
 export type ThemeAccent = (typeof THEME_ACCENTS)[number]
 
 export interface ThemeSelection {

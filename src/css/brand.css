@@ -74,6 +74,14 @@
     --it-accent-fg: oklch(18% 0 0);
   }
 
+  /* The pure green of the charte: hue 146 at saturation 100 % and lightness
+   * 50 % in HSL, the same recipe as the blue of the libraries and the yellow
+   * of the QR code app. */
+  :root[data-accent='green'] {
+    --it-accent: oklch(87% 0.262 146);
+    --it-accent-fg: oklch(18% 0 0);
+  }
+
 }
 
 /*
