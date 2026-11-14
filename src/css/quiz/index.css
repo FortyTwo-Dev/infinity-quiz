@@ -16,6 +16,16 @@
     translate: 0 -2px;
   }
 
+  /* A card title is a label, not a paragraph: one line, then an ellipsis. The
+   * full title stays in the details dialog. */
+  .quiz-launch-card .it-card-title,
+  .quiz-manage-card .it-card-title {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .quiz-card-meta {
     display: flex;
     flex-wrap: wrap;
