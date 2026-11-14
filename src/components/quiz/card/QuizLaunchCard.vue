@@ -43,7 +43,7 @@ const status = computed(() =>
         </span>
       </div>
 
-      <ItCardTitle as="h3" size="lg">{{ title }}</ItCardTitle>
+      <ItCardTitle as="h3">{{ title }}</ItCardTitle>
       <p class="quiz-card-description">{{ description }}</p>
 
       <div v-if="tags && tags.length > 0" class="quiz-card-tags">

@@ -33,6 +33,7 @@
   .quiz-card-description {
     margin: 0;
     color: var(--it-muted);
+    font-size: var(--it-font-size-2);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -117,17 +118,17 @@
 
   .quiz-answer[data-state='selected'] {
     border-color: var(--it-accent);
-    background-color: color-mix(in oklch, var(--it-accent) 10%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-accent) 10%, var(--it-bg));
   }
 
   .quiz-answer[data-state='correct'] {
     border-color: var(--it-success);
-    background-color: color-mix(in oklch, var(--it-success) 14%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-success) 14%, var(--it-bg));
   }
 
   .quiz-answer[data-state='wrong'] {
     border-color: var(--it-danger);
-    background-color: color-mix(in oklch, var(--it-danger) 12%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-danger) 12%, var(--it-bg));
   }
 
   .quiz-question-actions {
@@ -302,13 +303,13 @@
 
   .quiz-review-answer[data-state='correct'] {
     border-color: var(--it-success);
-    background-color: color-mix(in oklch, var(--it-success) 12%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-success) 12%, var(--it-bg));
     color: var(--it-success);
   }
 
   .quiz-review-answer[data-state='wrong'] {
     border-color: var(--it-danger);
-    background-color: color-mix(in oklch, var(--it-danger) 12%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-danger) 12%, var(--it-bg));
     color: var(--it-danger);
   }
 

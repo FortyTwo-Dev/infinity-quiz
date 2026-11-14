@@ -59,13 +59,13 @@
   }
 
   .app-nav-link:hover {
-    background-color: color-mix(in oklch, var(--it-fg) 8%, transparent);
+    background-color: color-mix(in oklab, var(--it-fg) 8%, transparent);
   }
 
   /* The current page is carried by a filled row, not by an underline: a
    * sidebar row is a surface, a link in running text is not. */
   .app-nav-link[aria-current='page'] {
-    background-color: color-mix(in oklch, var(--it-accent) 14%, transparent);
+    background-color: color-mix(in oklab, var(--it-accent) 14%, transparent);
     color: var(--it-accent);
     font-weight: var(--it-font-weight-semibold);
     text-decoration: none;

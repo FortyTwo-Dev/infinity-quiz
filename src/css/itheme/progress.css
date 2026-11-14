@@ -3,7 +3,7 @@
   :where(.it-theme) {
     --it-progress-height: var(--it-space-2);
     --it-progress-radius: var(--it-radius-full);
-    --it-progress-track: color-mix(in oklch, var(--it-fg) 12%, transparent);
+    --it-progress-track: color-mix(in oklab, var(--it-fg) 12%, transparent);
     --it-progress-color: var(--it-accent);
   }
 }

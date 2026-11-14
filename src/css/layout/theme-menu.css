@@ -85,7 +85,7 @@
   }
 
   .app-theme-option:hover {
-    background-color: color-mix(in oklch, var(--it-fg) 7%, transparent);
+    background-color: color-mix(in oklab, var(--it-fg) 7%, transparent);
   }
 
   .app-theme-option:focus-visible {

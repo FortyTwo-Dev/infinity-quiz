@@ -45,7 +45,7 @@
     align-items: center;
     gap: var(--it-space-2);
     margin: 0;
-    font-size: var(--it-font-size-5);
+    font-size: var(--it-font-size-4);
     font-weight: var(--it-font-weight-semibold);
     line-height: var(--it-line-height-tight);
   }
@@ -55,7 +55,7 @@
   }
 
   .it-card-title-lg {
-    font-size: var(--it-font-size-6);
+    font-size: var(--it-font-size-5);
   }
 
   .it-card-actions {

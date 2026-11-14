@@ -77,7 +77,7 @@
   /* A tint of the variant colour on the page background, text in the
    * foreground colour: readable without a filled block. */
   .it-badge-soft {
-    background-color: color-mix(in oklch, var(--it-badge-bg) 20%, var(--it-bg));
+    background-color: color-mix(in oklab, var(--it-badge-bg) 20%, var(--it-bg));
     color: var(--it-fg);
     border-color: transparent;
   }
