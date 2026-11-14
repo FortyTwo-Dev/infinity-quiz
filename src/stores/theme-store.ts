@@ -1,130 +1,61 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { parseThemeBlock, buildThemeCss } from '../utils/theme-import'
-import { BUILT_IN_THEMES, DEFAULT_THEME_NAME, isValidThemeName } from '../constants/themes'
+import { DEFAULT_THEME, type ThemeSelection } from '../constants/themes'
 import { STORAGE_KEYS } from '../constants'
+import { normalizeGlobalTheme, normalizeQuizTheme } from '../utils/theme'
 
-export interface ImportedTheme {
-  name: string
-  colorScheme: 'light' | 'dark'
-  raw: string
-}
-
-const STYLE_PREFIX = 'iq-imported-theme-'
-
-function writeDomTheme(name: string) {
+function writeDomTheme(selection: ThemeSelection) {
   if (typeof document === 'undefined') return
-  document.documentElement.dataset.theme = name
+  document.documentElement.dataset.theme = selection.mode
+  document.documentElement.dataset.accent = selection.accent
 }
 
 export const useThemeStore = defineStore(
   'theme',
   () => {
-    const globalThemeName = ref<string>(DEFAULT_THEME_NAME)
-    const importedThemes = ref<ImportedTheme[]>([])
-    const temporaryThemeName = ref<string | null>(null)
+    const globalTheme = ref<ThemeSelection>({ ...DEFAULT_THEME })
+    const temporaryTheme = ref<ThemeSelection | null>(null)
 
-    function applyTheme(name: string) {
-      globalThemeName.value = name
-      writeDomTheme(name)
+    function applyTheme(selection: ThemeSelection) {
+      globalTheme.value = normalizeGlobalTheme(selection)
+      writeDomTheme(globalTheme.value)
     }
 
-    function resolveTheme(name: string | undefined): string | null {
-      if (!name) return null
-      if (
-        BUILT_IN_THEMES.includes(name) ||
-        importedThemes.value.some((t) => t.name === name)
-      ) {
-        return name
-      }
-      return null
-    }
-
-    function applyQuizTheme(name: string | undefined) {
-      const resolved = resolveTheme(name) ?? DEFAULT_THEME_NAME
-      temporaryThemeName.value = resolved
-      writeDomTheme(resolved)
+    /**
+     * Apply the theme of the quiz being played without touching the global
+     * one. A quiz that carries no theme keeps the global selection: forcing
+     * the default here would drop a dark-mode reader into a light quiz.
+     */
+    function applyQuizTheme(selection: unknown) {
+      const resolved = normalizeQuizTheme(selection) ?? null
+      temporaryTheme.value = resolved
+      if (resolved) writeDomTheme(resolved)
     }
 
     function restoreGlobalTheme() {
-      temporaryThemeName.value = null
-      writeDomTheme(globalThemeName.value)
+      temporaryTheme.value = null
+      writeDomTheme(globalTheme.value)
     }
 
-    function injectThemeStyle(theme: ImportedTheme) {
-      if (typeof document === 'undefined') return
-      const styleId = `${STYLE_PREFIX}${theme.name}`
-      document.getElementById(styleId)?.remove()
-
-      const style = document.createElement('style')
-      style.id = styleId
-      style.dataset.theme = theme.name
-      style.textContent = buildThemeCss({
-        name: theme.name,
-        colorScheme: theme.colorScheme,
-        variables: parseThemeBlock(theme.raw).variables,
-      })
-      document.head.appendChild(style)
-    }
-
-    function isNameTaken(name: string): boolean {
-      return BUILT_IN_THEMES.includes(name) || importedThemes.value.some((t) => t.name === name)
-    }
-
-    function importTheme(css: string, nameOverride?: string): boolean {
-      const parsed = parseThemeBlock(css)
-      const name = (nameOverride ?? parsed.name).trim()
-      if (!name || !isValidThemeName(name)) {
-        throw new Error('Theme name is invalid (letters, digits, "-", "_" only)')
-      }
-      if (isNameTaken(name)) {
-        throw new Error(`A theme named "${name}" already exists`)
-      }
-
-      const theme: ImportedTheme = {
-        name,
-        colorScheme: parsed.colorScheme,
-        raw: css,
-      }
-      importedThemes.value.push(theme)
-      injectThemeStyle(theme)
-      applyTheme(name)
-      return true
-    }
-
-    function removeTheme(name: string) {
-      importedThemes.value = importedThemes.value.filter((t) => t.name !== name)
-      if (typeof document !== 'undefined') {
-        document.getElementById(`${STYLE_PREFIX}${name}`)?.remove()
-      }
-      if (globalThemeName.value === name) {
-        applyTheme(DEFAULT_THEME_NAME)
-      }
-    }
-
+    /** Apply the rehydrated theme, normalized: storage is untrusted. */
     function rehydrate() {
-      for (const theme of importedThemes.value) {
-        injectThemeStyle(theme)
-      }
-      writeDomTheme(globalThemeName.value)
+      globalTheme.value = normalizeGlobalTheme(globalTheme.value)
+      writeDomTheme(globalTheme.value)
     }
 
     return {
-      globalThemeName,
-      importedThemes,
-      temporaryThemeName,
+      globalTheme,
+      temporaryTheme,
       applyTheme,
       applyQuizTheme,
       restoreGlobalTheme,
-      importTheme,
-      removeTheme,
       rehydrate,
     }
   },
   {
     persist: {
       key: STORAGE_KEYS.theme,
-      pick: ['globalThemeName', 'importedThemes'],
+      pick: ['globalTheme'],
     },
   },
 )

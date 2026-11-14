@@ -1,7 +1,7 @@
 # ADR-001 - Tailwind CSS Class Detection Strategy
 
 ## Status
-Accepted
+Superseded by: [ADR-002](./ADR-002-infinity-theme-migration.md)
 
 ## Context
 

@@ -1,0 +1,82 @@
+@layer components {
+  .import-export-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-6);
+    max-inline-size: 56rem;
+  }
+
+  .import-card,
+  .export-card {
+    width: 100%;
+  }
+
+  .import-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-2);
+  }
+
+  .import-section-title {
+    margin: 0;
+    font-size: var(--it-font-size-3);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .import-or {
+    margin: 0;
+    color: var(--it-muted);
+    font-size: var(--it-font-size-2);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .import-json {
+    font-family: var(--it-font-mono);
+    font-size: var(--it-font-size-2);
+    resize: vertical;
+  }
+
+  .import-preview {
+    margin: 0;
+    color: var(--it-muted);
+    font-size: var(--it-font-size-1);
+  }
+
+  .import-preview-valid {
+    color: var(--it-success);
+  }
+
+  .import-actions,
+  .export-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-3);
+  }
+
+  .export-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-2);
+  }
+
+  .export-preview-title {
+    margin: 0;
+    font-size: var(--it-font-size-3);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .export-pre {
+    margin: 0;
+    padding: var(--it-space-3);
+    border-radius: var(--it-radius);
+    background-color: var(--it-bg);
+    font-family: var(--it-font-mono);
+    font-size: var(--it-font-size-1);
+    max-block-size: 24rem;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+}

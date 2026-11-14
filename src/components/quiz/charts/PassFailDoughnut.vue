@@ -13,7 +13,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const successColor = useThemeColor('success')
-const errorColor = useThemeColor('error')
+const dangerColor = useThemeColor('danger')
 const radius = useThemeRadius()
 
 const chartData = computed(() => ({
@@ -21,7 +21,7 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: [props.passed, props.failed],
-      backgroundColor: [successColor.value, errorColor.value],
+      backgroundColor: [successColor.value, dangerColor.value],
       borderWidth: 0,
       borderRadius: radius.value,
     },
@@ -41,7 +41,7 @@ const chartOptions: ChartOptions<'doughnut'> = {
 </script>
 
 <template>
-  <div class="h-64">
+  <div class="quiz-chart">
     <Doughnut :data="chartData" :options="chartOptions" />
   </div>
 </template>

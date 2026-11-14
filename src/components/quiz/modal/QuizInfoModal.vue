@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { DModal, DModalBox, DModalActions, DModalBackdrop } from '@/components/daisy-ui/modal'
-import { DBadge } from '@/components/daisy-ui'
+import { ItBadge, ItDialog } from '@/components/itheme'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 import {
   ATTEMPT_STATUS_COLORS,
   ATTEMPT_STATUS_LABELS,
   type AttemptStatus,
 } from '@/composables/useAttempt'
+import type { WidgetVariant } from '@/components/itheme'
 
 interface Props {
   title: string
@@ -28,103 +29,85 @@ const props = defineProps<Props>()
 
 const statusLabel = computed(() => (props.status ? ATTEMPT_STATUS_LABELS[props.status] : ''))
 
-const statusColor = computed(() => (props.status ? ATTEMPT_STATUS_COLORS[props.status] : 'neutral'))
+const statusVariant = computed<WidgetVariant>(() => {
+  const color = props.status ? ATTEMPT_STATUS_COLORS[props.status] : 'neutral'
+  return color === 'error' ? 'danger' : color
+})
 
-const modal = ref<InstanceType<typeof DModal> | null>(null)
+const isOpen = ref(false)
 
 function open() {
-  modal.value?.open()
+  isOpen.value = true
 }
 
 function close() {
-  modal.value?.close()
+  isOpen.value = false
 }
 
-defineExpose({
-  open,
-  close,
-})
+defineExpose({ open, close })
 </script>
 
 <template>
-  <DModal ref="modal">
-    <DModalBackdrop />
-    <DModalBox class="max-w-2xl w-full">
-      <h3 class="text-lg font-bold mb-4">{{ title }}</h3>
-      <p class="text-base-content/80 mb-6">{{ description }}</p>
+  <ItDialog :open="isOpen" labelled-by="quiz-info-title" class="quiz-info-dialog" @close="close">
+    <h2 id="quiz-info-title" class="it-h3">{{ title }}</h2>
+    <p class="quiz-info-description">{{ description }}</p>
 
-      <div class="space-y-6">
-        <!-- Category and Tags -->
-        <section v-if="primaryTag || (tags && tags.length > 0)">
-          <h4 class="text-sm font-medium text-base-content mb-2">Category & Tags</h4>
-          <div class="flex flex-wrap gap-2">
-            <DBadge v-if="primaryTag" variant="primary" class="uppercase font-bold text-nowrap">
-              {{ primaryTag }}
-            </DBadge>
-            <DBadge v-for="tag in tags" :key="tag" variant="primary" soft class="text-nowrap">
-              {{ tag }}
-            </DBadge>
-          </div>
-        </section>
-
-        <!-- Quiz Statistics -->
-        <section>
-          <h4 class="text-sm font-medium text-base-content mb-2">Statistics</h4>
-          <div class="grid grid-cols-3 gap-4 text-sm">
-            <div class="flex items-center gap-2">
-              <span class="text-base-content/60">Questions:</span>
-              <span class="font-semibold">{{ questionCount ?? 0 }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-base-content/60">Time Limit:</span>
-              <span class="font-semibold">{{
-                timeLimit !== undefined ? `${timeLimit}s` : 'None'
-              }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-base-content/60">Max Skips:</span>
-              <span class="font-semibold">{{ maxSkips ?? 'Unlimited' }}</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Quiz Options -->
-        <section>
-          <h4 class="text-sm font-medium text-base-content mb-2">Options</h4>
-          <div class="flex flex-wrap gap-2">
-            <DBadge :variant="hasIndividualQuestionTimeLimits ? 'success' : 'error'" soft>
-              <span class="text-xs"
-                >Per-Question Time Limits:
-                {{ hasIndividualQuestionTimeLimits ? 'Yes' : 'No' }}</span
-              >
-            </DBadge>
-            <DBadge :variant="shuffleQuestions ? 'success' : 'error'" soft>
-              <span class="text-xs">Questions Shuffled: {{ shuffleQuestions ? 'Yes' : 'No' }}</span>
-            </DBadge>
-            <DBadge :variant="shuffleAnswers ? 'success' : 'error'" soft>
-              <span class="text-xs">Answers Shuffled: {{ shuffleAnswers ? 'Yes' : 'No' }}</span>
-            </DBadge>
-            <DBadge :variant="enableReviewMode ? 'success' : 'error'" soft>
-              <span class="text-xs">Review Mode: {{ enableReviewMode ? 'Yes' : 'No' }}</span>
-            </DBadge>
-            <DBadge :variant="feedbackEnabled ? 'success' : 'error'" soft>
-              <span class="text-xs">Feedback Enabled: {{ feedbackEnabled ? 'Yes' : 'No' }}</span>
-            </DBadge>
-          </div>
-        </section>
-
-        <!-- Status -->
-        <section v-if="props.status">
-          <h4 class="text-sm font-medium text-base-content mb-2">Quiz Status</h4>
-          <span class="badge" :class="`badge-${statusColor}`">
-            {{ statusLabel }}
-          </span>
-        </section>
+    <section v-if="primaryTag || (tags && tags.length > 0)" class="quiz-info-section">
+      <h3 class="quiz-info-heading">Category &amp; tags</h3>
+      <div class="quiz-info-row">
+        <ItBadge v-if="primaryTag" variant="primary" class="quiz-info-tag-strong">
+          {{ primaryTag }}
+        </ItBadge>
+        <ItBadge v-for="tag in tags" :key="tag" variant="primary" soft>{{ tag }}</ItBadge>
       </div>
+    </section>
 
-      <DModalActions>
-        <button type="button" class="btn btn-neutral" @click="close">Close</button>
-      </DModalActions>
-    </DModalBox>
-  </DModal>
+    <section class="quiz-info-section">
+      <h3 class="quiz-info-heading">Statistics</h3>
+      <dl class="quiz-info-stats">
+        <div class="quiz-info-stat">
+          <dt>Questions</dt>
+          <dd>{{ questionCount ?? 0 }}</dd>
+        </div>
+        <div class="quiz-info-stat">
+          <dt>Time limit</dt>
+          <dd>{{ timeLimit !== undefined ? `${timeLimit}s` : 'None' }}</dd>
+        </div>
+        <div class="quiz-info-stat">
+          <dt>Max skips</dt>
+          <dd>{{ maxSkips ?? 'Unlimited' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="quiz-info-section">
+      <h3 class="quiz-info-heading">Options</h3>
+      <div class="quiz-info-row">
+        <ItBadge :variant="hasIndividualQuestionTimeLimits ? 'success' : 'danger'" soft>
+          Per-question time limits: {{ hasIndividualQuestionTimeLimits ? 'Yes' : 'No' }}
+        </ItBadge>
+        <ItBadge :variant="shuffleQuestions ? 'success' : 'danger'" soft>
+          Questions shuffled: {{ shuffleQuestions ? 'Yes' : 'No' }}
+        </ItBadge>
+        <ItBadge :variant="shuffleAnswers ? 'success' : 'danger'" soft>
+          Answers shuffled: {{ shuffleAnswers ? 'Yes' : 'No' }}
+        </ItBadge>
+        <ItBadge :variant="enableReviewMode ? 'success' : 'danger'" soft>
+          Review mode: {{ enableReviewMode ? 'Yes' : 'No' }}
+        </ItBadge>
+        <ItBadge :variant="feedbackEnabled ? 'success' : 'danger'" soft>
+          Feedback enabled: {{ feedbackEnabled ? 'Yes' : 'No' }}
+        </ItBadge>
+      </div>
+    </section>
+
+    <section v-if="props.status" class="quiz-info-section">
+      <h3 class="quiz-info-heading">Quiz status</h3>
+      <ItBadge :variant="statusVariant">{{ statusLabel }}</ItBadge>
+    </section>
+
+    <div class="it-dialog-actions">
+      <ItButton @click="close">Close</ItButton>
+    </div>
+  </ItDialog>
 </template>

@@ -1,112 +1,78 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { DCard, DCardBody } from '@/components/daisy-ui/card'
-import {
-  DButton,
-  DCardActions,
-  DCardTitle,
-  DFieldset,
-  DSelect,
-  DSelectOption,
-} from '@/components/daisy-ui'
-import { useQuizStore } from '../../stores'
+import { computed, ref } from 'vue'
 import { PhDownload, PhCopy } from '@phosphor-icons/vue'
+import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItButton, ItField, ItOption, ItSelect } from '@infinitylib/infinity-theme-vue'
+import { useQuizStore } from '../../stores'
 
-interface Emits {
-  (e: 'export-single', quizId: string): void
-  (e: 'export-all'): void
-  (e: 'copy', quizId: string | null): void
-}
-
-const emit = defineEmits<Emits>()
+const emit = defineEmits<{
+  'export-single': [quizId: string]
+  'export-all': []
+  copy: [quizId: string | null]
+}>()
 
 const quizStore = useQuizStore()
 
-const selectedQuizId = ref<string | null>(null)
+const quizSelection = ref('')
 
 const quizzes = computed(() => quizStore.quizzes)
 const hasQuizzes = computed(() => quizzes.value.length > 0)
 
-const getExportPreview = computed(() => {
-  if (selectedQuizId.value) {
-    const quiz = quizStore.getQuizById(selectedQuizId.value)
+const exportPreview = computed(() => {
+  if (quizSelection.value) {
+    const quiz = quizStore.getQuizById(quizSelection.value)
     return quiz ? JSON.stringify(quiz, null, 2) : null
   }
   return JSON.stringify(quizStore.quizzes, null, 2)
 })
-
-const handleExportSingle = () => {
-  if (selectedQuizId.value) {
-    emit('export-single', selectedQuizId.value)
-  }
-}
-
-const handleExportAll = () => {
-  emit('export-all')
-}
-
-const handleCopyToClipboard = () => {
-  emit('copy', selectedQuizId.value)
-}
 </script>
 
 <template>
-  <DCard border class="bg-base-100">
-    <DCardBody>
-      <DCardTitle tag="h2" size="xl">
-        <PhDownload :size="24" />
+  <ItCard border class="export-card">
+    <ItCardBody size="lg">
+      <ItCardTitle as="h2">
+        <PhDownload :size="24" aria-hidden="true" />
         Export
-      </DCardTitle>
+      </ItCardTitle>
 
-      <DCard>
-        <DCardBody>
-          <DCardTitle tag="h3" size="lg">Select a quiz to export</DCardTitle>
-          <DFieldset label="Export" class="w-full">
-            <DSelect v-model="selectedQuizId" :disabled="!hasQuizzes" class="w-full">
-              <DSelectOption value="">All quizzes</DSelectOption>
-              <DSelectOption v-for="quiz in quizzes" :key="quiz.id" :value="quiz.id">
-                {{ quiz.title }}
-              </DSelectOption>
-            </DSelect>
-          </DFieldset>
-          <DCardActions justify="start">
-            <DButton
-              type="button"
-              variant="primary"
-              @click="handleExportSingle"
-              :disabled="!selectedQuizId"
-            >
-              <PhDownload :size="18" />
-              Export Selected Quiz
-            </DButton>
+      <ItField label="Quiz to export" html-for="export-quiz">
+        <ItSelect id="export-quiz" v-model="quizSelection" :disabled="!hasQuizzes">
+          <ItOption value="" text="All quizzes" />
+          <ItOption v-for="quiz in quizzes" :key="quiz.id" :value="quiz.id" :text="quiz.title" />
+        </ItSelect>
+      </ItField>
 
-            <DButton type="button" variant="primary" @click="handleExportAll">
-              <PhDownload :size="18" />
-              Export All Quizzes
-            </DButton>
+      <div class="export-actions">
+        <ItButton
+          type="button"
+          variant="primary"
+          :disabled="!quizSelection"
+          @click="emit('export-single', quizSelection)"
+        >
+          <PhDownload :size="18" aria-hidden="true" />
+          Export selected
+        </ItButton>
 
-            <DButton
-              type="button"
-              variant="secondary"
-              @click="handleCopyToClipboard"
-              :disabled="!selectedQuizId && !hasQuizzes"
-            >
-              <PhCopy :size="18" />
-              Copy to clipboard
-            </DButton>
-          </DCardActions>
-        </DCardBody>
-      </DCard>
+        <ItButton type="button" variant="secondary" @click="emit('export-all')">
+          <PhDownload :size="18" aria-hidden="true" />
+          Export all
+        </ItButton>
 
-      <DCard v-if="selectedQuizId" class="">
-        <DCardBody>
-          <DCardTitle tag="h3" size="lg">Preview</DCardTitle>
-          <pre
-            class="bg-base-200 font-mono text-md overflow-x-auto whitespace-pre-wrap wrap-break-word max-h-96 overflow-y-auto"
-            >{{ getExportPreview }}</pre>
-        </DCardBody>
-      </DCard>
+        <ItButton
+          type="button"
+          variant="secondary"
+          :disabled="!quizSelection && !hasQuizzes"
+          @click="emit('copy', quizSelection || null)"
+        >
+          <PhCopy :size="18" aria-hidden="true" />
+          Copy to clipboard
+        </ItButton>
+      </div>
 
-    </DCardBody>
-  </DCard>
+      <section v-if="quizSelection" class="export-preview">
+        <h3 class="export-preview-title">Preview</h3>
+        <pre class="export-pre">{{ exportPreview }}</pre>
+      </section>
+    </ItCardBody>
+  </ItCard>
 </template>

@@ -1,19 +1,55 @@
-export const THEME_COLORS = ['blue', 'yellow', 'red'] as const
-export type ThemeColor = (typeof THEME_COLORS)[number]
+/** A semantic colour published by `@infinitylib/infinity-theme` (`--it-<name>`). */
+export const THEME_COLOR_NAMES = [
+  'fg',
+  'surface',
+  'surface-fg',
+  'muted',
+  'border',
+  'accent',
+  'accent-fg',
+  'danger',
+  'success',
+  'warning',
+  'info',
+] as const
+export type ThemeColorName = (typeof THEME_COLOR_NAMES)[number]
 
-export const THEME_VARIANTS = ['light', 'dark'] as const
-export type ThemeVariant = (typeof THEME_VARIANTS)[number]
+/**
+ * A theme is a mode shipped by `@infinitylib/infinity-theme` and a brand accent
+ * bound by the application (see `docs/decisions/ADR-002`). The two are
+ * orthogonal: the mode picks the token set, the accent overrides `--it-accent`.
+ */
+export const THEME_MODES = ['light', 'dark'] as const
+export type ThemeMode = (typeof THEME_MODES)[number]
 
-export const BUILT_IN_THEMES = THEME_COLORS.flatMap((color) =>
-  THEME_VARIANTS.map((variant) => buildThemeName(color, variant)),
+export const THEME_ACCENTS = ['green'] as const
+export type ThemeAccent = (typeof THEME_ACCENTS)[number]
+
+export interface ThemeSelection {
+  mode: ThemeMode
+  accent: ThemeAccent
+}
+
+export const DEFAULT_THEME: ThemeSelection = { mode: 'light', accent: 'green' }
+
+/**
+ * Theme names written by the daisyUI build. They are still in `localStorage` of
+ * every existing install, so they are read for good, and never written again.
+ */
+export const LEGACY_THEME_NAMES: Record<string, ThemeSelection> = {
+  'infinity-blue-light': { mode: 'light', accent: 'green' },
+  'infinity-blue-dark': { mode: 'dark', accent: 'green' },
+  'infinity-yellow-light': { mode: 'light', accent: 'green' },
+  'infinity-yellow-dark': { mode: 'dark', accent: 'green' },
+  'infinity-red-light': { mode: 'light', accent: 'green' },
+  'infinity-red-dark': { mode: 'dark', accent: 'green' },
+}
+
+/** A selection as offered by a form select, serialized as `<mode>-<accent>`. */
+export interface ThemeOption extends ThemeSelection {
+  value: string
+}
+
+export const THEME_OPTIONS: ThemeOption[] = THEME_MODES.flatMap((mode) =>
+  THEME_ACCENTS.map((accent) => ({ mode, accent, value: `${mode}-${accent}` })),
 )
-
-export const DEFAULT_THEME_NAME = 'infinity-blue-light'
-
-export function buildThemeName(color: ThemeColor, variant: ThemeVariant): string {
-  return `infinity-${color}-${variant}`
-}
-
-export function isValidThemeName(name: string): boolean {
-  return /^[A-Za-z0-9_-]+$/.test(name)
-}

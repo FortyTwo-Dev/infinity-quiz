@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { PhPlus, PhUpload } from '@phosphor-icons/vue'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
+import { ItCard, ItCardBody } from '@/components/itheme'
 import { ConfirmModal } from '@/components/common'
-import { DButton } from '@/components/daisy-ui'
 import QuizSearchBar from '../components/quiz/QuizSearchBar.vue'
 import { QuizManageCard } from '../components/quiz/card'
 import { useQuizManagement } from '../composables/useQuizManagement'
 import { useQuizStore, useNotificationStore } from '../stores'
-import { PhPlus, PhUpload } from '@phosphor-icons/vue'
 
 const quizStore = useQuizStore()
 const notificationStore = useNotificationStore()
+
 const {
   searchTerm,
   selectedCategory,
@@ -25,26 +27,12 @@ const {
   clearFilters,
 } = useQuizManagement()
 
-// Modal state
 const showDeleteModal = ref(false)
 const quizToDelete = ref<string | null>(null)
 const showDuplicateModal = ref(false)
 const quizToDuplicate = ref<string | null>(null)
 
-const handleCreateQuiz = () => {
-  navigateToCreate()
-}
-
-const handleEditQuiz = (quizId: string) => {
-  navigateToEdit(quizId)
-}
-
-const handleDuplicateQuiz = (quizId: string) => {
-  quizToDuplicate.value = quizId
-  showDuplicateModal.value = true
-}
-
-const confirmDuplicate = () => {
+function confirmDuplicate() {
   if (quizToDuplicate.value) {
     const title = quizStore.getQuizById(quizToDuplicate.value)?.title || 'this quiz'
     duplicateQuiz(quizToDuplicate.value)
@@ -54,95 +42,89 @@ const confirmDuplicate = () => {
   showDuplicateModal.value = false
 }
 
-const handleDeleteQuiz = (quizId: string) => {
-  quizToDelete.value = quizId
-  showDeleteModal.value = true
-}
-
-const confirmDelete = () => {
+function confirmDelete() {
   if (quizToDelete.value) {
     const title = quizStore.getQuizById(quizToDelete.value)?.title || 'this quiz'
     deleteQuiz(quizToDelete.value)
-    notificationStore.addNotification(`Quiz "${title}" deleted successfully`, 'success', 3000)
+    notificationStore.addNotification(`Quiz "${title}" deleted`, 'success', 3000)
     quizToDelete.value = null
   }
   showDeleteModal.value = false
 }
 
-const handleImportExport = () => {
-  navigateToImportExport()
+function requestDelete(quizId: string) {
+  quizToDelete.value = quizId
+  showDeleteModal.value = true
 }
+
+function requestDuplicate(quizId: string) {
+  quizToDuplicate.value = quizId
+  showDuplicateModal.value = true
+}
+
+const hasFilters = () => Boolean(searchTerm.value || selectedCategory.value || selectedTag.value)
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-4">
-    <div class="flex justify-between items-start mb-8 gap-6">
+  <section class="quiz-view">
+    <header class="quiz-page-header">
       <div>
-        <h1 class="text-base-content mb-2 text-2xl font-bold">Quiz Management</h1>
-        <p class="text-base-content/70 m-0">Create, edit, delete and organize your quizzes</p>
+        <h1 class="quiz-page-title">Manage quizzes</h1>
+        <p class="quiz-page-subtitle">Create, edit, duplicate, delete and export your quizzes</p>
       </div>
-      <div class="flex gap-4">
-        <DButton
-          type="button"
-          variant="secondary"
-          size="md"
-          @click="handleImportExport"
-          class="inline-flex items-center gap-2"
-        >
+      <div class="quiz-page-actions">
+        <ItButton variant="secondary" @click="navigateToImportExport">
           <PhUpload :size="20" />
-          Import/Export
-        </DButton>
-        <DButton
-          type="button"
-          variant="primary"
-          size="md"
-          @click="handleCreateQuiz"
-          class="inline-flex items-center gap-2"
-        >
+          Import / Export
+        </ItButton>
+        <ItButton variant="primary" @click="navigateToCreate">
           <PhPlus :size="20" />
-          New Quiz
-        </DButton>
+          New quiz
+        </ItButton>
       </div>
-    </div>
+    </header>
 
     <QuizSearchBar
-      v-model:searchTerm="searchTerm"
-      v-model:selectedCategory="selectedCategory"
-      v-model:selectedTag="selectedTag"
+      v-model:search-term="searchTerm"
+      v-model:selected-category="selectedCategory"
+      v-model:selected-tag="selectedTag"
       :categories="allCategories"
       :tags="allTags"
     />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div v-if="filteredQuizzes.length > 0" class="quiz-grid">
       <QuizManageCard
         v-for="quiz in filteredQuizzes"
         :key="quiz.id"
         :quiz="quiz"
-        @edit="handleEditQuiz"
-        @duplicate="handleDuplicateQuiz"
-        @delete="handleDeleteQuiz"
+        @edit="navigateToEdit"
+        @duplicate="requestDuplicate"
+        @delete="requestDelete"
       />
-
-      <div
-        v-if="filteredQuizzes.length === 0"
-        class="col-span-full text-center p-8 text-base-content/70"
-      >
-        <h3 class="text-base-content mb-2 text-lg">No quizzes found</h3>
-        <p v-if="searchTerm || selectedCategory || selectedTag" class="mb-0">
-          No quizzes match your search criteria.
-          <button
-            type="button"
-            class="bg-none border-none text-primary cursor-pointer underline font-inherit p-0 ml-2 hover:text-primary/80"
-            @click="clearFilters"
-          >
-            Clear filters
-          </button>
-        </p>
-        <p v-else class="mb-0">No quizzes available. Create a new one!</p>
-      </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <ItCard v-else border class="quiz-empty">
+      <ItCardBody size="lg">
+        <p class="quiz-empty-title">No quizzes found</p>
+        <p class="quiz-empty-text">
+          {{
+            hasFilters()
+              ? 'Nothing matches these filters.'
+              : 'The catalogue is empty: create a quiz or import one.'
+          }}
+        </p>
+        <div class="quiz-empty-actions">
+          <ItButton v-if="hasFilters()" variant="secondary" @click="clearFilters">
+            Clear filters
+          </ItButton>
+          <ItButton v-else variant="primary" @click="navigateToCreate">
+            <PhPlus :size="18" />
+            Create a quiz
+          </ItButton>
+        </div>
+      </ItCardBody>
+    </ItCard>
+
     <ConfirmModal
       v-model="showDeleteModal"
       :title="
@@ -152,11 +134,10 @@ const handleImportExport = () => {
       "
       confirm-text="Delete"
       cancel-text="Cancel"
-      variant="error"
+      variant="danger"
       @confirm="confirmDelete"
     />
 
-    <!-- Duplicate Confirmation Modal -->
     <ConfirmModal
       v-model="showDuplicateModal"
       title="Confirm duplication"
@@ -170,5 +151,5 @@ const handleImportExport = () => {
       variant="primary"
       @confirm="confirmDuplicate"
     />
-  </div>
+  </section>
 </template>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { DBadge, DProgress } from '@/components/daisy-ui'
-import { DCard, DCardBody } from '@/components/daisy-ui/card'
+import { ItBadge, ItCard, ItCardBody, ItProgress } from '@/components/itheme'
 
 interface Props {
   score: number
@@ -9,46 +8,42 @@ interface Props {
   passed: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 </script>
 
 <template>
-  <DCard size="lg" class="max-w-[600px] mx-auto text-center">
-    <DCardBody padding="lg">
-      <!-- Score -->
-      <div class="text-8xl font-bold mb-4" :class="passed ? 'text-success' : 'text-error'">
-        {{ score }}/{{ totalQuestions }}
-      </div>
+  <ItCard border class="quiz-score-card">
+    <ItCardBody size="lg">
+      <p class="quiz-score-value" :class="passed ? 'quiz-score-passed' : 'quiz-score-failed'">
+        {{ score }}<span class="quiz-score-total">/{{ totalQuestions }}</span>
+      </p>
 
-      <!-- Progress Bar -->
-      <DProgress :value="score" :max="totalQuestions" color="primary" class="mb-6 h-4" />
+      <ItProgress
+        :value="score"
+        :max="totalQuestions"
+        :variant="props.passed ? 'success' : 'danger'"
+        label="Correct answers"
+      />
 
-      <!-- Percentage -->
-      <div class="text-2xl font-semibold mb-4">{{ percentage }}%</div>
+      <p class="quiz-score-percentage">{{ percentage }}%</p>
 
-      <!-- Stats -->
-      <div class="flex justify-center gap-8 text-center mb-6">
+      <dl class="quiz-score-stats">
         <div>
-          <div class="text-sm text-base-content/70">Accuracy</div>
-          <div class="font-bold">{{ percentage }}%</div>
+          <dt>Accuracy</dt>
+          <dd>{{ percentage }}%</dd>
         </div>
         <div>
-          <div class="text-sm text-base-content/70">Result</div>
-          <div class="font-bold" :class="passed ? 'text-success' : 'text-error'">
+          <dt>Result</dt>
+          <dd :class="passed ? 'quiz-score-passed' : 'quiz-score-failed'">
             {{ passed ? 'Passed' : 'Failed' }}
-          </div>
+          </dd>
         </div>
-      </div>
+      </dl>
 
-      <!-- Badge -->
-      <div>
-        <DBadge v-if="passed" variant="success" size="lg">
-          <slot name="success-message">Congratulations!</slot>
-        </DBadge>
-        <DBadge v-else variant="error" size="lg">
-          <slot name="failure-message">Try again</slot>
-        </DBadge>
-      </div>
-    </DCardBody>
-  </DCard>
+      <ItBadge :variant="passed ? 'success' : 'danger'">
+        <slot v-if="passed" name="success-message">Congratulations!</slot>
+        <slot v-else name="failure-message">Try again</slot>
+      </ItBadge>
+    </ItCardBody>
+  </ItCard>
 </template>

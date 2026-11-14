@@ -1,81 +1,70 @@
 <script setup lang="ts">
 import { Field } from 'vee-validate'
-import { DCheckbox, DFieldset, DInput } from '@/components/daisy-ui'
-import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
+import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItCheckbox, ItField, ItInput } from '@infinitylib/infinity-theme-vue'
+
+const checkboxes = [
+  { name: 'shuffleQuestions', label: 'Shuffle questions' },
+  { name: 'shuffleAnswers', label: 'Shuffle all answers' },
+  { name: 'enableReviewMode', label: 'Enable review mode at the end' },
+  { name: 'feedbackEnabled', label: 'Show immediate feedback after each answer' },
+] as const
 </script>
 
 <template>
-  <DCard border class="bg-base-100 w-full">
-    <DCardBody padding="lg" class="gap-6">
-      <DCardTitle tag="h2" size="lg">Quiz settings</DCardTitle>
+  <ItCard border class="quiz-form-card">
+    <ItCardBody size="lg">
+      <ItCardTitle as="h2" size="lg">Quiz settings</ItCardTitle>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="quiz-settings-grid">
         <Field v-slot="{ field, errorMessage }" name="timeLimit">
-          <DFieldset
+          <ItField
             label="Time limit (seconds, optional)"
-            :message="errorMessage"
-            :error="!!errorMessage"
-            class="w-full"
+            html-for="quiz-time-limit"
+            :error="errorMessage"
           >
-            <DInput
+            <ItInput
+              id="quiz-time-limit"
               type="number"
               :model-value="field.value ?? ''"
-              :color="errorMessage ? 'error' : undefined"
+              :invalid="!!errorMessage"
               placeholder="No global limit"
               @update:model-value="field.onChange"
               @blur="field.onBlur"
             />
-          </DFieldset>
+          </ItField>
         </Field>
 
         <Field v-slot="{ field, errorMessage }" name="maxSkips">
-          <DFieldset
-            label="Maximum skips (optional)"
-            :message="errorMessage"
-            :error="!!errorMessage"
-            class="w-full"
-          >
-            <DInput
+          <ItField label="Maximum skips (optional)" html-for="quiz-max-skips" :error="errorMessage">
+            <ItInput
+              id="quiz-max-skips"
               type="number"
               :model-value="field.value ?? ''"
-              :color="errorMessage ? 'error' : undefined"
+              :invalid="!!errorMessage"
               placeholder="Unlimited"
               @update:model-value="field.onChange"
               @blur="field.onBlur"
             />
-          </DFieldset>
+          </ItField>
         </Field>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <Field v-slot="{ field }" name="shuffleQuestions">
-          <label class="flex items-center gap-3 cursor-pointer">
-            <DCheckbox :model-value="field.value" @update:model-value="field.onChange" />
-            <span>Shuffle questions</span>
-          </label>
-        </Field>
-
-        <Field v-slot="{ field }" name="shuffleAnswers">
-          <label class="flex items-center gap-3 cursor-pointer">
-            <DCheckbox :model-value="field.value" @update:model-value="field.onChange" />
-            <span>Shuffle all answers</span>
-          </label>
-        </Field>
-
-        <Field v-slot="{ field }" name="enableReviewMode">
-          <label class="flex items-center gap-3 cursor-pointer">
-            <DCheckbox :model-value="field.value" @update:model-value="field.onChange" />
-            <span>Enable review mode at the end</span>
-          </label>
-        </Field>
-
-        <Field v-slot="{ field }" name="feedbackEnabled">
-          <label class="flex items-center gap-3 cursor-pointer">
-            <DCheckbox :model-value="field.value" @update:model-value="field.onChange" />
-            <span>Show immediate feedback after each answer</span>
-          </label>
+      <div class="quiz-checkbox-list">
+        <Field
+          v-for="checkbox in checkboxes"
+          :key="checkbox.name"
+          v-slot="{ field }"
+          :name="checkbox.name"
+        >
+          <ItCheckbox
+            :id="`quiz-${checkbox.name}`"
+            :label="checkbox.label"
+            :model-value="field.value"
+            @update:model-value="field.onChange"
+          />
         </Field>
       </div>
-    </DCardBody>
-  </DCard>
+    </ItCardBody>
+  </ItCard>
 </template>

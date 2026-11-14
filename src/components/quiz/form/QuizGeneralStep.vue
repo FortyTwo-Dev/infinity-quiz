@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { Field } from 'vee-validate'
-import { DBadge, DButton, DFieldset, DInput, DTextarea, DSelect, DSelectOption } from '@/components/daisy-ui'
-import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
+import { ItBadge, ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
+import {
+  ItButton,
+  ItField,
+  ItInput,
+  ItOption,
+  ItSelect,
+  ItTextarea,
+} from '@infinitylib/infinity-theme-vue'
 import { PhPlus } from '@phosphor-icons/vue'
-import { useThemeStore } from '@/stores'
-import { BUILT_IN_THEMES, DEFAULT_THEME_NAME } from '@/constants/themes'
+import { DEFAULT_THEME, THEME_OPTIONS } from '@/constants/themes'
 
 interface Props {
   tagSuggestions: string[]
@@ -20,11 +26,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>()
 
-const themeStore = useThemeStore()
-
 const tagDraft = ref('')
-
-const importedThemeNames = computed(() => themeStore.importedThemes.map((t) => t.name))
 
 function submitTag() {
   const value = tagDraft.value.trim()
@@ -35,104 +37,110 @@ function submitTag() {
 </script>
 
 <template>
-  <DCard border class="bg-base-100 w-full">
-    <DCardBody padding="lg" class="gap-6">
-      <DCardTitle tag="h2" size="lg">General information</DCardTitle>
+  <ItCard border class="quiz-form-card">
+    <ItCardBody size="lg">
+      <ItCardTitle as="h2" size="lg">General information</ItCardTitle>
 
       <Field v-slot="{ field, errorMessage }" name="title">
-        <DFieldset label="Title" :message="errorMessage" :error="!!errorMessage" class="w-full">
-          <DInput
+        <ItField label="Title" html-for="quiz-title" :error="errorMessage">
+          <ItInput
+            id="quiz-title"
             :model-value="field.value"
-            :color="errorMessage ? 'error' : undefined"
+            :invalid="!!errorMessage"
             placeholder="My quiz title"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DFieldset>
+        </ItField>
       </Field>
 
       <Field v-slot="{ field, errorMessage }" name="description">
-        <DFieldset
-          label="Description"
-          :message="errorMessage"
-          :error="!!errorMessage"
-          class="w-full"
-        >
-          <DTextarea
+        <ItField label="Description" html-for="quiz-description" :error="errorMessage">
+          <ItTextarea
+            id="quiz-description"
             :model-value="field.value"
-            :variant="errorMessage ? 'error' : undefined"
+            :invalid="!!errorMessage"
             placeholder="What is this quiz about?"
             :rows="3"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DFieldset>
+        </ItField>
       </Field>
 
       <Field v-slot="{ field }" name="category">
-        <DFieldset label="Category" class="w-full">
-          <DInput
+        <ItField label="Category" html-for="quiz-category">
+          <ItInput
+            id="quiz-category"
             :model-value="field.value ?? ''"
             placeholder="e.g. Geography"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DFieldset>
+        </ItField>
       </Field>
 
       <Field v-slot="{ field }" name="theme">
-        <DFieldset label="Theme" class="w-full">
-          <DSelect
+        <ItField label="Theme" html-for="quiz-theme" hint="Defaults to the application theme.">
+          <ItSelect
+            id="quiz-theme"
             :model-value="field.value ?? ''"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           >
-            <DSelectOption value="">Default ({{ DEFAULT_THEME_NAME }})</DSelectOption>
-            <DSelectOption v-for="name in BUILT_IN_THEMES" :key="name" :value="name">
-              {{ name }}
-            </DSelectOption>
-            <DSelectOption v-for="name in importedThemeNames" :key="name" :value="name">
-              {{ name }}
-            </DSelectOption>
-          </DSelect>
-        </DFieldset>
+            <ItOption value="" :text="`Default (${DEFAULT_THEME.mode}, ${DEFAULT_THEME.accent})`" />
+            <ItOption
+              v-for="option in THEME_OPTIONS"
+              :key="option.value"
+              :value="option.value"
+              :text="`${option.mode} · ${option.accent}`"
+            />
+          </ItSelect>
+        </ItField>
       </Field>
 
-      <DFieldset label="Tags" class="w-full">
-        <div class="flex gap-2">
-          <DInput v-model="tagDraft" placeholder="Add a tag" @keydown.enter.prevent="submitTag" />
-          <DButton type="button" variant="secondary" size="md" @click="submitTag">
+      <ItField label="Tags" html-for="quiz-tag-input">
+        <div class="quiz-tag-row">
+          <ItInput
+            id="quiz-tag-input"
+            v-model="tagDraft"
+            class="quiz-tag-input"
+            placeholder="Add a tag"
+            @keydown.enter.prevent="submitTag"
+          />
+          <ItButton type="button" variant="secondary" :aria-label="'Add tag'" @click="submitTag">
             <PhPlus :size="16" />
-          </DButton>
+          </ItButton>
         </div>
 
         <Field v-slot="{ field }" name="tags">
-          <div v-if="field.value.length > 0" class="flex flex-wrap gap-2 mt-2">
-            <DBadge
+          <div v-if="field.value.length > 0" class="quiz-tag-list">
+            <ItBadge
               v-for="tag in field.value"
               :key="tag"
               variant="primary"
               soft
               removable
+              :remove-label="`Remove tag ${tag}`"
               @remove="emit('remove-tag', tag)"
             >
               {{ tag }}
-            </DBadge>
+            </ItBadge>
           </div>
 
-          <div v-if="tagSuggestions.length > 0" class="flex flex-wrap gap-2 mt-2">
+          <div v-if="tagSuggestions.length > 0" class="quiz-tag-list">
             <button
               v-for="suggestion in tagSuggestions"
               :key="suggestion"
               type="button"
-              class="badge badge-ghost badge-sm cursor-pointer"
+              class="quiz-tag-suggestion"
               @click="emit('add-tag', suggestion)"
             >
               + {{ suggestion }}
             </button>
           </div>
         </Field>
-      </DFieldset>
-    </DCardBody>
-  </DCard>
+      </ItField>
+    </ItCardBody>
+  </ItCard>
 </template>

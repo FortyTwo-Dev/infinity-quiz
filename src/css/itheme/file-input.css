@@ -1,0 +1,52 @@
+/* File input: candidate for upstream. Native input plus a styled picker button. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-file-input-height: var(--it-control-height-md);
+    --it-file-input-padding: var(--it-control-padding-md);
+    --it-file-input-bg: var(--it-surface);
+    --it-file-input-fg: var(--it-surface-fg);
+    --it-file-input-border: var(--it-border);
+    --it-file-input-radius: var(--it-radius);
+  }
+}
+
+@layer components {
+  .it-file-input {
+    font: inherit;
+    color: var(--it-fg);
+    max-width: 100%;
+  }
+
+  .it-file-input::file-selector-button {
+    margin-inline-end: var(--it-space-3);
+    height: var(--it-file-input-height);
+    padding-inline: var(--it-file-input-padding);
+    border: var(--it-border-width) solid var(--it-file-input-border);
+    border-radius: var(--it-file-input-radius);
+    background-color: var(--it-file-input-bg);
+    color: var(--it-file-input-fg);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .it-file-input:hover:not(:disabled)::file-selector-button {
+    opacity: 0.9;
+  }
+
+  .it-file-input:focus-visible::file-selector-button {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .it-file-input:disabled {
+    color: var(--it-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  .it-file-input:disabled::file-selector-button {
+    background-color: var(--it-disabled-bg);
+    border-color: var(--it-disabled-border);
+    color: var(--it-disabled-fg);
+    cursor: not-allowed;
+  }
+}

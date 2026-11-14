@@ -1,0 +1,137 @@
+/*
+ * Sidebar navigation. Collapsed on desktop, the labels disappear and the links
+ * keep their accessible name through `aria-label`.
+ */
+@layer components {
+  .app-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-4);
+    block-size: 100%;
+    min-block-size: 0;
+    /* Two longhands, not a shorthand: `overflow: hidden` would override the
+     * vertical scrolling the rail needs when the navigation is taller than
+     * the viewport. */
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: var(--it-space-3);
+    border-inline-end: var(--it-border-width) solid var(--it-border);
+    background-color: var(--it-surface);
+  }
+
+  /* The brand is the way home: logo, then the name. Collapsed, only the logo
+   * stays, which is a better rail marker than two letters. */
+  .app-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
+    padding: var(--it-space-2);
+    border-radius: var(--it-radius);
+    color: var(--it-fg);
+    font-size: var(--it-font-size-4);
+    font-weight: var(--it-font-weight-semibold);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .app-sidebar-brand:hover {
+    background-color: color-mix(in oklab, var(--it-fg) 8%, transparent);
+  }
+
+  .app-sidebar-brand:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .app-sidebar-logo {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: var(--it-radius);
+    flex-shrink: 0;
+  }
+
+  .app-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .app-nav-grow {
+    margin-block-start: auto;
+  }
+
+  .app-nav-title {
+    padding: var(--it-space-2);
+    color: var(--it-muted);
+    font-size: var(--it-font-size-1);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .app-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-3);
+    padding: var(--it-space-2) var(--it-space-3);
+    border-radius: var(--it-radius);
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--it-fg);
+    transition: background-color 0.15s ease;
+  }
+
+  .app-nav-link:hover {
+    background-color: color-mix(in oklab, var(--it-fg) 8%, transparent);
+  }
+
+  /* The current page is carried by a filled row, not by an underline: a
+   * sidebar row is a surface, a link in running text is not. */
+  .app-nav-link[aria-current='page'] {
+    background-color: color-mix(in oklab, var(--it-accent) 14%, transparent);
+    color: var(--it-accent);
+    font-weight: var(--it-font-weight-semibold);
+    text-decoration: none;
+  }
+
+  .app-nav-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* An icon is not a fluid box: it must keep its size when the row narrows. */
+  .app-nav-link svg {
+    flex-shrink: 0;
+  }
+
+  /* Desktop collapsed: icon only, label hidden but the link keeps its name. */
+  @media (min-width: 64rem) {
+    .app-sidebar[data-collapsed='true'] .app-nav-label,
+    .app-sidebar[data-collapsed='true'] .app-nav-title,
+    .app-sidebar[data-collapsed='true'] .app-sidebar-brand-full {
+      display: none;
+    }
+
+    /* Collapsed, the row is only as wide as the icon: the inline padding of
+     * the expanded row would leave a 6px box and squeeze the icon. */
+    .app-sidebar[data-collapsed='true'] {
+      padding-inline: var(--it-space-2);
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-nav-link {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-sidebar-brand {
+      justify-content: center;
+      padding-inline: 0;
+    }
+
+    .app-sidebar[data-collapsed='true'] .app-nav-title {
+      visibility: hidden;
+    }
+  }
+}

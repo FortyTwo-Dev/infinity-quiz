@@ -4,6 +4,7 @@ import { useForm, useFieldArray, type Path } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { useQuizStore } from '../stores'
 import { QuizFormSchema, type QuizFormValues, type FormQuestion } from '../utils/validation'
+import { normalizeQuizTheme, themeToOptionValue } from '../utils/theme'
 import type { Quiz } from '../types/quiz'
 
 /** Steps of the multi-step quiz form, in display order. */
@@ -64,7 +65,7 @@ function quizToFormValues(quiz: Quiz): QuizFormValues {
       shuffleAnswers: q.shuffleAnswers,
       explanation: q.explanation,
     })),
-    theme: quiz.theme,
+    theme: themeToOptionValue(quiz.theme),
   }
 }
 
@@ -91,7 +92,7 @@ function formValuesToQuiz(values: QuizFormValues, quizId: string): Quiz {
       shuffleAnswers: q.shuffleAnswers,
       explanation: q.explanation,
     })),
-    theme: values.theme || undefined,
+    theme: normalizeQuizTheme(values.theme),
   }
 }
 

@@ -1,24 +1,15 @@
 <script setup lang="ts">
-import { DButton } from '@/components/daisy-ui'
 import { PhPlus } from '@phosphor-icons/vue'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
 import QuizQuestionFields from './QuizQuestionFields.vue'
 
-interface Props {
-  questionCount: number
-}
+defineProps<{ questionCount: number }>()
 
-defineProps<Props>()
-
-interface Emits {
-  (e: 'add'): void
-  (e: 'remove', index: number): void
-}
-
-const emit = defineEmits<Emits>()
+const emit = defineEmits<{ add: []; remove: [index: number] }>()
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full">
+  <div class="quiz-questions-step">
     <QuizQuestionFields
       v-for="index in questionCount"
       :key="index - 1"
@@ -28,9 +19,9 @@ const emit = defineEmits<Emits>()
       @remove="emit('remove', index - 1)"
     />
 
-    <DButton type="button" variant="primary" size="md" soft @click="emit('add')">
+    <ItButton type="button" variant="secondary" @click="emit('add')">
       <PhPlus :size="18" />
       Add question
-    </DButton>
+    </ItButton>
   </div>
 </template>

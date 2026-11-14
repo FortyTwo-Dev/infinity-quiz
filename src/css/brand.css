@@ -1,0 +1,82 @@
+/*
+ * Brand layer of infinity-quiz: the accent bindings, the typeface, and the
+ * values the application carried over from its daisyUI themes.
+ *
+ * Loaded after @infinitylib/infinity-theme; the layer order is declared in
+ * src/css/style.css, which index.html loads first.
+ */
+
+@font-face {
+  font-family: 'SpaceGrotesk';
+  src: url('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer it.base {
+  :root {
+    --it-font-sans: 'SpaceGrotesk', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer it.tokens {
+  /* Carried over from the daisyUI theme blocks: 2px frames, 0.25rem boxes. */
+  :root {
+    --it-border-width: 2px;
+    --it-radius: 0.125rem;
+
+    /* The accent as an ink: a fill colour is tuned for blocks, not for small
+     * text. Mixing it towards the foreground darkens it on light surfaces and
+     * lightens it on dark ones, which is exactly what a readable ink needs. */
+    --iq-accent-ink: color-mix(in oklab, var(--it-accent) 50%, var(--it-fg));
+
+    /* The status hues of the previous theme, so charts, alerts and badges keep
+     * their colour while the rest of the migration is in flight. */
+    --it-info: oklch(74% 0.16 232.661);
+    --it-info-fg: oklch(29% 0.066 243.157);
+    --it-success: oklch(79% 0.209 151.711);
+    --it-success-fg: oklch(37% 0.077 168.94);
+    --it-warning: oklch(82% 0.189 84.429);
+    --it-warning-fg: oklch(41% 0.112 45.904);
+    --it-danger: oklch(70% 0.191 22.216);
+    --it-danger-fg: oklch(27% 0.105 12.094);
+  }
+
+  [data-theme='dark'] {
+    --it-info: oklch(68% 0.169 237.323);
+    --it-info-fg: oklch(0% 0 0);
+    --it-success: oklch(72% 0.219 149.579);
+    --it-success-fg: oklch(0% 0 0);
+    --it-warning: oklch(76% 0.188 70.08);
+    --it-warning-fg: oklch(0% 0 0);
+    --it-danger: oklch(63% 0.237 25.331);
+    --it-danger-fg: oklch(0% 0 0);
+  }
+
+  /*
+   * The accent. One per application: #00ff96 is hue 155 at saturation 100 %
+   * and lightness 50 % in HSL, the recipe of the charte. Its ink is mixed
+   * harder towards the text colour, because a bright accent falls under
+   * 4.5:1 as small text otherwise.
+   */
+  :root[data-accent='green'] {
+    --it-accent: #00ff96;
+    --it-accent-fg: oklch(18% 0 0);
+    --iq-accent-ink: color-mix(in oklab, var(--it-accent) 45%, var(--it-fg));
+  }
+
+}
+
+/*
+ * Deliberate exceptions to the package, in the layer reserved for them.
+ *
+ * A ghost button hovers to `--it-surface`, which is exactly the background of
+ * a card: on a card, the hover was invisible. The knob is rebound to a tint of
+ * the text colour, so the feedback reads on any surface.
+ */
+@layer it.overrides {
+  :where(.it-theme) {
+    --it-button-ghost-hover-bg: color-mix(in oklab, var(--it-fg) 9%, transparent);
+  }
+}

@@ -6,35 +6,19 @@ interface Props {
   fluid?: boolean
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'none'
   padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  /** Every container is centred by `.l-container`; kept for the call sites. */
   centered?: boolean
 }
 
 const props = defineProps<Props>()
 
 const containerClasses = computed(() => {
-  const classes: string[] = []
+  const classes = ['l-container']
 
-  if (props.fluid) {
-    classes.push('w-full', 'max-w-none')
-  } else if (props.size) {
-    classes.push(`max-w-${props.size}`)
-  }
+  if (props.fluid) classes.push('l-container-fluid')
+  else if (props.size) classes.push(`l-container-${props.size}`)
 
-  if (props.padding) {
-    const paddingMap: Record<string, string> = {
-      none: 'p-0',
-      xs: 'p-1',
-      sm: 'p-2',
-      md: 'p-4',
-      lg: 'p-6',
-      xl: 'p-8',
-    }
-    classes.push(paddingMap[props.padding] || 'p-4')
-  }
-
-  if (props.centered) {
-    classes.push('mx-auto')
-  }
+  if (props.padding) classes.push(`l-container-pad-${props.padding}`)
 
   return classes
 })

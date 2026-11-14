@@ -13,7 +13,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  color: 'primary',
+  color: 'accent',
   size: 160,
 })
 
@@ -51,11 +51,11 @@ const chartOptions: ChartOptions<'doughnut'> = {
 </script>
 
 <template>
-  <div class="relative" :style="{ width: `${size}px`, height: `${size}px` }">
+  <div class="quiz-gauge" :style="{ width: `${size}px`, height: `${size}px` }">
     <Doughnut :data="chartData" :options="chartOptions" />
-    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-      <span class="text-2xl font-bold leading-tight">{{ Math.round(value) }}%</span>
-      <span class="text-sm text-base-content/70 leading-tight">{{ label }}</span>
+    <div class="quiz-gauge-center">
+      <span class="quiz-gauge-value">{{ Math.round(value) }}%</span>
+      <span class="quiz-gauge-label">{{ label }}</span>
     </div>
   </div>
 </template>

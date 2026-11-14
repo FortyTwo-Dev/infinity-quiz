@@ -2,154 +2,131 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { nextTick } from 'vue'
 import { useThemeStore } from '../../stores/theme-store'
 import { setupTestPinia, installTestPinia, readStorage } from './setup'
+import { STORAGE_KEYS } from '../../constants'
 
-const VALID_BLOCK = `@plugin "daisyui/theme" {
-  name: "mytheme";
-  color-scheme: "dark";
-  --color-base-100: oklch(14% 0.005 285.823);
-  --color-primary: oklch(59% 0.24 277);
-}`
+function rootTheme() {
+  return {
+    mode: document.documentElement.dataset.theme,
+    accent: document.documentElement.dataset.accent,
+  }
+}
 
 describe('useThemeStore', () => {
   beforeEach(() => {
     setupTestPinia()
-  })
-
-  describe('importTheme', () => {
-    it('imports a valid theme, applies it and persists it', async () => {
-      const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
-      await nextTick()
-
-      expect(store.importedThemes).toHaveLength(1)
-      expect(store.importedThemes[0]?.name).toBe('mytheme')
-      expect(store.globalThemeName).toBe('mytheme')
-      expect(store.importedThemes[0]?.raw).toBe(VALID_BLOCK)
-
-      const persisted = JSON.parse(readStorage('infinity-quiz-theme') ?? '{}')
-      expect(persisted.importedThemes[0].name).toBe('mytheme')
-      expect(persisted.globalThemeName).toBe('mytheme')
-    })
-
-    it('uses the name override', () => {
-      const store = useThemeStore()
-      store.importTheme(VALID_BLOCK, 'renamed-theme')
-
-      expect(store.importedThemes[0]?.name).toBe('renamed-theme')
-    })
-
-    it('rejects duplicate names (imported or built-in)', () => {
-      const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
-
-      expect(() => store.importTheme(VALID_BLOCK)).toThrow('already exists')
-      expect(() => store.importTheme(VALID_BLOCK, 'infinity-blue-light')).toThrow('already exists')
-    })
-
-    it('rejects an empty or invalid name override', () => {
-      const store = useThemeStore()
-      expect(() => store.importTheme(VALID_BLOCK, '')).toThrow('Theme name is invalid')
-      expect(() => store.importTheme(VALID_BLOCK, 'bad name')).toThrow('Theme name is invalid')
-    })
-
-    it('does not add the theme when parsing fails', () => {
-      const store = useThemeStore()
-      expect(() => store.importTheme('@plugin "daisyui/theme" { }')).toThrow('Theme name is missing')
-      expect(store.importedThemes).toHaveLength(0)
-    })
-  })
-
-  describe('removeTheme', () => {
-    it('removes the theme and falls back to the default when active', () => {
-      const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
-
-      store.removeTheme('mytheme')
-
-      expect(store.importedThemes).toHaveLength(0)
-      expect(store.globalThemeName).toBe('infinity-blue-light')
-    })
-
-    it('keeps the current global theme when removing a non-active theme', () => {
-      const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
-      store.applyTheme('infinity-red-light')
-
-      store.removeTheme('mytheme')
-
-      expect(store.globalThemeName).toBe('infinity-red-light')
-    })
+    delete document.documentElement.dataset.theme
+    delete document.documentElement.dataset.accent
   })
 
   describe('applyTheme', () => {
-    it('updates the global theme name', () => {
+    it('writes both attributes on the document element', () => {
       const store = useThemeStore()
-      store.applyTheme('infinity-yellow-dark')
+      store.applyTheme({ mode: 'dark', accent: 'green' })
 
-      expect(store.globalThemeName).toBe('infinity-yellow-dark')
+      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'green' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'green' })
+    })
+
+    it('persists the pair under the theme storage key', async () => {
+      const store = useThemeStore()
+      store.applyTheme({ mode: 'dark', accent: 'green' })
+      await nextTick()
+
+      expect(JSON.parse(readStorage(STORAGE_KEYS.theme) ?? '{}')).toEqual({
+        globalTheme: { mode: 'dark', accent: 'green' },
+      })
     })
   })
 
   describe('applyQuizTheme / restoreGlobalTheme', () => {
-    it('applies the default theme when the quiz has no theme', () => {
+    it('keeps the global theme when the quiz carries no theme', () => {
       const store = useThemeStore()
-      store.applyTheme('infinity-red-light')
+      store.applyTheme({ mode: 'dark', accent: 'green' })
 
       store.applyQuizTheme(undefined)
 
-      expect(store.temporaryThemeName).toBe('infinity-blue-light')
-      expect(store.globalThemeName).toBe('infinity-red-light')
+      expect(store.temporaryTheme).toBeNull()
+      expect(store.globalTheme).toEqual({ mode: 'dark', accent: 'green' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'green' })
     })
 
-    it('applies a built-in quiz theme without touching the global theme', () => {
+    it('changes both attributes without touching the global theme', () => {
       const store = useThemeStore()
-      store.applyTheme('infinity-blue-light')
+      store.applyTheme({ mode: 'light', accent: 'green' })
 
-      store.applyQuizTheme('infinity-red-dark')
+      store.applyQuizTheme({ mode: 'dark', accent: 'green' })
 
-      expect(store.temporaryThemeName).toBe('infinity-red-dark')
-      expect(store.globalThemeName).toBe('infinity-blue-light')
+      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'green' })
+      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'green' })
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'green' })
     })
 
-    it('falls back to the default for an unknown theme name', () => {
+    it('accepts a legacy name left in an older quiz', () => {
       const store = useThemeStore()
-      store.applyQuizTheme('does-not-exist')
 
-      expect(store.temporaryThemeName).toBe('infinity-blue-light')
+      store.applyQuizTheme('infinity-yellow-dark')
+
+      expect(store.temporaryTheme).toEqual({ mode: 'dark', accent: 'green' })
     })
 
-    it('applies an imported theme when it exists', () => {
+    it('keeps the global theme for a quiz whose theme is unknown', () => {
       const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
+      store.applyTheme({ mode: 'dark', accent: 'green' })
 
-      store.applyQuizTheme('mytheme')
+      store.applyQuizTheme('removed-theme')
 
-      expect(store.temporaryThemeName).toBe('mytheme')
+      expect(store.temporaryTheme).toBeNull()
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'green' })
     })
 
     it('restores the global theme', () => {
       const store = useThemeStore()
-      store.applyTheme('infinity-red-light')
-      store.applyQuizTheme('infinity-yellow-dark')
+      store.applyTheme({ mode: 'light', accent: 'green' })
+      store.applyQuizTheme({ mode: 'dark', accent: 'green' })
 
       store.restoreGlobalTheme()
 
-      expect(store.temporaryThemeName).toBeNull()
+      expect(store.temporaryTheme).toBeNull()
+      expect(rootTheme()).toEqual({ mode: 'light', accent: 'green' })
+    })
+  })
+
+  describe('rehydrate', () => {
+    it('writes the rehydrated theme on the document element', () => {
+      const store = useThemeStore()
+      store.applyTheme({ mode: 'dark', accent: 'green' })
+
+      store.rehydrate()
+
+      expect(rootTheme()).toEqual({ mode: 'dark', accent: 'green' })
+    })
+
+    it('normalizes an unsupported stored selection back to a valid one', () => {
+      // A payload written by a build this one does not know.
+      localStorage.setItem(
+        STORAGE_KEYS.theme,
+        JSON.stringify({ globalTheme: { mode: 'sepia', accent: 'violet' } }),
+      )
+      installTestPinia()
+
+      const store = useThemeStore()
+      store.rehydrate()
+
+      expect(store.globalTheme).toEqual({ mode: 'light', accent: 'green' })
+      expect(rootTheme()).toEqual({ mode: 'light', accent: 'green' })
     })
   })
 
   describe('persistence', () => {
-    it('rehydrates imported themes after a simulated reload', async () => {
+    it('keeps the mode and accent across a simulated reload', async () => {
       const store = useThemeStore()
-      store.importTheme(VALID_BLOCK)
+      store.applyTheme({ mode: 'dark', accent: 'green' })
       await nextTick()
 
       installTestPinia()
       const fresh = useThemeStore()
 
-      expect(fresh.importedThemes).toHaveLength(1)
-      expect(fresh.importedThemes[0]?.name).toBe('mytheme')
-      expect(fresh.globalThemeName).toBe('mytheme')
+      expect(fresh.globalTheme).toEqual({ mode: 'dark', accent: 'green' })
     })
   })
 })

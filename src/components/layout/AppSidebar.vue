@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import {
-  PhHouse,
-  PhChartLine,
-  PhPlus,
-  PhGear,
-  PhArrowSquareIn,
-  PhPalette,
-} from '@phosphor-icons/vue'
+import { RouterLink } from 'vue-router'
+import { PhHouse, PhChartLine, PhPlus, PhGear, PhArrowSquareIn } from '@phosphor-icons/vue'
 
 interface NavItem {
   label: string
@@ -21,7 +15,6 @@ const managementNavItems: NavItem[] = [
   { label: 'Management', routeName: 'quiz-management', icon: PhGear },
   { label: 'Create', routeName: 'quiz-create', icon: PhPlus },
   { label: 'Import / Export', routeName: 'quiz-import-export', icon: PhArrowSquareIn },
-  { label: 'Themes', routeName: 'theme-import', icon: PhPalette },
 ]
 
 const otherNavItems: NavItem[] = [
@@ -30,56 +23,51 @@ const otherNavItems: NavItem[] = [
 </script>
 
 <template>
-  <div class="w-full">
-    <ul class="menu w-full">
-      <li class="text-2xl font-bold text-base-content">
-        <span class="is-drawer-close:hidden">IQuiz</span>
-        <span class="is-drawer-open:hidden">IQ</span>
-      </li>
-    </ul>
+  <RouterLink to="/" class="app-sidebar-brand">
+    <img src="/img/logo.png" alt="" aria-hidden="true" class="app-sidebar-logo" />
+    <span class="app-sidebar-brand-full">IQuiz</span>
+  </RouterLink>
 
-    <!-- Main navigation -->
-    <ul class="menu w-full">
+  <nav aria-label="Sections">
+    <ul class="app-nav">
       <li v-for="item in mainNavItems" :key="item.routeName">
         <router-link
           :to="{ name: item.routeName }"
-          class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          :data-tip="item.label"
+          class="it-nav-link app-nav-link"
+          :aria-label="item.label"
         >
-          <component :is="item.icon" class="inline-block" size="20" weight="fill" />
-          <span class="is-drawer-close:hidden">{{ item.label }}</span>
+          <component :is="item.icon" :size="20" weight="fill" />
+          <span class="app-nav-label">{{ item.label }}</span>
         </router-link>
       </li>
     </ul>
 
-    <!-- Management section -->
-    <ul class="menu w-full">
-      <li class="menu-title is-drawer-close:hidden"><span>Management</span></li>
+    <ul class="app-nav">
+      <li class="app-nav-title">Management</li>
       <li v-for="item in managementNavItems" :key="item.routeName">
         <router-link
           :to="{ name: item.routeName }"
-          class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          :data-tip="item.label"
+          class="it-nav-link app-nav-link"
+          :aria-label="item.label"
         >
-          <component :is="item.icon" class="inline-block" size="20" weight="fill" />
-          <span class="is-drawer-close:hidden">{{ item.label }}</span>
+          <component :is="item.icon" :size="20" weight="fill" />
+          <span class="app-nav-label">{{ item.label }}</span>
         </router-link>
       </li>
     </ul>
 
-    <!-- Other section -->
-    <ul class="menu w-full mt-auto">
-      <li class="menu-title is-drawer-close:hidden"><span>Other</span></li>
+    <ul class="app-nav app-nav-grow">
+      <li class="app-nav-title">Other</li>
       <li v-for="item in otherNavItems" :key="item.routeName">
         <router-link
           :to="{ name: item.routeName }"
-          class="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          :data-tip="item.label"
+          class="it-nav-link app-nav-link"
+          :aria-label="item.label"
         >
-          <component :is="item.icon" class="inline-block" size="20" weight="fill" />
-          <span class="is-drawer-close:hidden">{{ item.label }}</span>
+          <component :is="item.icon" :size="20" weight="fill" />
+          <span class="app-nav-label">{{ item.label }}</span>
         </router-link>
       </li>
     </ul>
-  </div>
+  </nav>
 </template>

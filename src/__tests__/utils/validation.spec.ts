@@ -112,6 +112,25 @@ describe('Zod validation utils', () => {
       expect(result.success).toBe(false)
     })
 
+    it('QuizSchema should convert a legacy theme name into a selection', () => {
+      const result = QuizSchema.parse({ ...validQuiz, theme: 'infinity-red-dark' })
+
+      expect(result.theme).toEqual({ mode: 'dark', accent: 'green' })
+    })
+
+    it('QuizSchema should drop an unknown theme instead of rejecting the quiz', () => {
+      const result = QuizSchema.safeParse({ ...validQuiz, theme: 'removed-theme' })
+
+      expect(result.success).toBe(true)
+      expect(result.data?.theme).toBeUndefined()
+    })
+
+    it('QuizSchema should keep an already normalized theme', () => {
+      const result = QuizSchema.parse({ ...validQuiz, theme: { mode: 'light', accent: 'green' } })
+
+      expect(result.theme).toEqual({ mode: 'light', accent: 'green' })
+    })
+
     it('QuizSchema should reject empty questions', () => {
       const result = QuizSchema.safeParse(invalidQuizEmptyQuestions)
       expect(result.success).toBe(false)
@@ -180,14 +199,15 @@ describe('Zod validation utils', () => {
     })
 
     it('should return null when a question correctAnswerIndex is out of range', () => {
-      const json = JSON.stringify({ ...validQuiz, questions: [invalidQuestionInvalidCorrectAnswer] })
+      const json = JSON.stringify({
+        ...validQuiz,
+        questions: [invalidQuestionInvalidCorrectAnswer],
+      })
       expect(parseAndValidateQuizJSON(json)).toBeNull()
     })
 
     it('should return null when one quiz of an array is invalid', () => {
-      expect(
-        parseAndValidateQuizJSON(JSON.stringify([validQuiz, invalidQuizMissingId])),
-      ).toBeNull()
+      expect(parseAndValidateQuizJSON(JSON.stringify([validQuiz, invalidQuizMissingId]))).toBeNull()
     })
   })
 

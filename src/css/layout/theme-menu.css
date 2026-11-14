@@ -1,0 +1,8 @@
+/* Theme controls. A single accent per application: only the mode is a choice. */
+@layer components {
+  .app-theme-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
+  }
+}

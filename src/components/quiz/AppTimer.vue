@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DBadge, DProgress } from '@/components/daisy-ui'
+import { ItProgress } from '@/components/itheme'
 
 interface Props {
   timeLeft: number | null
@@ -10,7 +10,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const formattedTime = computed(() => {
-  if (props.timeLeft === null) return null
+  if (props.timeLeft === null) return '00:00'
   const minutes = Math.floor(props.timeLeft / 60)
   const seconds = props.timeLeft % 60
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
@@ -22,30 +22,21 @@ const isTimeLow = computed(() => {
   return props.timeLeft <= props.timeLimit * 0.1
 })
 
-const percentage = computed(() => {
+const progressValue = computed(() => {
   if (!props.timeLimit || props.timeLeft === null) return 0
   return Math.max(100 - (props.timeLeft / props.timeLimit) * 100, 0)
 })
 </script>
 
 <template>
-  <div class="inline-block relative h-8">
-    <DProgress
-      v-if="props.timeLimit && props.timeLeft !== null"
-      :value="percentage"
-      :color="isTimeLow ? 'warning' : 'success'"
-      class="h-2 absolute top-1/2 left-0 right-0 -translate-y-1/2"
+  <div class="quiz-timer" :data-low="isTimeLow">
+    <ItProgress
+      v-if="timeLimit && timeLeft !== null"
+      :value="progressValue"
+      :variant="isTimeLow ? 'warning' : 'accent'"
+      label="Time remaining"
+      class="quiz-timer-bar"
     />
-    <DBadge
-      variant="ghost"
-      size="lg"
-      class="font-mono text-xl px-2 py-1 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
-      :class="{
-        'text-warning animate-pulse': isTimeLow,
-        'text-success': !isTimeLow && props.timeLeft !== null,
-      }"
-    >
-      {{ formattedTime || '00:00' }}
-    </DBadge>
+    <span class="quiz-timer-value">{{ formattedTime }}</span>
   </div>
 </template>
