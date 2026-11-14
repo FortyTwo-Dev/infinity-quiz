@@ -13,3 +13,8 @@ packs:
     path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/containers"
   - source: path
     path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/ci"
+  - source: git
+    url: "https://github.com/FortyTwo-Dev/iproject-ibrain-packs"
+    ref: "main"
+    pack: "infinity-quiz"
+    layer: project

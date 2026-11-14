@@ -112,7 +112,7 @@ git push origin --delete <branch_name>
 ### Checklist
 
 - Functionality: Does the code correctly implement the feature/fix?
-- Convention compliance: Does the code follow rules in `rules/`?
+- Convention compliance: Does the code follow the rules resolved for its path (`ibrain resolve <path> --render`)?
 - Type safety: No `any`, proper typing everywhere
 - Error handling: Are errors handled properly?
 - Tests: Are there tests for new code? Is coverage sufficient?
