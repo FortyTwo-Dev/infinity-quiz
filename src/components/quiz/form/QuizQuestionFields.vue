@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Field, useFieldArray } from 'vee-validate'
-import { DButton, DCheckbox, DFieldset, DInput, DTextarea } from '@/components/daisy-ui'
-import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
+import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
+import { ItButton, ItCheckbox, ItField, ItInput, ItTextarea } from '@infinitylib/infinity-theme-vue'
 import { PhPlus, PhTrash, PhCaretDown, PhCaretUp } from '@phosphor-icons/vue'
 
 interface Props {
@@ -13,11 +13,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-interface Emits {
-  (e: 'remove'): void
-}
-
-const emit = defineEmits<Emits>()
+const emit = defineEmits<{ remove: [] }>()
 
 const showAdvanced = ref(false)
 
@@ -40,54 +36,51 @@ function removeOptionAt(optionIndex: number) {
 </script>
 
 <template>
-  <DCard border class="bg-base-100 w-full">
-    <DCardBody padding="lg" class="gap-4">
-      <div class="flex items-center justify-between">
-        <DCardTitle tag="h3" size="md">Question {{ questionIndex + 1 }}</DCardTitle>
-        <DButton
+  <ItCard border class="quiz-form-card">
+    <ItCardBody size="lg">
+      <div class="quiz-question-head">
+        <ItCardTitle as="h3">Question {{ questionIndex + 1 }}</ItCardTitle>
+        <ItButton
           v-if="canRemove"
           type="button"
-          variant="error"
+          variant="danger"
           size="sm"
-          soft
+          :aria-label="`Remove question ${questionIndex + 1}`"
           @click="emit('remove')"
         >
           <PhTrash :size="16" />
-        </DButton>
+        </ItButton>
       </div>
 
       <Field v-slot="{ field, errorMessage }" :name="`${basePath}.text`">
-        <DFieldset
+        <ItField
           label="Question text"
-          :message="errorMessage"
-          :error="!!errorMessage"
-          class="w-full"
+          :html-for="`question-${questionIndex}-text`"
+          :error="errorMessage"
         >
-          <DInput
+          <ItInput
+            :id="`question-${questionIndex}-text`"
             :model-value="field.value"
-            :color="errorMessage ? 'error' : undefined"
+            :invalid="!!errorMessage"
             placeholder="Your question"
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
-        </DFieldset>
+        </ItField>
       </Field>
 
-      <div class="flex flex-col gap-2">
-        <span class="text-sm font-medium">Options</span>
-        <Field
-          v-slot="{ field: correctField }"
-          :name="`${basePath}.correctAnswerIndex`"
-        >
-          <div class="flex flex-col gap-2">
+      <div class="quiz-options">
+        <span class="quiz-options-label">Options</span>
+        <Field v-slot="{ field: correctField }" :name="`${basePath}.correctAnswerIndex`">
+          <div class="quiz-option-list">
             <div
               v-for="(optionField, optionIndex) in optionFields"
               :key="optionField.key"
-              class="flex items-center gap-2"
+              class="quiz-option-row"
             >
               <input
                 type="radio"
-                class="radio radio-primary"
+                class="it-radio-primary"
                 :name="`correct-${questionIndex}`"
                 :checked="correctField.value === optionIndex"
                 :aria-label="`Mark option ${optionIndex + 1} as correct`"
@@ -96,39 +89,42 @@ function removeOptionAt(optionIndex: number) {
               <Field
                 v-slot="{ field, errorMessage }"
                 :name="`${basePath}.options[${optionIndex}]`"
-                class="flex-1"
+                class="quiz-option-field"
               >
-                <DInput
+                <ItInput
                   :model-value="field.value"
-                  :color="errorMessage ? 'error' : undefined"
+                  :invalid="!!errorMessage"
                   :placeholder="`Option ${optionIndex + 1}`"
-                  class="flex-1"
+                  :aria-label="`Option ${optionIndex + 1}`"
                   @update:model-value="field.onChange"
                   @blur="field.onBlur"
                 />
               </Field>
-              <DButton
+              <ItButton
                 type="button"
                 variant="ghost"
                 size="sm"
                 :disabled="optionFields.length <= 2"
+                :aria-label="`Remove option ${optionIndex + 1}`"
                 @click="removeOptionAt(optionIndex)"
               >
                 <PhTrash :size="16" />
-              </DButton>
+              </ItButton>
             </div>
           </div>
         </Field>
-        <DButton type="button" variant="secondary" size="sm" soft @click="addOption">
+        <ItButton type="button" variant="secondary" size="sm" @click="addOption">
           <PhPlus :size="16" />
           Add option
-        </DButton>
+        </ItButton>
       </div>
 
-      <div class="flex flex-col gap-3">
+      <div class="quiz-advanced">
         <button
           type="button"
-          class="btn btn-ghost btn-sm justify-start gap-2 self-start"
+          class="quiz-advanced-toggle"
+          :aria-expanded="showAdvanced"
+          :aria-controls="`question-${questionIndex}-advanced`"
           @click="showAdvanced = !showAdvanced"
         >
           <PhCaretUp v-if="showAdvanced" :size="16" />
@@ -136,42 +132,53 @@ function removeOptionAt(optionIndex: number) {
           Advanced options
         </button>
 
-        <div v-if="showAdvanced" class="flex flex-col gap-4 pl-2">
+        <div
+          v-if="showAdvanced"
+          :id="`question-${questionIndex}-advanced`"
+          class="quiz-advanced-panel"
+        >
           <Field v-slot="{ field }" :name="`${basePath}.explanation`">
-            <DFieldset label="Explanation (shown with feedback)" class="w-full">
-              <DTextarea
+            <ItField
+              label="Explanation (shown with feedback)"
+              :html-for="`question-${questionIndex}-explanation`"
+            >
+              <ItTextarea
+                :id="`question-${questionIndex}-explanation`"
                 :model-value="field.value ?? ''"
                 :rows="2"
                 placeholder="Explain the correct answer"
                 @update:model-value="field.onChange"
                 @blur="field.onBlur"
               />
-            </DFieldset>
+            </ItField>
           </Field>
 
           <Field v-slot="{ field }" :name="`${basePath}.timeLimit`">
-            <DFieldset label="Time limit (seconds, optional)" class="w-full">
-              <DInput
+            <ItField
+              label="Time limit (seconds, optional)"
+              :html-for="`question-${questionIndex}-time-limit`"
+            >
+              <ItInput
+                :id="`question-${questionIndex}-time-limit`"
                 type="number"
                 :model-value="field.value ?? ''"
                 placeholder="No limit"
                 @update:model-value="field.onChange"
                 @blur="field.onBlur"
               />
-            </DFieldset>
+            </ItField>
           </Field>
 
           <Field v-slot="{ field }" :name="`${basePath}.shuffleAnswers`">
-            <label class="flex items-center gap-3 cursor-pointer">
-              <DCheckbox
-                :model-value="field.value ?? false"
-                @update:model-value="field.onChange"
-              />
-              <span class="text-sm">Shuffle this question's answers</span>
-            </label>
+            <ItCheckbox
+              :id="`question-${questionIndex}-shuffle`"
+              :label="`Shuffle this question's answers`"
+              :model-value="field.value ?? false"
+              @update:model-value="field.onChange"
+            />
           </Field>
         </div>
       </div>
-    </DCardBody>
-  </DCard>
+    </ItCardBody>
+  </ItCard>
 </template>

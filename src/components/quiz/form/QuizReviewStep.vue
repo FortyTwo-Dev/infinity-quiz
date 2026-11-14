@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DBadge } from '@/components/daisy-ui'
-import { DCard, DCardBody, DCardTitle } from '@/components/daisy-ui/card'
+import { ItBadge, ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
 import type { QuizFormValues } from '@/utils/validation'
 
 interface Props {
@@ -32,58 +31,56 @@ const settings = computed<SettingRow[]>(() => [
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 w-full">
-    <DCard border class="bg-base-100 w-full">
-      <DCardBody padding="lg" class="gap-3">
-        <DCardTitle tag="h2" size="lg">Summary</DCardTitle>
-        <h3 class="text-xl font-semibold">{{ values.title }}</h3>
-        <p class="text-base-content/70">{{ values.description }}</p>
+  <div class="quiz-review-step">
+    <ItCard border class="quiz-form-card">
+      <ItCardBody size="lg">
+        <ItCardTitle as="h2" size="lg">Summary</ItCardTitle>
+        <h3 class="quiz-review-title">{{ values.title }}</h3>
+        <p class="quiz-review-description">{{ values.description }}</p>
 
-        <div class="flex flex-wrap gap-2 items-center">
-          <DBadge soft variant="primary" class="uppercase font-bold">
+        <div class="quiz-review-badges">
+          <ItBadge variant="accent" soft class="quiz-review-category">
             {{ values.category || 'Uncategorized' }}
-          </DBadge>
-          <DBadge v-for="tag in values.tags" :key="tag" variant="primary" soft>{{ tag }}</DBadge>
+          </ItBadge>
+          <ItBadge v-for="tag in values.tags" :key="tag" variant="accent" soft>{{ tag }}</ItBadge>
         </div>
-      </DCardBody>
-    </DCard>
+      </ItCardBody>
+    </ItCard>
 
-    <DCard border class="bg-base-100 w-full">
-      <DCardBody padding="lg" class="gap-3">
-        <DCardTitle tag="h3" size="md">Settings</DCardTitle>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+    <ItCard border class="quiz-form-card">
+      <ItCardBody size="lg">
+        <ItCardTitle as="h3">Settings</ItCardTitle>
+        <dl class="quiz-review-settings">
           <div v-for="setting in settings" :key="setting.label">
-            <div class="text-base-content/60">{{ setting.label }}</div>
-            <div class="font-semibold">{{ setting.value }}</div>
+            <dt>{{ setting.label }}</dt>
+            <dd>{{ setting.value }}</dd>
           </div>
-        </div>
-      </DCardBody>
-    </DCard>
+        </dl>
+      </ItCardBody>
+    </ItCard>
 
-    <DCard border class="bg-base-100 w-full">
-      <DCardBody padding="lg" class="gap-4">
-        <DCardTitle tag="h3" size="md">
-          Questions ({{ values.questions.length }})
-        </DCardTitle>
+    <ItCard border class="quiz-form-card">
+      <ItCardBody size="lg">
+        <ItCardTitle as="h3">Questions ({{ values.questions.length }})</ItCardTitle>
 
         <div
           v-for="(question, index) in values.questions"
           :key="index"
-          class="flex flex-col gap-2 border-b border-base-200 pb-3 last:border-none"
+          class="quiz-review-question"
         >
-          <div class="font-medium">{{ index + 1 }}. {{ question.text }}</div>
-          <ul class="flex flex-col gap-1 text-sm">
+          <div class="quiz-review-question-title">{{ index + 1 }}. {{ question.text }}</div>
+          <ul class="quiz-review-options">
             <li
               v-for="(option, optionIndex) in question.options"
               :key="optionIndex"
-              :class="optionIndex === question.correctAnswerIndex ? 'text-success' : ''"
+              :class="{ 'quiz-review-option-correct': optionIndex === question.correctAnswerIndex }"
             >
               {{ optionLetters[optionIndex] ?? '?' }}. {{ option }}
               <span v-if="optionIndex === question.correctAnswerIndex"> (correct)</span>
             </li>
           </ul>
         </div>
-      </DCardBody>
-    </DCard>
+      </ItCardBody>
+    </ItCard>
   </div>
 </template>
