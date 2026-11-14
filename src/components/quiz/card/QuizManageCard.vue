@@ -37,7 +37,7 @@ function handleDelete() {
   <ItCard border class="quiz-manage-card" @click="handleEdit">
     <ItCardBody size="lg">
       <div class="quiz-card-meta">
-        <ItBadge variant="accent" soft class="quiz-card-category">
+        <ItBadge variant="primary" soft class="quiz-card-category">
           {{ quiz.category || 'Uncategorized' }}
         </ItBadge>
         <span class="quiz-manage-count">{{ quiz.questions.length }} questions</span>

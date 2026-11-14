@@ -33,7 +33,7 @@ const status = computed(() =>
   <ItCard border class="quiz-launch-card" @click="emit('click')">
     <ItCardBody>
       <div class="quiz-card-meta">
-        <ItBadge variant="accent" soft class="quiz-card-category">
+        <ItBadge variant="primary" soft class="quiz-card-category">
           {{ primaryTag || 'Uncategorized' }}
         </ItBadge>
         <span v-if="status" class="quiz-status" :data-status="status.color">

@@ -55,10 +55,10 @@ defineExpose({ open, close })
     <section v-if="primaryTag || (tags && tags.length > 0)" class="quiz-info-section">
       <h3 class="quiz-info-heading">Category &amp; tags</h3>
       <div class="quiz-info-row">
-        <ItBadge v-if="primaryTag" variant="accent" class="quiz-info-tag-strong">
+        <ItBadge v-if="primaryTag" variant="primary" class="quiz-info-tag-strong">
           {{ primaryTag }}
         </ItBadge>
-        <ItBadge v-for="tag in tags" :key="tag" variant="accent" soft>{{ tag }}</ItBadge>
+        <ItBadge v-for="tag in tags" :key="tag" variant="primary" soft>{{ tag }}</ItBadge>
       </div>
     </section>
 

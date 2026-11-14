@@ -31,42 +31,63 @@
     --it-badge-bg: var(--it-surface);
     --it-badge-fg: var(--it-surface-fg);
     --it-badge-border: var(--it-border);
+
+    --it-badge-soft-tint: var(--it-fg);
+    --it-badge-soft-ink: var(--it-fg);
   }
 
-  .it-badge-accent {
+  .it-badge-primary {
     --it-badge-bg: var(--it-accent);
     --it-badge-fg: var(--it-accent-fg);
     --it-badge-border: var(--it-accent);
+
+    --it-badge-soft-tint: var(--it-accent);
+    --it-badge-soft-ink: var(--iq-accent-ink);
   }
 
   .it-badge-success {
     --it-badge-bg: var(--it-success);
     --it-badge-fg: var(--it-success-fg);
     --it-badge-border: var(--it-success);
+
+    --it-badge-soft-tint: var(--it-success);
+    --it-badge-soft-ink: color-mix(in oklab, var(--it-success) 55%, var(--it-fg));
   }
 
   .it-badge-warning {
     --it-badge-bg: var(--it-warning);
     --it-badge-fg: var(--it-warning-fg);
     --it-badge-border: var(--it-warning);
+
+    --it-badge-soft-tint: var(--it-warning);
+    --it-badge-soft-ink: color-mix(in oklab, var(--it-warning) 45%, var(--it-fg));
   }
 
   .it-badge-danger {
     --it-badge-bg: var(--it-danger);
     --it-badge-fg: var(--it-danger-fg);
     --it-badge-border: var(--it-danger);
+
+    --it-badge-soft-tint: var(--it-danger);
+    --it-badge-soft-ink: color-mix(in oklab, var(--it-danger) 65%, var(--it-fg));
   }
 
   .it-badge-info {
     --it-badge-bg: var(--it-info);
     --it-badge-fg: var(--it-info-fg);
     --it-badge-border: var(--it-info);
+
+    --it-badge-soft-tint: var(--it-info);
+    --it-badge-soft-ink: color-mix(in oklab, var(--it-info) 55%, var(--it-fg));
   }
 
   .it-badge-ghost {
     --it-badge-bg: transparent;
     --it-badge-fg: var(--it-muted);
     --it-badge-border: transparent;
+
+    --it-badge-soft-tint: var(--it-muted);
+    --it-badge-soft-ink: var(--it-muted);
   }
 
   .it-badge-outline {
@@ -74,11 +95,13 @@
     color: var(--it-badge-bg);
   }
 
-  /* A tint of the variant colour on the page background, text in the
-   * foreground colour: readable without a filled block. */
+  /* Soft: a tint of the variant colour as the surface, and the variant colour
+   * as the ink. Status hues are pulled towards the foreground so small text
+   * stays readable; the accent ink is bound by the application, which knows
+   * how bright its accent is. */
   .it-badge-soft {
-    background-color: color-mix(in oklab, var(--it-badge-bg) 20%, var(--it-bg));
-    color: var(--it-fg);
+    background-color: color-mix(in oklab, var(--it-badge-soft-tint) 16%, var(--it-bg));
+    color: var(--it-badge-soft-ink);
     border-color: transparent;
   }
 

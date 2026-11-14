@@ -39,10 +39,10 @@ const settings = computed<SettingRow[]>(() => [
         <p class="quiz-review-description">{{ values.description }}</p>
 
         <div class="quiz-review-badges">
-          <ItBadge variant="accent" soft class="quiz-review-category">
+          <ItBadge variant="primary" soft class="quiz-review-category">
             {{ values.category || 'Uncategorized' }}
           </ItBadge>
-          <ItBadge v-for="tag in values.tags" :key="tag" variant="accent" soft>{{ tag }}</ItBadge>
+          <ItBadge v-for="tag in values.tags" :key="tag" variant="primary" soft>{{ tag }}</ItBadge>
         </div>
       </ItCardBody>
     </ItCard>

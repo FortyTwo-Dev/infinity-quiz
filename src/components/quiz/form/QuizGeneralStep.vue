@@ -118,7 +118,7 @@ function submitTag() {
             <ItBadge
               v-for="tag in field.value"
               :key="tag"
-              variant="accent"
+              variant="primary"
               soft
               removable
               :remove-label="`Remove tag ${tag}`"

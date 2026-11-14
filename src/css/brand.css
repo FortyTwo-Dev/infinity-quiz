@@ -26,6 +26,11 @@
     --it-border-width: 2px;
     --it-radius: 0.25rem;
 
+    /* The accent as an ink: a fill colour is tuned for blocks, not for small
+     * text. Mixing it towards the foreground darkens it on light surfaces and
+     * lightens it on dark ones, which is exactly what a readable ink needs. */
+    --iq-accent-ink: color-mix(in oklab, var(--it-accent) 50%, var(--it-fg));
+
     /* The status hues of the previous theme, so charts, alerts and badges keep
      * their colour while the rest of the migration is in flight. */
     --it-info: oklch(74% 0.16 232.661);
@@ -67,6 +72,7 @@
   [data-theme='dark'][data-accent='yellow'] {
     --it-accent: oklch(75% 0.2 100);
   }
+
 
   :root[data-accent='red'] {
     --it-accent: oklch(65% 0.25 25);

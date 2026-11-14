@@ -5,6 +5,6 @@
  * value, and every widget resolves it through `it-*` tokens.
  */
 export type WidgetVariant =
-  'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'ghost'
+  'neutral' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'ghost'
 
 export type WidgetSize = 'sm' | 'md' | 'lg'
