@@ -1,0 +1,67 @@
+/*
+ * Quiz domain components. Feature-named classes, `components` layer, values
+ * from the theme tokens.
+ */
+@layer components {
+  /* ---- Quiz information dialog ------------------------------------------ */
+  .quiz-info-dialog {
+    --it-dialog-width: 42rem;
+  }
+
+  .quiz-info-description {
+    margin: 0;
+    color: var(--it-muted);
+  }
+
+  .quiz-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-2);
+  }
+
+  .quiz-info-heading {
+    margin: 0;
+    font-size: var(--it-font-size-2);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .quiz-info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-2);
+  }
+
+  .quiz-info-tag-strong {
+    font-weight: var(--it-font-weight-semibold);
+    text-transform: uppercase;
+  }
+
+  .quiz-info-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--it-space-3);
+    margin: 0;
+    font-size: var(--it-font-size-2);
+  }
+
+  .quiz-info-stat {
+    display: flex;
+    gap: var(--it-space-2);
+  }
+
+  .quiz-info-stat dt {
+    color: var(--it-muted);
+  }
+
+  .quiz-info-stat dd {
+    margin: 0;
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  /* The stat row stacks on narrow screens. */
+  @media (max-width: 30rem) {
+    .quiz-info-stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}

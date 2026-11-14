@@ -152,7 +152,7 @@ const handleImportExport = () => {
       "
       confirm-text="Delete"
       cancel-text="Cancel"
-      variant="error"
+      variant="danger"
       @confirm="confirmDelete"
     />
 
