@@ -25,9 +25,13 @@
     color: var(--it-muted);
   }
 
+  /* Each card spans four row tracks and hands them to its own blocks, so the
+   * title, the description and the actions line up across a row even when one
+   * card wraps further than its neighbours. */
   .quiz-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    grid-auto-rows: auto;
     gap: var(--it-space-5);
     align-items: stretch;
   }

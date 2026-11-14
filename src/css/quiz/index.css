@@ -641,19 +641,23 @@
   .quiz-manage-card .it-card-actions {
     flex-wrap: nowrap;
     gap: var(--it-space-2);
-    /* Pinned to the bottom so the actions of cards in the same row line up. */
-    margin-block-start: auto;
   }
 
-  /* Cards share the height of their row instead of hugging their content. */
+  /* Subgrid: the card owns four tracks of the catalogue grid, and its blocks
+   * sit in them. The body is dissolved so its blocks become the card's
+   * children; the padding moves from the body to the card. */
   .quiz-launch-card,
   .quiz-manage-card {
-    block-size: 100%;
+    grid-row: span 4;
+    display: grid;
+    grid-template-rows: subgrid;
+    gap: var(--it-card-gap);
+    padding: var(--it-card-padding);
   }
 
-  .quiz-launch-card .it-card-body,
-  .quiz-manage-card .it-card-body {
-    flex: 1;
+  .quiz-launch-card > .it-card-body,
+  .quiz-manage-card > .it-card-body {
+    display: contents;
   }
 }
 

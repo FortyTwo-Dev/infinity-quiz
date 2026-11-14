@@ -46,10 +46,6 @@ function handleDelete() {
       <ItCardTitle as="h3">{{ quiz.title }}</ItCardTitle>
       <p class="quiz-card-description">{{ quiz.description }}</p>
 
-      <div v-if="quiz.tags && quiz.tags.length > 0" class="quiz-card-tags">
-        <ItBadge v-for="tag in quiz.tags" :key="tag" variant="neutral">{{ tag }}</ItBadge>
-      </div>
-
       <ItCardActions justify="between">
         <ItButton type="button" variant="primary" @click.stop="handleEdit">
           <PhPencil :size="16" />

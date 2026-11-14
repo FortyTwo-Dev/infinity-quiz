@@ -31,7 +31,7 @@ const status = computed(() =>
 
 <template>
   <ItCard border class="quiz-launch-card" @click="emit('click')">
-    <ItCardBody size="lg">
+    <ItCardBody>
       <div class="quiz-card-meta">
         <ItBadge variant="accent" soft class="quiz-card-category">
           {{ primaryTag || 'Uncategorized' }}
