@@ -32,7 +32,7 @@ function isCorrectOption(optionIndex: number): boolean {
 /** A row is in one of four states; the state drives the styling, not a stack
  * of conditionals. */
 function optionState(optionIndex: number): string {
-  const { isSkipped, isCorrect } = props.questionResult
+  const { isSkipped } = props.questionResult
   if (isCorrectOption(optionIndex)) return 'correct'
   if (isSelected(optionIndex) && !isSkipped) return 'wrong'
   if (isSelected(optionIndex)) return 'skipped'
