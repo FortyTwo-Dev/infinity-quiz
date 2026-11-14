@@ -154,7 +154,7 @@ docs/
 - [Roadmap](./docs/roadmap.md) - Feature development phases
 - [Workflow](./docs/workflow.md) - Git workflow, commits, PR, code review
 - [Quiz Format](./docs/quiz-format.md) - Quiz data format specification
-- [Coding Rules](./rules/) - All coding conventions and guidelines
+- [Coding Rules](https://github.com/FortyTwo-Dev/iproject-ibrain-packs/tree/main/infinity-quiz/rules) - Project rules, resolved by `ibrain` into `.ai/rules/` (`ibrain sync`)
 
 ## IDE Setup
 
