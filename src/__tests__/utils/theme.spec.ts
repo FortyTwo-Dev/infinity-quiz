@@ -12,29 +12,29 @@ describe('normalizeThemeSelection', () => {
   it('converts every legacy daisyUI theme name', () => {
     expect(normalizeThemeSelection('infinity-blue-light')).toEqual({
       mode: 'light',
-      accent: 'mint',
+      accent: 'green',
     })
-    expect(normalizeThemeSelection('infinity-blue-dark')).toEqual({ mode: 'dark', accent: 'mint' })
+    expect(normalizeThemeSelection('infinity-blue-dark')).toEqual({ mode: 'dark', accent: 'green' })
     expect(normalizeThemeSelection('infinity-yellow-light')).toEqual({
       mode: 'light',
-      accent: 'fresh',
+      accent: 'green',
     })
     expect(normalizeThemeSelection('infinity-yellow-dark')).toEqual({
       mode: 'dark',
-      accent: 'fresh',
+      accent: 'green',
     })
-    expect(normalizeThemeSelection('infinity-red-light')).toEqual({ mode: 'light', accent: 'emerald' })
-    expect(normalizeThemeSelection('infinity-red-dark')).toEqual({ mode: 'dark', accent: 'emerald' })
+    expect(normalizeThemeSelection('infinity-red-light')).toEqual({ mode: 'light', accent: 'green' })
+    expect(normalizeThemeSelection('infinity-red-dark')).toEqual({ mode: 'dark', accent: 'green' })
   })
 
   it('converts a form option value', () => {
-    expect(normalizeThemeSelection('dark-emerald')).toEqual({ mode: 'dark', accent: 'emerald' })
+    expect(normalizeThemeSelection('dark-green')).toEqual({ mode: 'dark', accent: 'green' })
   })
 
   it('accepts an already normalized selection', () => {
-    expect(normalizeThemeSelection({ mode: 'dark', accent: 'fresh' })).toEqual({
+    expect(normalizeThemeSelection({ mode: 'dark', accent: 'green' })).toEqual({
       mode: 'dark',
-      accent: 'fresh',
+      accent: 'green',
     })
   })
 
@@ -51,13 +51,13 @@ describe('normalizeThemeSelection', () => {
 
 describe('normalizeGlobalTheme', () => {
   it('keeps a valid selection', () => {
-    expect(normalizeGlobalTheme('infinity-red-dark')).toEqual({ mode: 'dark', accent: 'emerald' })
+    expect(normalizeGlobalTheme('infinity-red-dark')).toEqual({ mode: 'dark', accent: 'green' })
   })
 
   it('falls back to the default for anything else', () => {
     expect(normalizeGlobalTheme('imported-theme')).toEqual({ mode: 'light', accent: 'green' })
     expect(normalizeGlobalTheme(undefined)).toEqual({ mode: 'light', accent: 'green' })
-    expect(normalizeGlobalTheme({ mode: 'sepia', accent: 'mint' })).toEqual({
+    expect(normalizeGlobalTheme({ mode: 'sepia', accent: 'green' })).toEqual({
       mode: 'light',
       accent: 'green',
     })
@@ -72,13 +72,13 @@ describe('normalizeQuizTheme', () => {
   })
 
   it('converts a legacy quiz theme', () => {
-    expect(normalizeQuizTheme('infinity-yellow-dark')).toEqual({ mode: 'dark', accent: 'fresh' })
+    expect(normalizeQuizTheme('infinity-yellow-dark')).toEqual({ mode: 'dark', accent: 'green' })
   })
 })
 
 describe('themeToOptionValue', () => {
   it('serializes a selection and leaves undefined alone', () => {
-    expect(themeToOptionValue({ mode: 'dark', accent: 'emerald' })).toBe('dark-emerald')
+    expect(themeToOptionValue({ mode: 'dark', accent: 'green' })).toBe('dark-green')
     expect(themeToOptionValue(undefined)).toBeUndefined()
   })
 })
@@ -91,7 +91,7 @@ describe('migrateThemeStorage', () => {
     })
 
     expect(JSON.parse(migrateThemeStorage(raw))).toEqual({
-      globalTheme: { mode: 'dark', accent: 'emerald' },
+      globalTheme: { mode: 'dark', accent: 'green' },
     })
   })
 
@@ -128,7 +128,7 @@ describe('migrateQuizCatalogue', () => {
       title: 'Capitals',
       description: 'Europe',
       questions: [],
-      theme: { mode: 'dark', accent: 'emerald' },
+      theme: { mode: 'dark', accent: 'green' },
       tags: ['geo'],
     })
   })

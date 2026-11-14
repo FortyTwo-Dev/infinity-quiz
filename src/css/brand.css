@@ -55,29 +55,11 @@
   }
 
   /*
-   * Accents: three greens, from the lightest to the deepest. A bright accent
-   * takes a dark foreground on its fill; the ink used as text is derived from
-   * the accent itself above, so no per-accent table is needed.
+   * The accent. One per application: #00ff96 is hue 155 at saturation 100 %
+   * and lightness 50 % in HSL, the recipe of the charte. Its ink is mixed
+   * harder towards the text colour, because a bright accent falls under
+   * 4.5:1 as small text otherwise.
    */
-  :root[data-accent='mint'] {
-    --it-accent: oklch(80% 0.16 150);
-    --it-accent-fg: oklch(18% 0 0);
-  }
-
-  :root[data-accent='fresh'] {
-    --it-accent: oklch(72% 0.18 152);
-    --it-accent-fg: oklch(18% 0 0);
-  }
-
-  :root[data-accent='emerald'] {
-    --it-accent: oklch(62% 0.14 160);
-    --it-accent-fg: oklch(18% 0 0);
-  }
-
-  /* The pure green of the charte: hue 155 at saturation 100 % and lightness
-   * 50 % in HSL, the same recipe as the blue of the libraries and the yellow
-   * of the QR code app. Its ink is mixed harder towards the text colour
-   * because the accent is bright enough to fall under 4.5:1 otherwise. */
   :root[data-accent='green'] {
     --it-accent: #00ff96;
     --it-accent-fg: oklch(18% 0 0);

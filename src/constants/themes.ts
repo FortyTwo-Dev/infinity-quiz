@@ -22,7 +22,7 @@ export type ThemeColorName = (typeof THEME_COLOR_NAMES)[number]
 export const THEME_MODES = ['light', 'dark'] as const
 export type ThemeMode = (typeof THEME_MODES)[number]
 
-export const THEME_ACCENTS = ['mint', 'fresh', 'emerald', 'green'] as const
+export const THEME_ACCENTS = ['green'] as const
 export type ThemeAccent = (typeof THEME_ACCENTS)[number]
 
 export interface ThemeSelection {
@@ -37,12 +37,12 @@ export const DEFAULT_THEME: ThemeSelection = { mode: 'light', accent: 'green' }
  * every existing install, so they are read for good, and never written again.
  */
 export const LEGACY_THEME_NAMES: Record<string, ThemeSelection> = {
-  'infinity-blue-light': { mode: 'light', accent: 'mint' },
-  'infinity-blue-dark': { mode: 'dark', accent: 'mint' },
-  'infinity-yellow-light': { mode: 'light', accent: 'fresh' },
-  'infinity-yellow-dark': { mode: 'dark', accent: 'fresh' },
-  'infinity-red-light': { mode: 'light', accent: 'emerald' },
-  'infinity-red-dark': { mode: 'dark', accent: 'emerald' },
+  'infinity-blue-light': { mode: 'light', accent: 'green' },
+  'infinity-blue-dark': { mode: 'dark', accent: 'green' },
+  'infinity-yellow-light': { mode: 'light', accent: 'green' },
+  'infinity-yellow-dark': { mode: 'dark', accent: 'green' },
+  'infinity-red-light': { mode: 'light', accent: 'green' },
+  'infinity-red-dark': { mode: 'dark', accent: 'green' },
 }
 
 /** A selection as offered by a form select, serialized as `<mode>-<accent>`. */
