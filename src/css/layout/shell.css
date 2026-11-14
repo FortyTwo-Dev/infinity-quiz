@@ -64,9 +64,13 @@
     padding: var(--it-space-4);
   }
 
+  /* The theme package styles every bare <button> as a text button, padding
+   * included; an icon button has to state its own box or the glyph is
+   * squeezed into whatever the padding leaves. */
   .app-icon-button {
     display: inline-grid;
     place-items: center;
+    padding: 0;
     inline-size: var(--it-control-height-md);
     block-size: var(--it-control-height-md);
     border: var(--it-border-width) solid transparent;
