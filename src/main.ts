@@ -6,8 +6,10 @@ import App from './App.vue'
 import router from './router'
 import { useThemeStore } from './stores'
 
-// Import styles
-import './css/main.css'
+// Import styles: the cascade order comes first (index.html), then the theme
+// package, then the application's brand layer.
+import '@infinitylib/infinity-theme'
+import './css/brand.css'
 
 const app = createApp(App)
 const pinia = createPinia()

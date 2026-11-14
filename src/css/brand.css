@@ -1,0 +1,80 @@
+/*
+ * Brand layer of infinity-quiz: the accent bindings, the typeface, and the
+ * values the application carried over from its daisyUI themes.
+ *
+ * Loaded after @infinitylib/infinity-theme; the layer order is declared in
+ * src/css/style.css, which index.html loads first.
+ */
+
+@font-face {
+  font-family: 'SpaceGrotesk';
+  src: url('../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer it.base {
+  :root {
+    --it-font-sans: 'SpaceGrotesk', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer it.tokens {
+  /* Carried over from the daisyUI theme blocks: 2px frames, 0.25rem boxes. */
+  :root {
+    --it-border-width: 2px;
+    --it-radius: 0.25rem;
+
+    /* The status hues of the previous theme, so charts, alerts and badges keep
+     * their colour while the rest of the migration is in flight. */
+    --it-info: oklch(74% 0.16 232.661);
+    --it-info-fg: oklch(29% 0.066 243.157);
+    --it-success: oklch(79% 0.209 151.711);
+    --it-success-fg: oklch(37% 0.077 168.94);
+    --it-warning: oklch(82% 0.189 84.429);
+    --it-warning-fg: oklch(41% 0.112 45.904);
+    --it-danger: oklch(70% 0.191 22.216);
+    --it-danger-fg: oklch(27% 0.105 12.094);
+  }
+
+  [data-theme='dark'] {
+    --it-radius: 0rem;
+    --it-info: oklch(68% 0.169 237.323);
+    --it-info-fg: oklch(0% 0 0);
+    --it-success: oklch(72% 0.219 149.579);
+    --it-success-fg: oklch(0% 0 0);
+    --it-warning: oklch(76% 0.188 70.08);
+    --it-warning-fg: oklch(0% 0 0);
+    --it-danger: oklch(63% 0.237 25.331);
+    --it-danger-fg: oklch(0% 0 0);
+  }
+
+  /*
+   * Accents. The mode-specific blocks come after the plain accent blocks: they
+   * share the same specificity, so source order is what selects them.
+   */
+  :root[data-accent='blue'] {
+    --it-accent: oklch(54% 0.245 262.881);
+    --it-accent-fg: oklch(100% 0 0);
+  }
+
+  :root[data-accent='yellow'] {
+    --it-accent: oklch(85% 0.2 100);
+    --it-accent-fg: oklch(0% 0 0);
+  }
+
+  [data-theme='dark'][data-accent='yellow'] {
+    --it-accent: oklch(75% 0.2 100);
+  }
+
+  :root[data-accent='red'] {
+    --it-accent: oklch(65% 0.25 25);
+    --it-accent-fg: oklch(100% 0 0);
+  }
+
+  [data-theme='dark'][data-accent='red'] {
+    --it-accent: oklch(55% 0.25 25);
+    --it-accent-fg: oklch(0% 0 0);
+  }
+}

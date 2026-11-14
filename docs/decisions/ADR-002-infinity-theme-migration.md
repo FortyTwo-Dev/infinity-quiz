@@ -65,7 +65,8 @@ with `@source inline()`. ADR-001 exists only to manage that constraint.
 ### Tokens
 
 The daisyUI token set maps onto the package tokens, and what the package does
-not name stays in an application namespace `--iq-*` declared in `brand.css`.
+not name is dropped, or, when a widget genuinely needs it, declared in an
+application namespace `--iq-*` in `brand.css`.
 
 | daisyUI | After migration | Note |
 | --- | --- | --- |
@@ -76,16 +77,16 @@ not name stays in an application namespace `--iq-*` declared in `brand.css`.
 | `base-content/70` | `--it-muted` | No translucent text: opacity applied to a foreground recreates contrast failures. |
 | `primary` | `--it-accent` | Accent-driven. |
 | `primary-content` | `--it-accent-fg` | Defined per accent, per mode. |
-| `secondary` | `--iq-secondary` | Kept as a decorative and chart colour; the package's `it-btn-secondary` is a button variant, not the old palette. |
-| `secondary-content` | `--iq-secondary-fg` | Pair of the above. |
-| `accent` | `--iq-highlight` | The violet stays, renamed: `accent` no longer means it. |
-| `accent-content` | `--iq-highlight-fg` | Pair of the above. |
-| `neutral` | `--iq-neutral` | Neutral fills. |
-| `neutral-content` | `--iq-neutral-fg` | Pair of the above. |
+| `secondary` | dropped | No consumer survives the migration; the package's `it-btn-secondary` is a surface style, not the old cyan palette. |
+| `secondary-content` | dropped | Follows `secondary`. |
+| `accent` | dropped | The violet had no consumer outside the removed theme view, and `accent` now means the brand accent. |
+| `accent-content` | dropped | Follows `accent`. |
+| `neutral` | dropped | The package's default button style already is the neutral surface. |
+| `neutral-content` | dropped | Follows `neutral`. |
 | `info`/`success`/`warning`/`error` | `--it-info`/`--it-success`/`--it-warning`/`--it-danger` | `error` becomes `danger`. Each `-content` becomes the matching `-fg`. |
 | `--radius-box` | `--it-radius` | The knob the package components read. Bound to `0.25rem` in light and `0` in dark, the values in use today. |
-| `--radius-selector`, `--radius-field` | `--iq-radius-selector`, `--iq-radius-field` | No package equivalent; used by application-owned controls only. |
-| `--border` (2px) | `--iq-border-width` | `--it-border` is a colour, never a width. |
+| `--radius-selector`, `--radius-field` | dropped | No package equivalent and no consumer once the daisyUI wrappers are rewritten. |
+| `--border` (2px) | `--it-border-width` (rebound to 2px) | The package owns the knob and every control reads it; `--it-border` is the colour, never a width. |
 | `--depth`, `--noise` | dropped | No equivalent, and both were `0`. |
 
 ### Styles the application owns

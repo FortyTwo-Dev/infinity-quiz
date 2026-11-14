@@ -77,9 +77,8 @@
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| [Tailwind CSS](https://tailwindcss.com/) | ^4.3.3 | Utility-first CSS framework |
-| [@tailwindcss/vite](https://github.com/tailwindlabs/tailwindcss-vite) | ^4.3.3 | Tailwind CSS Vite plugin |
-| [daisyUI](https://daisyui.com/) | ^5.7.22 | Tailwind CSS component library |
+| [@infinitylib/infinity-theme](https://github.com/InfinityLib/infinity-theme) | ^0.2.0 | CSS-first design tokens and component theme |
+| [@infinitylib/infinity-theme-vue](https://github.com/InfinityLib/infinity-theme-vue) | ^0.1.0 | Vue wrappers over the theme's component classes |
 
 ## Icons
 
