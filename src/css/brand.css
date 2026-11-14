@@ -83,3 +83,16 @@
     --it-accent-fg: oklch(0% 0 0);
   }
 }
+
+/*
+ * Deliberate exceptions to the package, in the layer reserved for them.
+ *
+ * A ghost button hovers to `--it-surface`, which is exactly the background of
+ * a card: on a card, the hover was invisible. The knob is rebound to a tint of
+ * the text colour, so the feedback reads on any surface.
+ */
+@layer it.overrides {
+  :where(.it-theme) {
+    --it-button-ghost-hover-bg: color-mix(in oklab, var(--it-fg) 9%, transparent);
+  }
+}
