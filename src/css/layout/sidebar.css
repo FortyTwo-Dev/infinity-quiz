@@ -16,19 +16,35 @@
     overflow: hidden;
   }
 
+  /* The brand is the way home: logo, then the name. Collapsed, only the logo
+   * stays, which is a better rail marker than two letters. */
   .app-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--it-space-2);
     padding: var(--it-space-2);
+    border-radius: var(--it-radius);
+    color: var(--it-fg);
     font-size: var(--it-font-size-4);
     font-weight: var(--it-font-weight-semibold);
+    text-decoration: none;
     white-space: nowrap;
   }
 
-  .app-sidebar-brand-full {
-    display: inline;
+  .app-sidebar-brand:hover {
+    background-color: color-mix(in oklab, var(--it-fg) 8%, transparent);
   }
 
-  .app-sidebar-brand-short {
-    display: none;
+  .app-sidebar-brand:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .app-sidebar-logo {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border-radius: var(--it-radius);
+    flex-shrink: 0;
   }
 
   .app-nav {
@@ -95,10 +111,6 @@
       display: none;
     }
 
-    .app-sidebar[data-collapsed='true'] .app-sidebar-brand-short {
-      display: inline;
-    }
-
     /* Collapsed, the row is only as wide as the icon: the inline padding of
      * the expanded row would leave a 6px box and squeeze the icon. */
     .app-sidebar[data-collapsed='true'] {
@@ -111,7 +123,8 @@
     }
 
     .app-sidebar[data-collapsed='true'] .app-sidebar-brand {
-      text-align: center;
+      justify-content: center;
+      padding-inline: 0;
     }
 
     .app-sidebar[data-collapsed='true'] .app-nav-title {

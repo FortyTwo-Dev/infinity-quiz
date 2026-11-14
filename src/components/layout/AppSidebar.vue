@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
+import { RouterLink } from 'vue-router'
 import { PhHouse, PhChartLine, PhPlus, PhGear, PhArrowSquareIn } from '@phosphor-icons/vue'
 
 interface NavItem {
@@ -22,10 +23,10 @@ const otherNavItems: NavItem[] = [
 </script>
 
 <template>
-  <div class="app-sidebar-brand">
+  <RouterLink to="/" class="app-sidebar-brand">
+    <img src="/img/logo.png" alt="" aria-hidden="true" class="app-sidebar-logo" />
     <span class="app-sidebar-brand-full">IQuiz</span>
-    <span class="app-sidebar-brand-short">IQ</span>
-  </div>
+  </RouterLink>
 
   <nav aria-label="Sections">
     <ul class="app-nav">
