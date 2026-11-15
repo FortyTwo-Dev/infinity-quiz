@@ -65,6 +65,7 @@ git commit -m "type(scope): message"
 | `router` | Router configuration |
 | `db` | Database connection, migrations |
 | `config` | Environment variables, configuration |
+| `hooks` | Git hooks and their installer |
 | `ui` | UI components |
 | `api` | API calls |
 
@@ -195,7 +196,24 @@ git push origin develop
 
 ## Code Quality
 
-Run before pushing:
+### Git hooks
+
+The hooks are versioned in `.githooks/` and installed once per clone:
+
+```bash
+bash scripts/install-hooks.sh
+```
+
+`pre-commit` formats and lints the staged files (Prettier, then oxlint, then
+ESLint) and re-stages the result; it refuses a file that still has unstaged
+changes, because re-staging would commit content that was not meant to be.
+`commit-msg` refuses a message that breaks the convention above.
+
+The installation writes `core.hooksPath` in the repository's own `.git/config`,
+never in the global configuration. A hook is never bypassed with `--no-verify`.
+
+### Before pushing
+
 ```bash
 bunx --bun oxlint . --fix && bunx --bun eslint . --fix --cache && bun run type-check && bun test:coverage
 ```

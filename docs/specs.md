@@ -4,7 +4,7 @@
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| [Bun](https://bun.sh/) | 1.3.14 | JavaScript runtime, package manager, bundler, and test runner |
+| [Bun](https://bun.sh/) | >=1.4.0 | JavaScript runtime, package manager, bundler, and test runner |
 
 ## Framework & Core Libraries
 
