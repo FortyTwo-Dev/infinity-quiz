@@ -32,6 +32,7 @@
 | [@vue/test-utils](https://test-utils.vuejs.org/) | ^2.4.11 | Vue-specific testing utilities |
 | [jsdom](https://github.com/jsdom/jsdom) | ^29.1.1 | DOM implementation for Node.js |
 | [@types/jsdom](https://www.npmjs.com/package/@types/jsdom) | ^28.0.3 | TypeScript types for jsdom |
+| [@vitest/coverage-v8](https://vitest.dev/guide/coverage) | 4.1.10 | V8 coverage provider, gated on the `lines: 80` threshold |
 
 > Requires Bun >= 1.4. Bun's test runner cannot compile `.vue` single-file components, so Vitest is used as the test runner on top of the Bun runtime. `zod` is inlined in `vitest.config.ts` to work around a Bun `__esModule` interop bug (oven-sh/bun#3393).
 
@@ -64,13 +65,23 @@
 |------|---------|---------|
 | [npm-run-all2](https://github.com/mysticatea/npm-run-all2) | ^9.0.2 | Run multiple npm scripts in parallel or sequential |
 | [jiti](https://github.com/unjs/jiti) | ^2.7.0 | Runtime TypeScript transpiler |
+| [uuid](https://github.com/uuidjs/uuid) | ^14.0.1 | Identifier generation for quizzes, questions and attempts |
+| [seedrandom](https://github.com/davidbau/seedrandom) | ^3.0.5 | Seeded generator behind the reproducible shuffle |
+
+## Charts
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| [chart.js](https://www.chartjs.org/) | ^4.5.1 | Charting library the statistics screen draws with |
+| [vue-chartjs](https://vue-chartjs.org/) | ^5.3.4 | Vue 3 wrapper around chart.js |
 
 ## Validation
 
 | Tool | Version | Purpose |
 |------|---------|---------|
 | [Zod](https://zod.dev/) | ^4.4.3 | Type-safe schema validation for quiz data structures |
-| [@vee-validate/zod](https://vee-validate.logaretm.com/v4/integrations/zod.html) | ^4.x | Form validation with Zod integration for Vue.js |
+| [vee-validate](https://vee-validate.logaretm.com/) | ^4.15.1 | Form state and validation driver |
+| [@vee-validate/zod](https://vee-validate.logaretm.com/v4/integrations/zod.html) | ^4.15.1 | Form validation with Zod integration for Vue.js |
 
 
 ## Styling
