@@ -23,14 +23,14 @@ while IFS= read -r line; do
     esac
 done < "$message_file"
 
-if [ -z "$subject" ]; then
+if [[ -z "$subject" ]]; then
     # An empty message: git refuses it on its own, with a better message.
     exit 0
 fi
 
 # Not hand-written messages. Refusing them would make `git pull` unusable, and
 # `--no-verify` is forbidden.
-if [ -f "$git_dir/MERGE_HEAD" ]; then
+if [[ -f "$git_dir/MERGE_HEAD" ]]; then
     exit 0
 fi
 case "$subject" in
@@ -43,7 +43,7 @@ if ! [[ "$subject" =~ $pattern ]]; then
     fail "Refused: \"$subject\" is not of the form <type>(<scope>): <subject>."
 fi
 
-if [ "${#subject}" -gt 72 ]; then
+if [[ "${#subject}" -gt 72 ]]; then
     fail "Refused: the subject is ${#subject} characters, the limit is 72."
 fi
 
