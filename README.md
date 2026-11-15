@@ -17,6 +17,9 @@ immediate feedback, a statistics screen, and a JSON format to share quizzes.
 - `/statistics` draws the attempt history: score trend, distribution, pass rate.
 - `/manage`, `/create`, `/edit/:quizId` own the catalogue.
 - `/import-export` moves quizzes in and out as JSON.
+- `/settings` holds the preferences: an optional OpenDyslexic reading font, and
+  the account, sync and data-export sections announced for later. The sidebar
+  also carries the credits and the source-code link.
 
 Everything runs in the browser. Every quiz, attempt and preference lives in
 `localStorage`: there is no account, no server, and no request leaves the device.
@@ -35,6 +38,7 @@ Everything runs in the browser. Every quiz, attempt and preference lives in
 - Categories, tags and search across the catalogue.
 - JSON import and export, validated on the way in.
 - Light and dark mode, and a quiz can carry its own theme while it plays.
+- An optional OpenDyslexic typeface, for readers who need it.
 - An attempt survives a reload: the question, the answers, the score and the
   remaining time all rehydrate.
 

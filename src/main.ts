@@ -4,7 +4,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
-import { useThemeStore } from './stores'
+import { useThemeStore, useAccessibilityStore } from './stores'
 import { STORAGE_KEYS } from './constants'
 import { migrateQuizCatalogue, migrateThemeStorage } from './utils/theme'
 
@@ -14,6 +14,7 @@ import '@infinitylib/infinity-theme'
 import './css/brand.css'
 import './css/itheme/index.css'
 import './css/layout/index.css'
+import './css/common/index.css'
 import './css/quiz/index.css'
 import './css/views/index.css'
 
@@ -48,5 +49,6 @@ app.use(pinia)
 app.use(router)
 
 useThemeStore().rehydrate()
+useAccessibilityStore().rehydrate()
 
 app.mount('#app')

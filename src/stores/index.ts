@@ -12,3 +12,4 @@ export {
 } from './notification-store'
 
 export { useThemeStore } from './theme-store'
+export { useAccessibilityStore } from './accessibility-store'
