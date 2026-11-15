@@ -1,74 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { defineComponent, h, nextTick, type Component } from 'vue'
-import { mount } from '@vue/test-utils'
-import { useForm } from 'vee-validate'
+import { nextTick } from 'vue'
 import QuizGeneralStep from '../../../components/quiz/form/QuizGeneralStep.vue'
 import { DEFAULT_THEME, THEME_OPTIONS } from '@/constants/themes'
-
-type Wrapper = ReturnType<typeof mount>
-
-const CONTROL_SELECTOR =
-  'input, select, textarea, button, [role="button"], [role="checkbox"], [role="radio"], [role="switch"]'
-
-type FormApi = ReturnType<typeof useForm>
-
-function mountInForm(
-  component: Component,
-  options: { initialValues: Record<string, unknown>; props?: Record<string, unknown> },
-) {
-  let form!: FormApi
-  const Host = defineComponent({
-    setup() {
-      form = useForm({ initialValues: options.initialValues })
-      return () => h(component, options.props ?? {})
-    },
-  })
-  const wrapper = mount(Host)
-  return { wrapper, form }
-}
-
-function normalize(value: string | null | undefined): string {
-  return (value ?? '').replace(/\s+/g, ' ').trim()
-}
-
-function accessibleName(element: Element): string {
-  const aria = element.getAttribute('aria-label')
-  if (aria) return normalize(aria)
-
-  const labelledBy = element.getAttribute('aria-labelledby')
-  if (labelledBy) {
-    const document = element.ownerDocument
-    const text = labelledBy
-      .split(/\s+/)
-      .map((id) => document?.getElementById(id)?.textContent ?? '')
-      .join(' ')
-    if (normalize(text)) return normalize(text)
-  }
-
-  const labels = (element as HTMLInputElement).labels
-  if (labels && labels.length > 0) {
-    const text = Array.from(labels)
-      .map((label) => label.textContent)
-      .join(' ')
-    if (normalize(text)) return normalize(text)
-  }
-
-  if (element.tagName === 'BUTTON') return normalize(element.textContent)
-
-  const title = element.getAttribute('title')
-  if (title) return normalize(title)
-
-  return ''
-}
-
-/** A control whose accessible name contains `name`. */
-function control(wrapper: Wrapper, name: string) {
-  return wrapper.findAll(CONTROL_SELECTOR).find((candidate) => {
-    const accessible = accessibleName(candidate.element)
-    if (accessible.includes(normalize(name))) return true
-    return candidate.attributes('name') === name
-  })
-}
+import { accessibleName, control, mountInForm, normalize, type Wrapper } from '../../support/form'
 
 function tagDraftInput(wrapper: Wrapper) {
   const inputs = wrapper.findAll('input').filter((candidate) => {
