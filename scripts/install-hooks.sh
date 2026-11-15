@@ -8,7 +8,7 @@ set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
-if [ ! -d .githooks ]; then
+if [[ ! -d .githooks ]]; then
     echo "no .githooks directory here" >&2
     exit 1
 fi
