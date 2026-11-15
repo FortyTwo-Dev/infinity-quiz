@@ -51,26 +51,25 @@ function stepComponent(wrapper: Wrapper) {
 }
 
 describe('QuizGeneralStep', () => {
-  it('renders the field labels', () => {
-    const { wrapper } = mountStep()
-    const rendered = normalize(wrapper.text())
+  it.each(['Title', 'Description', 'Category', 'Theme', 'Tags'])(
+    'renders the %s field',
+    (label) => {
+      expect(normalize(mountStep().wrapper.text())).toContain(label)
+    },
+  )
 
-    expect(rendered).toContain('Title')
-    expect(rendered).toContain('Description')
-    expect(rendered).toContain('Category')
-    expect(rendered).toContain('Theme')
-    expect(rendered).toContain('Tags')
-  })
-
-  it('stores the title typed in the form', async () => {
+  it.each([
+    ['Title', 'World capitals', 'title'],
+    ['Category', 'Geography', 'category'],
+  ])('stores %s typed in the form', async (label, value, field) => {
     const { wrapper, form } = mountStep()
 
-    const input = control(wrapper, 'Title')
+    const input = control(wrapper, label)
     expect(input).toBeDefined()
-    await input!.setValue('World capitals')
+    await input!.setValue(value)
     await nextTick()
 
-    expect(form.values.title).toBe('World capitals')
+    expect(form.values[field]).toBe(value)
   })
 
   it('renders a field error and marks the title input invalid', async () => {

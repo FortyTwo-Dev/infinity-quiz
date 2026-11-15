@@ -17,34 +17,25 @@ function mountStep(overrides: Record<string, unknown> = {}) {
 }
 
 describe('QuizSettingsStep', () => {
-  it('renders the numeric field labels', () => {
-    const { wrapper } = mountStep()
-    const rendered = normalize(wrapper.text())
+  it.each(['Time limit (seconds, optional)', 'Maximum skips (optional)'])(
+    'renders the %s field',
+    (label) => {
+      expect(normalize(mountStep().wrapper.text())).toContain(label)
+    },
+  )
 
-    expect(rendered).toContain('Time limit (seconds, optional)')
-    expect(rendered).toContain('Maximum skips (optional)')
-  })
-
-  it('stores the time limit typed in the form', async () => {
+  it.each([
+    ['Time limit', '300', 'timeLimit'],
+    ['Maximum skips', '7', 'maxSkips'],
+  ])('stores %s typed in the form', async (label, value, field) => {
     const { wrapper, form } = mountStep()
 
-    const input = control(wrapper, 'Time limit')
+    const input = control(wrapper, label)
     expect(input).toBeDefined()
-    await input!.setValue('300')
+    await input!.setValue(value)
     await nextTick()
 
-    expect(String(form.values.timeLimit)).toBe('300')
-  })
-
-  it('stores the maximum skips typed in the form', async () => {
-    const { wrapper, form } = mountStep()
-
-    const input = control(wrapper, 'Maximum skips')
-    expect(input).toBeDefined()
-    await input!.setValue('7')
-    await nextTick()
-
-    expect(String(form.values.maxSkips)).toBe('7')
+    expect(String(form.values[field])).toBe(value)
   })
 
   it('renders the four checkbox labels', () => {
