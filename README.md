@@ -1,188 +1,227 @@
 # Infinity Quiz
 
-> A local-first quiz application built with Vue 3, Pinia, and Vite. All data is persisted in localStorage for a seamless offline experience.
+<img src="public/img/logo.png" width="128" alt="Infinity Quiz logo" />
+
+A local-first quiz application: a catalogue, a playable quiz with a timer and
+immediate feedback, a statistics screen, and a JSON format to share quizzes.
+
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=FortyTwo-Dev_infinity-quiz2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=FortyTwo-Dev_infinity-quiz2)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=FortyTwo-Dev_infinity-quiz2&metric=bugs)](https://sonarcloud.io/summary/new_code?id=FortyTwo-Dev_infinity-quiz2)
+[![Security rating](https://sonarcloud.io/api/project_badges/measure?project=FortyTwo-Dev_infinity-quiz2&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=FortyTwo-Dev_infinity-quiz2)
+[![Code smells](https://sonarcloud.io/api/project_badges/measure?project=FortyTwo-Dev_infinity-quiz2&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=FortyTwo-Dev_infinity-quiz2)
+[![Duplicated lines](https://sonarcloud.io/api/project_badges/measure?project=FortyTwo-Dev_infinity-quiz2&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=FortyTwo-Dev_infinity-quiz2)
+
+- `/` lists the catalogue, searches it by title, filters it by category and tag.
+- `/quiz/:quizId` plays one quiz: questions, timer, feedback, skips.
+- `/results` shows the score, the review of every answer, and a restart.
+- `/statistics` draws the attempt history: score trend, distribution, pass rate.
+- `/manage`, `/create`, `/edit/:quizId` own the catalogue.
+- `/import-export` moves quizzes in and out as JSON.
+
+Everything runs in the browser. Every quiz, attempt and preference lives in
+`localStorage`: there is no account, no server, and no request leaves the device.
 
 ## Features
 
-### Current (Phase 3 - Quiz Management)
+- One question at a time, with immediate feedback, the correct answer
+  highlighted after a selection, and a full review at the end.
+- Optional time limit, global or per question, with a progress bar that reaches
+  its end on the last question.
+- Question and answer shuffling from a persisted seed, so a reload replays the
+  same order.
+- Skips, with a configurable maximum and a remaining count on the button.
+- Creation, edition, duplication and deletion, through a multi-step form
+  validated with Zod.
+- Categories, tags and search across the catalogue.
+- JSON import and export, validated on the way in.
+- Light and dark mode, and a quiz can carry its own theme while it plays.
+- An attempt survives a reload: the question, the answers, the score and the
+  remaining time all rehydrate.
 
-- Quiz list with local storage
-- Quiz selection and question navigation
-- Multiple choice questions
-- Score tracking and results screen
-- Restart and back to list functionality
-- Timer with optional time limit per quiz
-- Progress bar for completion percentage
-- Question and answer shuffling
-- Skip question functionality
-- Review mode at quiz end
-- Correct answer highlighting
-- Immediate feedback on selection
-- Quiz creation, editing, deletion, and duplication
-- Categories and tags for organizing quizzes
-- Search and filter quizzes
-- JSON import/export for sharing quizzes
-- Light/dark mode with multiple color themes
+## Stack
 
-### Roadmap
+- Vue 3.5 with the Composition API and `<script setup lang="ts">`.
+- TypeScript 6, pinned because `vue-tsc` 3.3 does not support TypeScript 7.
+- Vite 8 and Vue Router 5, with a lazy route per screen.
+- Pinia 4 with `pinia-plugin-persistedstate`; every store declares its storage
+  key and the exact fields it persists.
+- Zod 4 for the quiz format and vee-validate for the creation form.
+- Bun 1.4 as package manager and runtime, Vitest 4 for the suite, run on Bun.
+- The `@infinitylib/infinity-theme` design system, with `-vue` for its wrappers.
+- ESLint 10 with `eslint-plugin-vue`, Oxlint and Prettier.
 
-See [docs/roadmap.md](./docs/roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
-
-## Tech Stack
-
-| Category             | Tools                                        |
-| -------------------- | -------------------------------------------- |
-| **Runtime**          | Bun 1.3.14                                   |
-| **Framework**        | Vue 3.5.40                                   |
-| **Language**         | TypeScript 6.0                               |
-| **State Management** | Pinia 4.0.2 + pinia-plugin-persistedstate    |
-| **Router**           | Vue Router 5.2.0                             |
-| **Build Tool**       | Vite 8.1.5                                   |
-| **Testing**          | Vitest 4.1.10, @vue/test-utils 2.4.11        |
-| **Linting**          | ESLint 10.7.0, Oxlint 1.74.0                 |
-| **Formatting**       | Prettier 3.9.5                               |
-| **Icons**            | [Phosphor Icons](https://phosphoricons.com/) |
-
-See [docs/specs.md](./docs/specs.md) for the full technical stack details.
-
-## Project Setup
+## Getting started
 
 ```sh
-# Install dependencies
 bun install
+bun run dev
 ```
 
-### Development
+Open the URL Vite prints (usually `http://localhost:5173`).
+
+Production build:
 
 ```sh
-# Start development server
-bun dev
-
-# Development server with custom port
-bun dev --port 3000
-```
-
-### Build
-
-```sh
-# Type-check, compile and minify for production
 bun run build
-
-# Preview production build locally
-bun preview
+bun run preview
 ```
 
-### Testing
+The repository versions two git hooks. Install them once per clone:
 
 ```sh
-# Run unit tests (Vitest on the Bun runtime)
-bun test:unit
-
-# Run tests once with coverage
-bun test:coverage
-
-# Watch mode
-bun test:unit --watch
+bash scripts/install-hooks.sh
 ```
 
-> Tests require Bun >= 1.4. Vitest runs on the Bun runtime via `bun run --bun vitest`.
+`pre-commit` formats and lints the staged files; `commit-msg` refuses a message
+that breaks the convention.
 
-### Linting & Formatting
+## Scripts
+
+| Command              | Purpose                                |
+| -------------------- | -------------------------------------- |
+| `bun run dev`        | Start the Vite dev server              |
+| `bun run build`      | Type-check and build for production    |
+| `bun run preview`    | Preview the production build           |
+| `bun run type-check` | Run `vue-tsc --build`                  |
+| `bun run lint`       | Oxlint then ESLint, both with `--fix`  |
+| `bun run format`     | Format `src/` with Prettier            |
+| `bun run test:unit`  | Run the suite with Vitest (watch mode) |
+| `bun test:coverage`  | Run the full suite once, with coverage |
+
+## Releases
+
+The version follows the Conventional Commits. A successful CI run on `main`
+builds the production image once, pushes it as the immutable `sha-<commit>` tag
+and smoke-tests that registry image. Once CI succeeds, release-please opens a
+release pull request with the next version and the changelog. Merging it creates
+the tag and the GitHub release, and the release adds its version tag (`vX.Y.Z`)
+and `latest` to the same tested image, without rebuilding it.
+
+`1.0.0` is the first release; `main` only receives `release/*` merges, and
+`develop` is the integration branch.
+
+## Container
+
+The image builds the app with Bun and serves the static files with an
+unprivileged nginx on port 8080.
 
 ```sh
-# Run all linters
-bun lint
-
-# Run Oxlint (fast Rust-based linter)
-bun lint:oxlint
-
-# Run ESLint
-bun lint:eslint
-
-# Format code with Prettier
-bun format
+podman build --format docker -f container/Containerfile -t infinity-quiz:local .
+podman run --rm -p 8080:8080 infinity-quiz:local
 ```
 
-## Project Structure
+A release publishes `ghcr.io/fortytwo-dev/infinity-quiz` with the version tag
+(`vX.Y.Z`), `sha-<commit>` and `latest`. The `/healthz` endpoint answers for a
+health probe.
+
+Quadlet example:
+
+```ini
+[Container]
+Image=ghcr.io/fortytwo-dev/infinity-quiz:latest
+ContainerName=infinity-quiz
+AutoUpdate=registry
+PublishPort=8080:8080
+NoNewPrivileges=true
+DropCapability=ALL
+ReadOnly=true
+Tmpfs=/tmp:rw,mode=1777
+HealthCmd=wget -qO- http://127.0.0.1:8080/healthz
+HealthInterval=30s
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
+```
+
+`systemctl --user enable --now podman-auto-update.timer` follows the `latest`
+tag. Pin a version tag instead when a deployment must be reproducible.
+
+## Architecture
 
 ```
 src/
-├── assets/                   # Static assets (fonts)
+├── views/                 # one screen per route, lazy-loaded
 ├── components/
-│   ├── common/               # App-wide components (modal, notification, theme)
-│   ├── itheme/               # Local widgets the theme package does not ship yet
-│   ├── layout/               # Layout components (AppLayout, AppSidebar, containers)
-│   ├── quiz/                 # Quiz-specific components (cards, form, timer)
-│   └── quiz-import-export/   # Import/export components
-├── composables/              # Vue composables (useQuiz, useQuizForm, useResults, …)
-├── constants/                # Application constants (colors, thresholds, storage keys)
-├── css/                      # Cascade order, brand layer, widgets and screen CSS
-├── __tests__/                # Unit tests
-│   ├── composables/          # Composable tests
-│   ├── stores/               # Store tests
-│   └── utils/                # Utility tests
-├── router/                   # Vue Router configuration
+│   ├── itheme/            # the widgets the theme package does not ship yet
+│   ├── layout/            # the shell and the L* layout primitives
+│   ├── common/            # modal, notification, theme toggle
+│   ├── quiz/              # cards, form steps, charts, modal, search bar
+│   └── quiz-import-export/
+├── composables/           # stateful Vue logic, one concern per file
 ├── stores/
-│   ├── notification-store.ts # Notification state
-│   └── quiz/                 # Quiz-related stores
-│       ├── quiz-store.ts         # Quiz CRUD operations
-│       ├── quiz-session-store.ts # Quiz session management
-│       ├── quiz-history-store.ts # Completed quiz results
-│       └── quiz-verification-store.ts # Answer verification
-├── types/                    # TypeScript type definitions
-├── utils/                    # Utility functions (validation, random, array-utils)
-├── views/                    # Page-level components (routes)
-│   ├── QuizListView.vue      # Quiz selection
-│   ├── QuizView.vue          # Quiz taking interface
-│   ├── ResultsView.vue       # Results display
-│   ├── QuizFormView.vue      # Quiz create/edit form
-│   ├── QuizManagementView.vue# Quiz management
-│   ├── QuizImportExportView.vue # Import/export
-│   └── NotFoundView.vue      # 404 page
-├── App.vue                   # Root component
-└── main.ts                   # Application entry point
+│   └── quiz/              # catalogue, session, history, verification
+├── utils/                 # pure functions: validation, shuffle, theme
+├── types/                 # the domain shapes
+├── constants/             # thresholds, storage keys, themes
+├── css/                   # cascade order, brand, widgets, screens
+├── router/
+└── __tests__/             # mirrors the layers, plus support/ for the harnesses
+```
 
-docs/
-├── decisions/               # ADRs (architecture decision records)
-├── quiz-format.md           # Quiz data format specification
-├── roadmap.md               # Development roadmap
-├── specs.md                 # Technical stack documentation
-└── workflow.md              # Git workflow and conventions
+A layer only imports downwards: `views` → `components` → `composables` and
+`stores` → `utils`, `types` and `constants`. The theme widgets and the layout
+primitives import neither a store nor a domain type, so they stay promotable to
+the package.
 
+## Theme library
 
-## Documentation
+The UI consumes the published `@infinitylib/infinity-theme` package:
 
-- [Technical Stack](./docs/specs.md) - Complete dependency list
-- [Roadmap](./docs/roadmap.md) - Feature development phases
-- [Workflow](./docs/workflow.md) - Git workflow, commits, PR, code review
-- [Quiz Format](./docs/quiz-format.md) - Quiz data format specification
-- [Coding Rules](https://github.com/FortyTwo-Dev/iproject-ibrain-packs/tree/main/infinity-quiz/rules) - Project rules, resolved by `ibrain` into `.ai/rules/` (`ibrain sync`)
+- Design tokens, base HTML styles and `it-*` variants ship from the package.
+- The thin Vue wrappers ship from `@infinitylib/infinity-theme-vue`.
+- The application brand (the charte green accent, the typeface, the `--iq-*`
+  tokens) lives in `src/css/brand.css`.
+- The page arrangement lives in `src/css/` as application classes on the
+  structural tokens; `src/css/style.css` declares the cascade order.
+- The mode is set with `data-theme` on `<html>`, the accent with `data-accent`
+  (ADR-002, which supersedes the Tailwind and daisyUI decision in ADR-001).
 
-## IDE Setup
+## Testing
 
-### Recommended
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+```sh
+bun run test:unit          # watch mode, one file or one name as a filter
+bun run test:unit <filter> --run
+bun test:coverage          # the full suite with coverage, the pre-push gate
+```
 
-### Browser DevTools
-- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-- Enable Custom Object Formatter in DevTools settings
+Vitest runs on the Bun runtime: Bun's own test runner cannot compile a `.vue`
+single-file component. The suite holds 733 tests over 57 files, and the
+`lines: 80` threshold is enforced by `vitest.config.ts`.
 
-## Type Support for `.vue` Imports in TS
+Three layers:
 
-TypeScript cannot handle type information for `.vue` imports by default. We use:
-- `src/vite-env.d.ts` with `declare module '*.vue'` for type declarations
-- `vue-tsc` for type checking from the CLI
+- **Utils and stores**: scoring and its thresholds, the attempt lifecycle, the
+  seeded shuffle, the timer, persistence and rehydration.
+- **Composables**: the form, the import and export, the statistics aggregates.
+- **Components**: the cards, the form steps, the shell, the theme widgets. The
+  form-step specs mount their subject inside a host that owns the vee-validate
+  context; the harnesses live in `src/__tests__/support/`.
 
-## Customize Configuration
+The five chart components have no spec: jsdom has no canvas, so a test there
+would pin the props passed to chart.js, not a rendering.
 
-See [Vite Configuration Reference](https://vite.dev/config/) for build configuration options.
+## Governance
+
+The repository uses [ibrain](https://github.com/FortyTwo-Dev/infinity-brain) for
+AI governance knowledge. The Vue and Pinia standards live in their packs; the
+project rules live in the `infinity-quiz` pack of
+[iproject-ibrain-packs](https://github.com/FortyTwo-Dev/iproject-ibrain-packs),
+pinned in `ibrain.lock.yaml`. The generated `.ai/` and `.agents/` trees are
+ignored and recreated by `ibrain sync`; update the rules through
+`ibrain edit infinity-quiz`, then `ibrain push` and `ibrain sync`.
+
+## Notes
+
+- TypeScript is pinned to 6 until `vue-tsc` supports TypeScript 7.
+- `bun.lock` is the only lockfile; do not add an npm, yarn or pnpm lockfile.
+- The coverage figure counts the files in `src/__tests__/support/`, which are
+  test harnesses, not application code: the production layers sit near 95 %.
+- A boolean prop that is only optional declares its default explicitly; Vue
+  casts an absent boolean to `false` before any component code runs.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-Powered by Mistral Vibe. Created by FortyTwo_Dev.
-```
+MIT. See [LICENSE](LICENSE).
