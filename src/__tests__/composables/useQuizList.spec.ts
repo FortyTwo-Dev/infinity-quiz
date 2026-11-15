@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { setActivePinia, createPinia } from 'pinia'
 import { useQuizList } from '../../composables/useQuizList'
+import { setupTestPinia } from '../stores/setup'
 import { useQuizStore } from '../../stores'
 import type { Quiz } from '../../types/quiz'
 
@@ -15,7 +15,7 @@ vi.mock('vue-router', () => ({
 
 describe('useQuizList', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
+    setupTestPinia()
     vi.clearAllMocks()
   })
 

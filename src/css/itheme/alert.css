@@ -1,0 +1,58 @@
+/* Alert: candidate for upstream. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-alert-bg: var(--it-surface);
+    --it-alert-fg: var(--it-surface-fg);
+    --it-alert-border: var(--it-border);
+    --it-alert-gap: var(--it-space-3);
+    --it-alert-padding: var(--it-space-4);
+    --it-alert-radius: var(--it-radius);
+    --it-alert-border-width: var(--it-border-width);
+    --it-alert-font-size: var(--it-font-size-3);
+  }
+}
+
+@layer components {
+  .it-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--it-alert-gap);
+    padding: var(--it-alert-padding);
+    border: var(--it-alert-border-width) solid var(--it-alert-border);
+    border-radius: var(--it-alert-radius);
+    background-color: var(--it-alert-bg);
+    color: var(--it-alert-fg);
+    font-size: var(--it-alert-font-size);
+  }
+
+  .it-alert-info {
+    --it-alert-bg: var(--it-info);
+    --it-alert-fg: var(--it-info-fg);
+    --it-alert-border: var(--it-info);
+  }
+
+  .it-alert-success {
+    --it-alert-bg: var(--it-success);
+    --it-alert-fg: var(--it-success-fg);
+    --it-alert-border: var(--it-success);
+  }
+
+  .it-alert-warning {
+    --it-alert-bg: var(--it-warning);
+    --it-alert-fg: var(--it-warning-fg);
+    --it-alert-border: var(--it-warning);
+  }
+
+  .it-alert-danger {
+    --it-alert-bg: var(--it-danger);
+    --it-alert-fg: var(--it-danger-fg);
+    --it-alert-border: var(--it-danger);
+  }
+
+  .it-alert-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-1);
+    min-width: 0;
+  }
+}

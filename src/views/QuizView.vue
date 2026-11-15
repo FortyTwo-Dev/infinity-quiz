@@ -1,159 +1,103 @@
 <script setup lang="ts">
-import { useQuiz } from '../composables/useQuiz'
-import Button from '../components/common/Button.vue'
-import ProgressBar from '../components/common/ProgressBar.vue'
+import { watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { ItButton } from '@infinitylib/infinity-theme-vue'
+import { ItProgress } from '@/components/itheme'
+import { AppTimer } from '@/components/quiz'
+import { QuizFeedbackCard as FeedbackCard, QuizQuestionCard } from '@/components/quiz/card'
+import { useQuiz } from '@/composables'
+import { useThemeStore } from '@/stores'
 
 const {
   currentQuiz,
   currentQuestion,
+  currentQuestionOptions,
   totalQuestions,
   currentQuestionIndex,
   progress,
   hasNextQuestion,
   hasPreviousQuestion,
+  timeLeft,
+  hasTimer,
+  canSkip,
+  remainingSkips,
+  hasFeedbackEnabled,
+  getCurrentQuestionTimeLimit,
+  isAnswerVerified,
+  shouldShowFeedback,
+  isCurrentQuestionVerified,
+  isCompleted,
   selectAnswer,
+  skipQuestion,
+  verifyAnswer,
+  continueToNext,
   submitAndNext,
   goToPrevious,
   backToQuizList,
   getCurrentAnswer,
 } = useQuiz()
+
+const router = useRouter()
+const themeStore = useThemeStore()
+
+onMounted(() => {
+  themeStore.applyQuizTheme(currentQuiz.value?.theme)
+})
+
+onBeforeUnmount(() => {
+  themeStore.restoreGlobalTheme()
+})
+
+watch(
+  isCompleted,
+  (completed) => {
+    if (completed) router.push({ name: 'results' })
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
-  <div class="quiz-view">
-    <div v-if="currentQuiz" class="quiz-header">
-      <Button variant="text" size="small" class="back-button" @click="backToQuizList"
-        >← Retour à la liste</Button
-      >
-      <h1>{{ currentQuiz.title }}</h1>
-      <p>{{ currentQuiz.description }}</p>
-      <ProgressBar :value="progress" :max="100" height="8px" />
-      <span class="progress-text"
-        >Question {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}</span
-      >
-    </div>
+  <section class="quiz-play">
+    <header v-if="currentQuiz" class="quiz-play-header">
+      <ItButton variant="ghost" size="sm" @click="backToQuizList">← Back to list</ItButton>
 
-    <div v-if="currentQuestion" class="question-container">
-      <h2>{{ currentQuestion.text }}</h2>
-      <div class="options">
-        <Button
-          v-for="(option, index) in currentQuestion.options"
-          :key="index"
-          variant="secondary"
-          size="medium"
-          :class="{ 'option-button--selected': getCurrentAnswer() === index }"
-          class="option-button"
-          @click="selectAnswer(index)"
-        >
-          {{ option }}
-        </Button>
+      <div class="quiz-play-heading">
+        <h1 class="quiz-play-title">{{ currentQuiz.title }}</h1>
+        <p class="quiz-play-description">{{ currentQuiz.description }}</p>
       </div>
 
-      <div class="navigation">
-        <Button variant="secondary" :disabled="!hasPreviousQuestion" @click="goToPrevious">
-          Précédent
-        </Button>
-        <Button variant="primary" :disabled="getCurrentAnswer() === null" @click="submitAndNext">
-          {{ hasNextQuestion ? 'Suivant' : 'Terminer' }}
-        </Button>
+      <div class="quiz-play-progress">
+        <AppTimer v-if="hasTimer" :time-left="timeLeft" :time-limit="getCurrentQuestionTimeLimit" />
+        <ItProgress :value="progress" :max="100" label="Quiz progress" />
+        <span class="quiz-play-counter">
+          Question {{ currentQuestionIndex + 1 }} / {{ totalQuestions }}
+        </span>
       </div>
-    </div>
+    </header>
 
-    <div v-else class="no-question">
-      <p>Aucune question disponible</p>
-    </div>
-  </div>
+    <QuizQuestionCard
+      v-if="currentQuestion"
+      :question="currentQuestion"
+      :question-options="currentQuestionOptions"
+      :selected-answer="getCurrentAnswer()"
+      :is-answer-verified="isAnswerVerified"
+      :is-current-question-verified="isCurrentQuestionVerified"
+      :has-previous-question="hasPreviousQuestion"
+      :has-next-question="hasNextQuestion"
+      :can-skip="canSkip"
+      :remaining-skips="remainingSkips"
+      :has-feedback-enabled="hasFeedbackEnabled"
+      @select="selectAnswer"
+      @previous="goToPrevious"
+      @skip="skipQuestion"
+      @verify="verifyAnswer"
+      @continue="continueToNext"
+      @submit="submitAndNext"
+    />
+
+    <p v-else class="quiz-play-empty">No questions available</p>
+
+    <FeedbackCard v-if="shouldShowFeedback" />
+  </section>
 </template>
-
-<style scoped>
-.quiz-view {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-md);
-}
-
-.quiz-header {
-  margin-bottom: var(--space-xl);
-  text-align: center;
-  position: relative;
-}
-
-.back-button {
-  position: absolute;
-  left: var(--space-md);
-  top: var(--space-md);
-}
-
-.quiz-header h1 {
-  color: var(--color-text);
-  margin-bottom: var(--space-sm);
-}
-
-.quiz-header p {
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-}
-
-.progress-text {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-}
-
-.question-container {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-xl);
-  text-align: center;
-}
-
-.question-container h2 {
-  margin-top: 0;
-  margin-bottom: var(--space-xl);
-  color: var(--color-text);
-  font-size: 1.3rem;
-  min-height: 60px;
-}
-
-.options {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-
-.option-button {
-  width: 100%;
-  text-align: left;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all var(--transition-normal);
-}
-
-.option-button:hover {
-  border-color: var(--color-primary);
-  background: var(--color-primary-light);
-}
-
-.option-button--selected {
-  border-color: var(--color-primary);
-  background: var(--color-primary-light);
-  font-weight: bold;
-}
-
-.navigation {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-md);
-}
-
-.navigation > * {
-  flex: 1;
-}
-
-.no-question {
-  text-align: center;
-  padding: var(--space-xl);
-  color: var(--color-text-secondary);
-}
-</style>

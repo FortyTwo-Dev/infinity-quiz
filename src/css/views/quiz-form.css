@@ -1,0 +1,29 @@
+@layer components {
+  .quiz-form-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-6);
+  }
+
+  .quiz-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-6);
+  }
+
+  .quiz-form-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--it-space-3);
+    padding-block-start: var(--it-space-4);
+    border-block-start: var(--it-border-width) solid var(--it-border);
+  }
+
+  .quiz-form-footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--it-space-3);
+  }
+}

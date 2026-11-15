@@ -1,11 +1,20 @@
 import { computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useQuizSessionStore } from '../stores'
+import { useQuizSessionStore, useQuizVerificationStore } from '../stores'
+import { useSeededRandom } from './useSeededRandom'
+import { indexedSeededShuffle } from '../utils/random'
+
+export interface QuestionOption {
+  option: string
+  originalIndex: number
+}
 
 export function useQuiz() {
   const route = useRoute()
   const router = useRouter()
   const sessionStore = useQuizSessionStore()
+  const verificationStore = useQuizVerificationStore()
+  const { seed, ensureSeed } = useSeededRandom()
 
   const quizId = computed(() => route.params.quizId as string | undefined)
 
@@ -18,15 +27,60 @@ export function useQuiz() {
   const hasNextQuestion = computed(() => sessionStore.hasNextQuestion)
   const hasPreviousQuestion = computed(() => sessionStore.hasPreviousQuestion)
   const isCompleted = computed(() => sessionStore.isCompleted)
+  const timeLeft = computed(() => sessionStore.timeLeft)
+  const hasTimer = computed(() => sessionStore.hasTimer)
+  const canSkip = computed(() => sessionStore.canSkip)
+  const remainingSkips = computed(() => sessionStore.remainingSkips)
+  const hasFeedbackEnabled = computed(() => sessionStore.hasFeedbackEnabled)
+  const getCurrentQuestionTimeLimit = computed(() => sessionStore.getCurrentQuestionTimeLimit)
+  const isAnswerVerified = computed(() => verificationStore.isAnswerVerified)
+  const verifiedAnswerCorrect = computed(() => verificationStore.verifiedAnswerCorrect)
+  const shouldShowFeedback = computed(() => verificationStore.shouldShowFeedback)
+  const canSkipCurrentQuestion = computed(() => verificationStore.canSkipCurrentQuestion)
+  const isCurrentQuestionVerified = computed(() => verificationStore.isCurrentQuestionVerified)
+
+  const currentQuestionOptions = computed<QuestionOption[]>(() => {
+    const question = currentQuestion.value
+    if (!question) return []
+
+    const options = [...question.options]
+    const quiz = currentQuiz.value
+    const shouldShuffle = question.shuffleAnswers ?? quiz?.shuffleAnswers ?? false
+
+    // Shuffle the indices (not the text) so duplicate option texts can never
+    // collide on the same `originalIndex` via `indexOf`.
+    const indices = options.map((_, index) => index)
+    const orderedIndices = shouldShuffle
+      ? indexedSeededShuffle(indices, seed.value ?? quiz?.id ?? '', currentQuestionIndex.value)
+      : indices
+
+    return orderedIndices.map((index) => ({
+      option: options[index]!,
+      originalIndex: index,
+    }))
+  })
 
   function initializeQuiz() {
+    // Always resolve the seed (from the URL or a fresh one) so answer
+    // shuffling stays reproducible, including after a page reload.
+    const currentSeed = ensureSeed()
+
     if (quizId.value && quizId.value !== sessionStore.currentQuizId) {
-      sessionStore.selectQuiz(quizId.value)
+      sessionStore.selectQuiz(quizId.value, currentSeed)
+      return
     }
+    // Same quiz already in session (e.g. page reload): resume a persisted timer
+    sessionStore.resumeTimer()
   }
 
   function selectAnswer(answerIndex: number) {
     sessionStore.selectAnswer(answerIndex)
+  }
+
+  // Completion is owned by the store: QuizView watches `isCompleted` and
+  // redirects to results, so these actions never navigate themselves.
+  function skipQuestion() {
+    sessionStore.skipQuestion()
   }
 
   function submitAndNext() {
@@ -34,8 +88,15 @@ export function useQuiz() {
       sessionStore.nextQuestion()
     } else {
       sessionStore.completeQuiz()
-      router.push({ name: 'results' })
     }
+  }
+
+  function verifyAnswer() {
+    return verificationStore.verifyAnswer()
+  }
+
+  function continueToNext() {
+    verificationStore.continueToNext()
   }
 
   function goToPrevious() {
@@ -64,6 +125,7 @@ export function useQuiz() {
     quizId,
     currentQuiz,
     currentQuestion,
+    currentQuestionOptions,
     totalQuestions,
     currentQuestionIndex,
     score,
@@ -71,8 +133,23 @@ export function useQuiz() {
     hasNextQuestion,
     hasPreviousQuestion,
     isCompleted,
+    timeLeft,
+    hasTimer,
+    canSkip,
+    remainingSkips,
+    hasFeedbackEnabled,
+    getCurrentQuestionTimeLimit,
+    isAnswerVerified,
+    verifiedAnswerCorrect,
+    shouldShowFeedback,
+    canSkipCurrentQuestion,
+    isCurrentQuestionVerified,
+    seed,
     initializeQuiz,
     selectAnswer,
+    skipQuestion,
+    verifyAnswer,
+    continueToNext,
     submitAndNext,
     goToPrevious,
     restartQuiz,

@@ -1,35 +1,37 @@
-import { computed } from 'vue'
-import { SCORE_GRADES } from '../constants'
+import { computed, unref, type Ref, type ComputedRef } from 'vue'
+import { PASS_THRESHOLD } from '../constants'
 
-export function useScore(total: number, current: number) {
-  const percentage = computed(() => {
-    if (total === 0) return 0
-    return Math.round((current / total) * 100)
-  })
+export type ScoreSource = number | Ref<number> | ComputedRef<number>
+
+/**
+ * Percentage of correct answers, rounded for display only.
+ */
+export function getPercentage(score: number, total: number): number {
+  if (total === 0) return 0
+  return Math.round((score / total) * 100)
+}
+
+/**
+ * Whether the score reaches the pass threshold. Uses the exact ratio
+ * (no rounding) so a rounded 60% below the threshold is never a false pass.
+ */
+export function isPassed(score: number, total: number): boolean {
+  if (total === 0) return false
+  return score / total >= PASS_THRESHOLD / 100
+}
+
+export function useScore(total: ScoreSource, current: ScoreSource) {
+  const percentage = computed(() => getPercentage(unref(current), unref(total)))
+
+  const passed = computed(() => isPassed(unref(current), unref(total)))
 
   const formattedScore = computed(() => {
-    return `${current} / ${total}`
-  })
-
-  const letterGrade = computed(() => {
-    const percent = percentage.value
-    if (percent >= SCORE_GRADES.A_plus) return 'A+'
-    if (percent >= SCORE_GRADES.A) return 'A'
-    if (percent >= SCORE_GRADES.A_minus) return 'A-'
-    if (percent >= SCORE_GRADES.B_plus) return 'B+'
-    if (percent >= SCORE_GRADES.B) return 'B'
-    if (percent >= SCORE_GRADES.B_minus) return 'B-'
-    if (percent >= SCORE_GRADES.C_plus) return 'C+'
-    if (percent >= SCORE_GRADES.C) return 'C'
-    if (percent >= SCORE_GRADES.C_minus) return 'C-'
-    if (percent >= SCORE_GRADES.D_plus) return 'D+'
-    if (percent >= SCORE_GRADES.D) return 'D'
-    return 'F'
+    return `${unref(current)} / ${unref(total)}`
   })
 
   return {
     percentage,
+    passed,
     formattedScore,
-    letterGrade,
   }
 }

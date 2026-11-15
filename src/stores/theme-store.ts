@@ -1,108 +1,61 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import { lightTheme, darkTheme } from '@/theme/themes'
-import { generateThemeCSS } from '@/theme/utils/generate-css'
-import type { ThemeTokens, ThemeName } from '@/types/theme'
+import { ref } from 'vue'
+import { DEFAULT_THEME, type ThemeSelection } from '../constants/themes'
+import { STORAGE_KEYS } from '../constants'
+import { normalizeGlobalTheme, normalizeQuizTheme } from '../utils/theme'
 
-export const useThemeStore = defineStore('theme', () => {
-  // State - initialisé depuis localStorage
-  const initialTheme = typeof window !== 'undefined' ? localStorage.getItem('theme') || 'light' : 'light'
-  const currentThemeName = ref<ThemeName>(initialTheme)
-  const customThemes = ref<Map<string, ThemeTokens>>(new Map())
-  const styleElement = ref<HTMLStyleElement | null>(null)
+function writeDomTheme(selection: ThemeSelection) {
+  if (typeof document === 'undefined') return
+  document.documentElement.dataset.theme = selection.mode
+  document.documentElement.dataset.accent = selection.accent
+}
 
-  // Thèmes disponibles
-  const builtInThemes = computed(() => ({
-    light: lightTheme,
-    dark: darkTheme,
-  }))
+export const useThemeStore = defineStore(
+  'theme',
+  () => {
+    const globalTheme = ref<ThemeSelection>({ ...DEFAULT_THEME })
+    const temporaryTheme = ref<ThemeSelection | null>(null)
 
-  // Tous les thèmes (built-in + custom)
-  const allThemes = computed(() => ({
-    ...builtInThemes.value,
-    ...Object.fromEntries(customThemes.value),
-  }))
-
-  // Thème actuel complet
-  const currentTheme = computed(() => {
-    return allThemes.value[currentThemeName.value] || lightTheme
-  })
-
-  // Initialise le style element pour injecter les CSS
-  const initializeStyleElement = () => {
-    if (typeof document !== 'undefined') {
-      const existing = document.getElementById('theme-styles')
-      if (existing) existing.remove()
-
-      const styleEl = document.createElement('style')
-      styleEl.id = 'theme-styles'
-      document.head.appendChild(styleEl)
-      styleElement.value = styleEl
-      applyTheme()
-    }
-  }
-
-  // Applique le thème
-  const applyTheme = () => {
-    if (!styleElement.value) {
-      initializeStyleElement()
-      return
+    function applyTheme(selection: ThemeSelection) {
+      globalTheme.value = normalizeGlobalTheme(selection)
+      writeDomTheme(globalTheme.value)
     }
 
-    const theme = currentTheme.value
-    styleElement.value.textContent = generateThemeCSS(theme)
-    document.documentElement.dataset.theme = theme.name
-  }
-
-  // Actions
-  const setTheme = (name: ThemeName) => {
-    if (allThemes.value[name]) {
-      currentThemeName.value = name
-      localStorage.setItem('theme', name)
-      applyTheme()
+    /**
+     * Apply the theme of the quiz being played without touching the global
+     * one. A quiz that carries no theme keeps the global selection: forcing
+     * the default here would drop a dark-mode reader into a light quiz.
+     */
+    function applyQuizTheme(selection: unknown) {
+      const resolved = normalizeQuizTheme(selection) ?? null
+      temporaryTheme.value = resolved
+      if (resolved) writeDomTheme(resolved)
     }
-  }
 
-  const toggleTheme = () => {
-    const current = currentThemeName.value
-    const nextTheme = current === 'light' ? 'dark' : 'light'
-    setTheme(nextTheme)
-  }
-
-  const addCustomTheme = (theme: ThemeTokens) => {
-    customThemes.value.set(theme.name, theme)
-  }
-
-  const removeCustomTheme = (name: string) => {
-    customThemes.value.delete(name)
-    if (currentThemeName.value === name) {
-      setTheme('light')
+    function restoreGlobalTheme() {
+      temporaryTheme.value = null
+      writeDomTheme(globalTheme.value)
     }
-  }
 
-  // Crée un thème custom à partir de tokens partiels
-  const createCustomTheme = (
-    name: string,
-    customizations: Partial<Omit<ThemeTokens, 'name'>>,
-  ): ThemeTokens => {
+    /** Apply the rehydrated theme, normalized: storage is untrusted. */
+    function rehydrate() {
+      globalTheme.value = normalizeGlobalTheme(globalTheme.value)
+      writeDomTheme(globalTheme.value)
+    }
+
     return {
-      name,
-      ...lightTheme,
-      ...customizations,
+      globalTheme,
+      temporaryTheme,
+      applyTheme,
+      applyQuizTheme,
+      restoreGlobalTheme,
+      rehydrate,
     }
-  }
-
-  return {
-    currentThemeName,
-    currentTheme,
-    builtInThemes,
-    allThemes,
-    customThemes,
-    setTheme,
-    toggleTheme,
-    addCustomTheme,
-    removeCustomTheme,
-    createCustomTheme,
-    initializeStyleElement,
-  }
-})
+  },
+  {
+    persist: {
+      key: STORAGE_KEYS.theme,
+      pick: ['globalTheme'],
+    },
+  },
+)

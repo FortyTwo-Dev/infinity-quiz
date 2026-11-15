@@ -1,8 +1,13 @@
+import type { ThemeSelection } from '../constants/themes'
+
 export interface Question {
   id: string
   text: string
   options: string[]
   correctAnswerIndex: number
+  timeLimit?: number // Time limit in seconds for this specific question
+  shuffleAnswers?: boolean // Whether to shuffle the order of answers for this question
+  explanation?: string // Explanation shown when feedback is enabled (required if quiz.feedbackEnabled is true)
 }
 
 export interface Quiz {
@@ -10,6 +15,43 @@ export interface Quiz {
   title: string
   description: string
   questions: Question[]
+  timeLimit?: number // Time limit in seconds for the entire quiz (applies to questions without individual timeLimit)
+  shuffleQuestions?: boolean // Whether to shuffle the order of questions
+  shuffleAnswers?: boolean // Whether to shuffle answers for all questions (can be overridden per question)
+  maxSkips?: number // Maximum number of questions that can be skipped (undefined = unlimited)
+  enableReviewMode?: boolean // Whether to enable review mode after quiz completion
+  feedbackEnabled?: boolean // Whether to show immediate feedback after answer selection
+  category?: string // Quiz category for organization
+  tags?: string[] // Additional tags for filtering and search
+  theme?: ThemeSelection // Mode and accent this quiz is played with; falls back to the default theme
+}
+
+export interface QuestionResult {
+  question: Question
+  userAnswer: number | null
+  isCorrect: boolean
+  isSkipped: boolean
+}
+
+export interface QuizResult {
+  quizId: string
+  score: number
+  totalQuestions: number
+  date: string
+  passed: boolean
+}
+
+export interface QuizStats {
+  attempts: number
+  bestPercentage: number
+  averagePercentage: number
+  passRate: number
+}
+
+export interface GlobalStats {
+  attempts: number
+  averagePercentage: number
+  passRate: number
 }
 
 export interface QuizState {

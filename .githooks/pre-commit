@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# Pre-commit hook: format and lint what is staged, before it lands.
+#
+# Install once per clone:
+#   bash scripts/install-hooks.sh
+#
+# Adapted from the `global` pack template: the Rust, PHP and shell blocks are
+# dropped, this project ships only JavaScript, TypeScript, Vue and CSS. Prettier
+# and ESLint are added to the template's oxlint block because nothing else in
+# the pipeline formats a file, and because CI gates on both linters.
+#
+# A hook must never be bypassed (`--no-verify` is forbidden, see the safety
+# rule), so it stays fast: it checks, it does not run the test suite nor
+# `vue-tsc`.
+set -euo pipefail
+
+# NUL-delimited staged paths, written once: a failing `git diff` must abort the
+# hook rather than leave both lists empty and let the commit through unchecked.
+staged_list=$(mktemp)
+trap 'rm -f -- "$staged_list"' EXIT
+git diff --cached --name-only --diff-filter=ACMR -z > "$staged_list"
+
+# Staged paths matching an extended regex, in the repository.
+staged() {
+    local regex="$1"
+    local file
+
+    while IFS= read -r -d '' file; do
+        if [[ $file =~ $regex ]]; then
+            printf '%s\0' "$file"
+        fi
+    done < "$staged_list"
+}
+
+# A missing tool must neither block every commit nor pass unnoticed: warn, skip
+# the block, and let the commit through. Blocking here is how people learn to
+# reach for `--no-verify`.
+have() {
+    local tool="$1"
+    local purpose="$2"
+
+    if command -v "$tool" >/dev/null 2>&1; then
+        return 0
+    fi
+
+    printf 'warning: %s is not installed, skipping %s.\n' "$tool" "$purpose" >&2
+    return 1
+}
+
+# The fixers rewrite the working tree and the hook re-stages the result. That is
+# only safe when the file has nothing left unstaged: otherwise `git add` would
+# commit content the author deliberately kept out of the index.
+assert_fully_staged() {
+    local file
+
+    for file in "$@"; do
+        if ! git diff --quiet -- "$file"; then
+            printf 'error: %s has unstaged changes; stage or stash them before committing.\n' \
+                "$file" >&2
+            return 1
+        fi
+    done
+}
+
+format_files=()
+while IFS= read -r -d '' file; do
+    format_files+=("$file")
+done < <(staged '^src/.*\.(js|jsx|ts|tsx|mts|cts|mjs|cjs|vue|css|json)$')
+
+lint_files=()
+while IFS= read -r -d '' file; do
+    lint_files+=("$file")
+done < <(staged '\.(js|jsx|ts|tsx|mts|cts|mjs|cjs|vue)$')
+
+if ((${#format_files[@]} == 0 && ${#lint_files[@]} == 0)); then
+    exit 0
+fi
+
+if ! have bunx 'staged formatting and linting'; then
+    exit 0
+fi
+
+assert_fully_staged "${format_files[@]}" "${lint_files[@]}"
+
+# Prettier first, so the two linters inspect the formatted result.
+if ((${#format_files[@]} > 0)); then
+    bunx --bun prettier --write --experimental-cli -- "${format_files[@]}"
+fi
+
+if ((${#lint_files[@]} > 0)); then
+    bunx --bun oxlint --fix -- "${lint_files[@]}"
+    bunx --bun eslint --fix --cache --max-warnings=0 -- "${lint_files[@]}"
+fi
+
+# Reached only when every tool succeeded: a failure leaves the index untouched.
+git add -- "${format_files[@]}" "${lint_files[@]}"

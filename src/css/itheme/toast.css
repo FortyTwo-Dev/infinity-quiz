@@ -1,0 +1,47 @@
+/* Toast: candidate for upstream. A fixed region; the child carries the alert. */
+@layer it.tokens {
+  :where(.it-theme) {
+    --it-toast-inset: var(--it-space-4);
+    --it-toast-gap: var(--it-space-2);
+    --it-toast-width: 28rem;
+    --it-toast-z: 50;
+  }
+}
+
+@layer components {
+  .it-toast {
+    position: fixed;
+    z-index: var(--it-toast-z);
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-toast-gap);
+    max-width: min(var(--it-toast-width), calc(100vw - 2 * var(--it-toast-inset)));
+    padding: var(--it-toast-inset);
+  }
+
+  .it-toast-end {
+    inset-inline-end: 0;
+  }
+
+  .it-toast-start {
+    inset-inline-start: 0;
+  }
+
+  .it-toast-center {
+    inset-inline: 0;
+    margin-inline: auto;
+  }
+
+  .it-toast-top {
+    inset-block-start: 0;
+  }
+
+  .it-toast-bottom {
+    inset-block-end: 0;
+  }
+
+  .it-toast-middle {
+    inset-block-start: 50%;
+    translate: 0 -50%;
+  }
+}

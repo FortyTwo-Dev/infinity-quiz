@@ -1,0 +1,16 @@
+/*
+ * Widgets the theme package does not ship yet.
+ *
+ * Everything here is a candidate for upstream: `it-*` class names, `--it-*`
+ * tokens only, no literal colour, one file per widget. Promoting a widget to
+ * `@infinitylib/infinity-theme` means moving its file and deleting the local
+ * counterpart in the commit that bumps the package.
+ */
+@import './card.css';
+@import './badge.css';
+@import './alert.css';
+@import './dialog.css';
+@import './progress.css';
+@import './toast.css';
+@import './steps.css';
+@import './file-input.css';

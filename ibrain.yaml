@@ -1,0 +1,20 @@
+content:
+  rules: .ai/rules
+
+packs:
+  - source: path
+    path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/global"
+    priority: 0
+  - source: path
+    path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/vue"
+  - source: path
+    path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/pinia"
+  - source: path
+    path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/containers"
+  - source: path
+    path: "~/.iapp/ibrain/packs/github.com/FortyTwo-Dev/ibrain-packs/ci"
+  - source: git
+    url: "https://github.com/FortyTwo-Dev/iproject-ibrain-packs"
+    ref: "main"
+    pack: "infinity-quiz"
+    layer: project

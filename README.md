@@ -4,31 +4,46 @@
 
 ## Features
 
-### Current (MVP)
+### Current (Phase 3 - Quiz Management)
+
 - Quiz list with local storage
 - Quiz selection and question navigation
 - Multiple choice questions
 - Score tracking and results screen
 - Restart and back to list functionality
+- Timer with optional time limit per quiz
+- Progress bar for completion percentage
+- Question and answer shuffling
+- Skip question functionality
+- Review mode at quiz end
+- Correct answer highlighting
+- Immediate feedback on selection
+- Quiz creation, editing, deletion, and duplication
+- Categories and tags for organizing quizzes
+- Search and filter quizzes
+- JSON import/export for sharing quizzes
+- Light/dark mode with multiple color themes
 
 ### Roadmap
-See [doc/2 - Roadmap.md](./doc/2%20-%20Roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
+
+See [docs/roadmap.md](./docs/roadmap.md) for the complete 6-phase development plan including timer, shuffling, quiz management, statistics, and multiplayer features.
 
 ## Tech Stack
 
-| Category | Tools |
-|----------|-------|
-| **Runtime** | Bun 1.3.14 |
-| **Framework** | Vue 3.5.40 |
-| **Language** | TypeScript 6.0 |
-| **State Management** | Pinia 4.0.2 + pinia-plugin-persistedstate |
-| **Router** | Vue Router 5.2.0 |
-| **Build Tool** | Vite 8.1.5 |
-| **Testing** | Vitest 4.1.10, @vue/test-utils 2.4.11 |
-| **Linting** | ESLint 10.7.0, Oxlint 1.74.0 |
-| **Formatting** | Prettier 3.9.5 |
+| Category             | Tools                                        |
+| -------------------- | -------------------------------------------- |
+| **Runtime**          | Bun 1.3.14                                   |
+| **Framework**        | Vue 3.5.40                                   |
+| **Language**         | TypeScript 6.0                               |
+| **State Management** | Pinia 4.0.2 + pinia-plugin-persistedstate    |
+| **Router**           | Vue Router 5.2.0                             |
+| **Build Tool**       | Vite 8.1.5                                   |
+| **Testing**          | Vitest 4.1.10, @vue/test-utils 2.4.11        |
+| **Linting**          | ESLint 10.7.0, Oxlint 1.74.0                 |
+| **Formatting**       | Prettier 3.9.5                               |
+| **Icons**            | [Phosphor Icons](https://phosphoricons.com/) |
 
-See [doc/1 - Stack.md](./doc/1%20-%20Stack.md) for the full technical stack details.
+See [docs/specs.md](./docs/specs.md) for the full technical stack details.
 
 ## Project Setup
 
@@ -60,12 +75,17 @@ bun preview
 ### Testing
 
 ```sh
-# Run unit tests with Vitest
+# Run unit tests (Vitest on the Bun runtime)
 bun test:unit
 
-# Run tests in watch mode
+# Run tests once with coverage
+bun test:coverage
+
+# Watch mode
 bun test:unit --watch
 ```
+
+> Tests require Bun >= 1.4. Vitest runs on the Bun runtime via `bun run --bun vitest`.
 
 ### Linting & Formatting
 
@@ -87,57 +107,72 @@ bun format
 
 ```
 src/
-├── assets/                    # Static assets
-├── components/               # Reusable Vue components
-│   ├── common/               # Generic components (Button, Card, etc.)
-│   └── quiz/                 # Quiz-specific components
-├── composables/              # Vue composables
-├── constants/                # Application constants
-├── data/                     # Sample data and fixtures
+├── assets/                   # Static assets (fonts)
+├── components/
+│   ├── common/               # App-wide components (modal, notification, theme)
+│   ├── itheme/               # Local widgets the theme package does not ship yet
+│   ├── layout/               # Layout components (AppLayout, AppSidebar, containers)
+│   ├── quiz/                 # Quiz-specific components (cards, form, timer)
+│   └── quiz-import-export/   # Import/export components
+├── composables/              # Vue composables (useQuiz, useQuizForm, useResults, …)
+├── constants/                # Application constants (colors, thresholds, storage keys)
+├── css/                      # Cascade order, brand layer, widgets and screen CSS
+├── __tests__/                # Unit tests
+│   ├── composables/          # Composable tests
+│   ├── stores/               # Store tests
+│   └── utils/                # Utility tests
 ├── router/                   # Vue Router configuration
-├── stores/                   # Pinia stores
+├── stores/
+│   ├── notification-store.ts # Notification state
+│   └── quiz/                 # Quiz-related stores
+│       ├── quiz-store.ts         # Quiz CRUD operations
+│       ├── quiz-session-store.ts # Quiz session management
+│       ├── quiz-history-store.ts # Completed quiz results
+│       └── quiz-verification-store.ts # Answer verification
 ├── types/                    # TypeScript type definitions
-├── utils/                    # Utility functions
+├── utils/                    # Utility functions (validation, random, array-utils)
 ├── views/                    # Page-level components (routes)
+│   ├── QuizListView.vue      # Quiz selection
+│   ├── QuizView.vue          # Quiz taking interface
+│   ├── ResultsView.vue       # Results display
+│   ├── QuizFormView.vue      # Quiz create/edit form
+│   ├── QuizManagementView.vue# Quiz management
+│   ├── QuizImportExportView.vue # Import/export
+│   └── NotFoundView.vue      # 404 page
 ├── App.vue                   # Root component
 └── main.ts                   # Application entry point
 
- tests/
-├── composables/              # Composable tests
-├── stores/                   # Store tests
-└── utils/                    # Utility tests
+docs/
+├── decisions/               # ADRs (architecture decision records)
+├── quiz-format.md           # Quiz data format specification
+├── roadmap.md               # Development roadmap
+├── specs.md                 # Technical stack documentation
+└── workflow.md              # Git workflow and conventions
 
-doc/
-├── 1 - Stack.md              # Technical stack documentation
-├── 2 - Roadmap.md            # Development roadmap
-├── 3 - Guidelines.md         # Coding standards and architecture
-└── 4 - Git-Commits.md       # Git commit conventions
-```
 
 ## Documentation
 
-- [Coding Guidelines](./doc/3%20-%20Guidelines.md) - SOLID principles, naming conventions, architecture
-- [Git Commit Conventions](./doc/4%20-%20Git-Commits.md) - Conventional Commits specification
-- [Roadmap](./doc/2%20-%20Roadmap.md) - Feature development phases
-- [Technical Stack](./doc/1%20-%20Stack.md) - Complete dependency list
+- [Technical Stack](./docs/specs.md) - Complete dependency list
+- [Roadmap](./docs/roadmap.md) - Feature development phases
+- [Workflow](./docs/workflow.md) - Git workflow, commits, PR, code review
+- [Quiz Format](./docs/quiz-format.md) - Quiz data format specification
+- [Coding Rules](https://github.com/FortyTwo-Dev/iproject-ibrain-packs/tree/main/infinity-quiz/rules) - Project rules, resolved by `ibrain` into `.ai/rules/` (`ibrain sync`)
 
 ## IDE Setup
 
 ### Recommended
-- [VS Code](https://code.visualstudio.com/)
-- [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
 ### Browser DevTools
-- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) (Chrome/Edge)
+- [Vue.js DevTools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
 - Enable Custom Object Formatter in DevTools settings
 
 ## Type Support for `.vue` Imports in TS
 
 TypeScript cannot handle type information for `.vue` imports by default. We use:
+- `src/vite-env.d.ts` with `declare module '*.vue'` for type declarations
 - `vue-tsc` for type checking from the CLI
-- [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) in VS Code for IDE support
 
 ## Customize Configuration
 
@@ -146,3 +181,8 @@ See [Vite Configuration Reference](https://vite.dev/config/) for build configura
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+Powered by Mistral Vibe. Created by FortyTwo_Dev.
+```

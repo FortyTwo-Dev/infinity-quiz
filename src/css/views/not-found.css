@@ -1,0 +1,27 @@
+@layer components {
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--it-space-4);
+    min-block-size: 60vh;
+    text-align: center;
+  }
+
+  .not-found-icon {
+    color: var(--it-accent);
+  }
+
+  .not-found-code {
+    margin: 0;
+    font-size: var(--it-font-size-7);
+    font-weight: var(--it-font-weight-semibold);
+  }
+
+  .not-found-text {
+    margin: 0;
+    color: var(--it-muted);
+    font-size: var(--it-font-size-4);
+  }
+}

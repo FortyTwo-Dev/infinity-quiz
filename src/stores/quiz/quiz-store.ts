@@ -1,0 +1,152 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import type { Quiz } from '../../types/quiz'
+import { parseAndValidateQuizJSON } from '../../utils/validation'
+import { STORAGE_KEYS } from '../../constants'
+
+export const useQuizStore = defineStore(
+  'quiz',
+  () => {
+    // State
+    const quizzes = ref<Quiz[]>([])
+
+    // Getters
+    const getQuizById = computed(() => (id: string) => {
+      return quizzes.value.find((q) => q.id === id) ?? null
+    })
+
+    const getAllCategories = computed(() => {
+      const categories = new Set<string>()
+      quizzes.value.forEach((q) => {
+        if (q.category) categories.add(q.category)
+      })
+      return Array.from(categories).sort((a, b) => a.localeCompare(b))
+    })
+
+    const getAllTags = computed(() => {
+      const tags = new Set<string>()
+      quizzes.value.forEach((q) => {
+        if (q.tags) q.tags.forEach((tag) => tags.add(tag))
+      })
+      return Array.from(tags).sort((a, b) => a.localeCompare(b))
+    })
+
+    const searchQuizzes = computed(() => (searchTerm: string) => {
+      const term = searchTerm.toLowerCase()
+      return quizzes.value.filter(
+        (q) =>
+          q.title.toLowerCase().includes(term) ||
+          q.description.toLowerCase().includes(term) ||
+          q.category?.toLowerCase().includes(term) ||
+          q.tags?.some((tag) => tag.toLowerCase().includes(term)),
+      )
+    })
+
+    // Actions
+    const addQuiz = (quiz: Quiz) => {
+      quizzes.value.push(quiz)
+    }
+
+    const updateQuiz = (id: string, updatedQuiz: Partial<Quiz>) => {
+      const index = quizzes.value.findIndex((q) => q.id === id)
+      if (index !== -1) {
+        quizzes.value[index] = { ...quizzes.value[index], ...updatedQuiz } as Quiz
+      }
+    }
+
+    const deleteQuiz = (id: string) => {
+      quizzes.value = quizzes.value.filter((q) => q.id !== id)
+    }
+
+    const duplicateQuiz = (id: string): Quiz | null => {
+      const originalQuiz = getQuizById.value(id)
+      if (!originalQuiz) return null
+
+      const duplicatedQuiz: Quiz = {
+        ...originalQuiz,
+        id: `${originalQuiz.id}-copy-${uuidv4()}`,
+        title: `${originalQuiz.title} (Copy)`,
+      }
+
+      // Deep copy questions with new IDs
+      duplicatedQuiz.questions = originalQuiz.questions.map((q) => ({
+        ...q,
+        id: `${q.id}-copy-${uuidv4()}`,
+      }))
+
+      quizzes.value.push(duplicatedQuiz)
+      return duplicatedQuiz
+    }
+
+    const exportQuiz = (id: string): string | null => {
+      const quiz = getQuizById.value(id)
+      if (!quiz) return null
+      return JSON.stringify(quiz, null, 2)
+    }
+
+    const exportAllQuizzes = (): string => {
+      return JSON.stringify(quizzes.value, null, 2)
+    }
+
+    const importQuiz = (quizData: string): boolean => {
+      const parsedQuiz = parseAndValidateQuizJSON(quizData)
+      if (parsedQuiz === null || Array.isArray(parsedQuiz)) {
+        return false
+      }
+      if (getQuizById.value(parsedQuiz.id)) {
+        return false
+      }
+      addQuiz(parsedQuiz)
+      return true
+    }
+
+    const importQuizzes = (quizzesData: string): boolean => {
+      const parsedQuizzes = parseAndValidateQuizJSON(quizzesData)
+      if (parsedQuizzes === null || !Array.isArray(parsedQuizzes)) {
+        return false
+      }
+
+      // Reject the whole batch if any id is already present (or duplicated
+      // within the payload) to avoid silent duplicate ids.
+      const seenIds = new Set(quizzes.value.map((q) => q.id))
+      for (const quiz of parsedQuizzes) {
+        if (seenIds.has(quiz.id)) {
+          return false
+        }
+        seenIds.add(quiz.id)
+      }
+
+      quizzes.value.push(...parsedQuizzes)
+      return true
+    }
+
+    return {
+      // State
+      quizzes,
+
+      // Getters
+      getQuizById,
+      getAllCategories,
+      getAllTags,
+      searchQuizzes,
+
+      // Actions
+
+      addQuiz,
+      updateQuiz,
+      deleteQuiz,
+      duplicateQuiz,
+      exportQuiz,
+      exportAllQuizzes,
+      importQuiz,
+      importQuizzes,
+    }
+  },
+  {
+    persist: {
+      key: STORAGE_KEYS.quizzes,
+      pick: ['quizzes'],
+    },
+  },
+)
