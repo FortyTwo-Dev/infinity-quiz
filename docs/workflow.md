@@ -86,12 +86,19 @@ A PR must meet these requirements:
 
 ### PR Naming
 
-Format:
+Same convention as the commits, in English:
+
 ```
-#<plane-id> <branch_name>
+type(scope): imperative summary
 ```
 
-Example: `#123 feat/quiz-timer`
+Example: `feat(quiz): add timer`
+
+### PR Description
+
+Fill in `.github/PULL_REQUEST_TEMPLATE.md`: What, Why, Changes, Testing, Notes.
+Explain why, not only what, and link the issue with `Closes #<n>` or
+`Refs: #<n>`.
 
 ### Merge Process
 
