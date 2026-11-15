@@ -10,9 +10,7 @@ interface Props {
   showFeedback?: boolean
 }
 
-const props = defineProps<Props>()
-
-const showFeedback = computed(() => props.showFeedback ?? true)
+const props = withDefaults(defineProps<Props>(), { showFeedback: true })
 
 const status = computed<{ variant: WidgetVariant; label: string; icon: unknown }>(() => {
   const { isSkipped, isCorrect } = props.questionResult
