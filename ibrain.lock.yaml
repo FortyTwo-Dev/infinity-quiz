@@ -3,4 +3,4 @@ packs:
   - name: "infinity-quiz"
     url: "https://github.com/FortyTwo-Dev/iproject-ibrain-packs"
     ref: "main"
-    commit: "afc933ddcf7664bbf7cbd161c8315d841487412a"
+    commit: "bda5e47f5bd65e74b74721df83ac8509778fb3e5"
