@@ -1,0 +1,31 @@
+@layer components {
+  .settings-view {
+    display: flex;
+    flex-direction: column;
+    gap: var(--it-space-6);
+  }
+
+  .settings-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--it-space-3);
+  }
+
+  .settings-card-description {
+    margin-block-start: var(--it-space-2);
+    color: var(--it-muted);
+  }
+
+  .settings-control {
+    margin-block-start: var(--it-space-4);
+  }
+
+  .settings-hint,
+  .settings-note {
+    margin: var(--it-space-2) 0 0;
+    color: var(--it-muted);
+    font-size: var(--it-font-size-2);
+  }
+}

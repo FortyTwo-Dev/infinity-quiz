@@ -18,4 +18,8 @@ export const STORAGE_KEYS = {
   session: 'infinity-quiz-session',
   history: 'infinity-quiz-history',
   theme: 'infinity-quiz-theme',
+  accessibility: 'infinity-quiz-accessibility',
 } as const
+
+/** Application version, injected at build time from package.json. */
+export const APP_VERSION = __APP_VERSION__

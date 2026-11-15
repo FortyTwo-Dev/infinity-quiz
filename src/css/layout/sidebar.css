@@ -59,8 +59,38 @@
     list-style: none;
   }
 
-  .app-nav-grow {
+  /* The navigation fills the rail so the settings group can sink to the
+   * bottom; the other groups keep their place under the management links. */
+  .app-nav-stack {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+
+  /* Settings is pinned to the bottom and closed off by a rule, so it reads as
+   * a separate destination rather than one more section. */
+  .app-nav-settings {
     margin-block-start: auto;
+    padding-block-start: var(--it-space-2);
+    border-block-start: var(--it-border-width) solid var(--it-border);
+  }
+
+  .app-sidebar-version {
+    margin: 0;
+    padding-block-start: var(--it-space-2);
+    padding-inline: var(--it-space-2);
+    border-block-start: var(--it-border-width) solid var(--it-border);
+    color: var(--it-muted);
+    font-size: var(--it-font-size-1);
+    white-space: nowrap;
+  }
+
+  /* A version number is not an icon: the collapsed rail keeps it out. */
+  @media (min-width: 64rem) {
+    .app-sidebar[data-collapsed='true'] .app-sidebar-version {
+      display: none;
+    }
   }
 
   .app-nav-title {
@@ -88,17 +118,57 @@
   }
 
   /* The current page is carried by a filled row, not by an underline: a
-   * sidebar row is a surface, a link in running text is not. */
+   * sidebar row is a surface, a link in running text is not. The theme draws
+   * its own inset bottom line on the active link; the rail drops it. The text
+   * uses the accent ink, not the accent fill: #00ff96 fails 4.5:1 on a light
+   * surface (see the `--iq-accent-ink` note in brand.css). */
   .app-nav-link[aria-current='page'] {
     background-color: color-mix(in oklab, var(--it-accent) 14%, transparent);
-    color: var(--it-accent);
+    color: var(--iq-accent-ink);
     font-weight: var(--it-font-weight-semibold);
     text-decoration: none;
+    box-shadow: none;
   }
 
   .app-nav-label {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /* Credits and the source link are actions, not destinations: same row
+   * geometry as a nav link, muted until hovered. */
+  .app-nav-action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--it-space-3);
+    inline-size: 100%;
+    block-size: var(--it-control-height-sm);
+    padding-inline: var(--it-space-3);
+    border: 0;
+    border-radius: var(--it-radius);
+    background: transparent;
+    color: var(--it-muted);
+    font: inherit;
+    font-size: var(--it-font-size-2);
+    text-align: start;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .app-nav-action:hover {
+    background-color: color-mix(in oklab, var(--it-fg) 8%, transparent);
+    color: var(--it-fg);
+  }
+
+  .app-nav-action:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .app-nav-action svg {
+    flex-shrink: 0;
   }
 
   /* An icon is not a fluid box: it must keep its size when the row narrows. */
@@ -120,7 +190,8 @@
       padding-inline: var(--it-space-2);
     }
 
-    .app-sidebar[data-collapsed='true'] .app-nav-link {
+    .app-sidebar[data-collapsed='true'] .app-nav-link,
+    .app-sidebar[data-collapsed='true'] .app-nav-action {
       justify-content: center;
       padding-inline: 0;
     }

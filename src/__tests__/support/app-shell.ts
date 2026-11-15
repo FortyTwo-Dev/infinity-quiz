@@ -18,7 +18,7 @@ const RouteStub = defineComponent({
 })
 
 /**
- * The eight routes of the application, plus `unknown`: a route the shell does
+ * The nine routes of the application, plus `unknown`: a route the shell does
  * not know, which is how the top bar falls back to the brand name.
  */
 const routes: RouteRecordRaw[] = [
@@ -30,6 +30,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/create', name: 'quiz-create', component: RouteStub },
   { path: '/edit/:quizId', name: 'quiz-edit', component: RouteStub },
   { path: '/import-export', name: 'quiz-import-export', component: RouteStub },
+  { path: '/settings', name: 'settings', component: RouteStub },
   { path: '/unknown', name: 'unknown', component: RouteStub },
 ]
 

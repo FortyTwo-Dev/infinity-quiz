@@ -15,6 +15,7 @@ const ROUTE_TITLES = [
   { path: '/manage', title: 'Management' },
   { path: '/create', title: 'Create' },
   { path: '/import-export', title: 'Import / Export' },
+  { path: '/settings', title: 'Settings' },
   { path: '/results', title: 'Results' },
   { path: '/edit/abc', title: 'Edit' },
   { path: '/unknown', title: 'IQuiz' },
