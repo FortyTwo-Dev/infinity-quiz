@@ -12,7 +12,7 @@ interface Props {
   fullWidth?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { wrap: undefined })
 
 const flexClasses = computed(() => {
   const classes = [props.inline ? 'l-flex-inline' : 'l-flex']
