@@ -5,7 +5,7 @@
  * the subject cannot be mounted alone. The rest identifies a control the way a
  * user does, by its accessible name, so a spec never depends on a CSS class.
  */
-import { defineComponent, h, type Component } from 'vue'
+import { defineComponent, h, nextTick, type Component } from 'vue'
 import { mount } from '@vue/test-utils'
 import { useForm } from 'vee-validate'
 
@@ -80,6 +80,22 @@ export function controlMatching(wrapper: Wrapper, pattern: RegExp) {
   return wrapper
     .findAll(CONTROL_SELECTOR)
     .find((candidate) => pattern.test(accessibleName(candidate.element)))
+}
+
+/**
+ * Type `value` into the control named `controlName`, then let the form settle.
+ * Used by the specs that pin "this field feeds that form value".
+ */
+export async function typeIntoForm(
+  step: { wrapper: Wrapper; form: FormApi },
+  controlName: string,
+  value: string,
+): Promise<void> {
+  const input = control(step.wrapper, controlName)
+  if (!input) throw new Error(`no control named "${controlName}"`)
+
+  await input.setValue(value)
+  await nextTick()
 }
 
 /** A blank question, as the creation form starts one. */

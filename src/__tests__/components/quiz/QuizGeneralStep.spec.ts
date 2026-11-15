@@ -2,7 +2,14 @@ import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizGeneralStep from '../../../components/quiz/form/QuizGeneralStep.vue'
 import { DEFAULT_THEME, THEME_OPTIONS } from '@/constants/themes'
-import { accessibleName, control, mountInForm, normalize, type Wrapper } from '../../support/form'
+import {
+  accessibleName,
+  control,
+  mountInForm,
+  normalize,
+  typeIntoForm,
+  type Wrapper,
+} from '../../support/form'
 
 function tagDraftInput(wrapper: Wrapper) {
   const inputs = wrapper.findAll('input').filter((candidate) => {
@@ -62,14 +69,10 @@ describe('QuizGeneralStep', () => {
     ['Title', 'World capitals', 'title'],
     ['Category', 'Geography', 'category'],
   ])('stores %s typed in the form', async (label, value, field) => {
-    const { wrapper, form } = mountStep()
+    const step = mountStep()
+    await typeIntoForm(step, label, value)
 
-    const input = control(wrapper, label)
-    expect(input).toBeDefined()
-    await input!.setValue(value)
-    await nextTick()
-
-    expect(form.values[field]).toBe(value)
+    expect(step.form.values[field]).toBe(value)
   })
 
   it('renders a field error and marks the title input invalid', async () => {

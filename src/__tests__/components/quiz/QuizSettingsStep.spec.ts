@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizSettingsStep from '../../../components/quiz/form/QuizSettingsStep.vue'
-import { control, mountInForm, normalize } from '../../support/form'
+import { control, mountInForm, normalize, typeIntoForm } from '../../support/form'
 
 const initialValues = {
   timeLimit: undefined as number | undefined,
@@ -28,14 +28,10 @@ describe('QuizSettingsStep', () => {
     ['Time limit', '300', 'timeLimit'],
     ['Maximum skips', '7', 'maxSkips'],
   ])('stores %s typed in the form', async (label, value, field) => {
-    const { wrapper, form } = mountStep()
+    const step = mountStep()
+    await typeIntoForm(step, label, value)
 
-    const input = control(wrapper, label)
-    expect(input).toBeDefined()
-    await input!.setValue(value)
-    await nextTick()
-
-    expect(String(form.values[field])).toBe(value)
+    expect(String(step.form.values[field])).toBe(value)
   })
 
   it('renders the four checkbox labels', () => {
