@@ -1,7 +1,8 @@
+import { normalize } from '../../support/accessibility'
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizSettingsStep from '../../../components/quiz/form/QuizSettingsStep.vue'
-import { control, mountInForm, normalize, typeIntoForm } from '../../support/form'
+import { control, mountInForm, typeIntoForm } from '../../support/form'
 
 const initialValues = {
   timeLimit: undefined as number | undefined,

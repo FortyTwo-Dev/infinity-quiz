@@ -1,15 +1,9 @@
+import { accessibleName, normalize } from '../../support/accessibility'
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizGeneralStep from '../../../components/quiz/form/QuizGeneralStep.vue'
 import { DEFAULT_THEME, THEME_OPTIONS } from '@/constants/themes'
-import {
-  accessibleName,
-  control,
-  mountInForm,
-  normalize,
-  typeIntoForm,
-  type Wrapper,
-} from '../../support/form'
+import { control, mountInForm, typeIntoForm, type Wrapper } from '../../support/form'
 
 function tagDraftInput(wrapper: Wrapper) {
   const inputs = wrapper.findAll('input').filter((candidate) => {
