@@ -1,3 +1,4 @@
+import { normalize } from '../../support/accessibility'
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizQuestionsStep from '../../../components/quiz/form/QuizQuestionsStep.vue'
@@ -5,7 +6,6 @@ import {
   control,
   controlMatching,
   mountInForm,
-  normalize,
   questionFixture,
   type Wrapper,
 } from '../../support/form'

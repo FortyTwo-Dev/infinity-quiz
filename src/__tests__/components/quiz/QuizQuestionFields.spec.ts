@@ -1,12 +1,11 @@
+import { accessibleName, normalize } from '../../support/accessibility'
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizQuestionFields from '../../../components/quiz/form/QuizQuestionFields.vue'
 import {
-  accessibleName,
   control,
   controlMatching,
   mountInForm,
-  normalize,
   questionFixture,
   type Wrapper,
 } from '../../support/form'
