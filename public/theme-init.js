@@ -25,12 +25,12 @@
   // A payload written by the daisyUI build carries a theme name instead.
   const legacyName = selection.globalThemeName
   const legacyMode = typeof legacyName === 'string' && legacyName.endsWith('-dark') ? 'dark' : null
-  const mode = selection.globalTheme && selection.globalTheme.mode
+  const mode = selection.globalTheme?.mode
 
   root.dataset.theme = mode === 'dark' || mode === 'light' ? mode : legacyMode || 'light'
 
   const accessibility = read('infinity-quiz-accessibility')
-  if (accessibility && accessibility.isDyslexicFontEnabled === true) {
+  if (accessibility?.isDyslexicFontEnabled === true) {
     root.dataset.font = 'dyslexic'
   }
 })()
