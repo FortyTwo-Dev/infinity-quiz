@@ -60,6 +60,18 @@
     "href": "https://zod.dev"
   },
   {
+    "name": "marked",
+    "role": "Markdown rendering for a question context and its explanation",
+    "license": "MIT",
+    "href": "https://marked.js.org"
+  },
+  {
+    "name": "DOMPurify",
+    "role": "Sanitization of the rendered Markdown",
+    "license": "MPL-2.0 OR Apache-2.0",
+    "href": "https://github.com/cure53/DOMPurify"
+  },
+  {
     "name": "Phosphor Icons",
     "role": "Icon set",
     "license": "MIT",
