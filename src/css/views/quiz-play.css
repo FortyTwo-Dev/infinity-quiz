@@ -52,36 +52,27 @@
   }
 
   /*
-   * A stable play panel: the prompt, the context and the answers scroll inside
-   * the card, so the action row does not move from one question to the next.
+   * The play route owns the viewport: the stage (question and feedback) is the
+   * only thing that scrolls, and the action bar stays at the bottom. The card
+   * keeps its natural height, so a short question is a short card.
    */
-  .quiz-play .quiz-question-card {
-    block-size: clamp(22rem, calc(100dvh - 22rem), 34rem);
-  }
-
-  .quiz-play .quiz-question-card > .it-card-body {
+  .app-shell.app-shell-fullscreen .app-content {
     display: flex;
     flex-direction: column;
-    block-size: 100%;
+    overflow: hidden;
+  }
+
+  .quiz-play {
+    flex: 1;
     min-block-size: 0;
   }
 
-  .quiz-question-scroll {
-    flex: 1;
+  .quiz-play-stage {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    gap: var(--it-space-5);
     min-block-size: 0;
     overflow-y: auto;
-    padding-inline-end: var(--it-space-1);
-  }
-
-  /* Short questions sit in the middle of the panel instead of leaving the
-   * free space under the answers; a long one overflows and scrolls. */
-  .quiz-question-content {
-    margin-block: auto;
-  }
-
-  .quiz-question-actions {
-    flex: none;
   }
 }

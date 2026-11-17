@@ -138,7 +138,8 @@
   }
 
   .quiz-question-actions {
-    padding-block-start: var(--it-space-2);
+    flex: none;
+    padding-block-start: var(--it-space-3);
     border-block-start: var(--it-border-width) solid var(--it-border);
   }
 

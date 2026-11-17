@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mount, type DOMWrapper, type VueWrapper } from '@vue/test-utils'
+import { mount, type VueWrapper } from '@vue/test-utils'
 import QuizQuestionCard from '../../../components/quiz/card/QuizQuestionCard.vue'
 
 type Question = {
@@ -72,11 +72,7 @@ function optionStates(wrapper: VueWrapper): { text: string; state: string | unde
   }))
 }
 
-function button(wrapper: VueWrapper, label: string) {
-  return wrapper.findAll('button').find((candidate) => candidate.text().trim() === label)
-}
-
-function cardTitle(wrapper: VueWrapper | DOMWrapper<Element>) {
+function cardTitle(wrapper: VueWrapper) {
   return wrapper
     .findAll('h1,h2,h3,h4,h5,h6')
     .find((heading) => heading.text() === baseQuestion.text)
@@ -186,109 +182,6 @@ describe('QuizQuestionCard', () => {
     }
   })
 
-  it.each([
-    [true, 'Next'],
-    [false, 'Finish'],
-  ])(
-    'shows %s hasNextQuestion as %s and submits without feedback',
-    async (hasNextQuestion, label) => {
-      const wrapper = mountCard({ selectedAnswer: 1, hasNextQuestion })
-
-      const primary = button(wrapper, label)
-      expect(primary).toBeDefined()
-      await primary?.trigger('click')
-
-      expect(wrapper.emitted('submit')).toHaveLength(1)
-    },
-  )
-
-  it('shows Check while feedback is on and the current answer is not verified', async () => {
-    const wrapper = mountCard({ selectedAnswer: 1, hasFeedbackEnabled: true })
-
-    const check = button(wrapper, 'Check')
-    expect(check).toBeDefined()
-    await check?.trigger('click')
-
-    expect(wrapper.emitted('verify')).toHaveLength(1)
-  })
-
-  it.each([
-    [true, 'Next'],
-    [false, 'Finish'],
-  ])('continues with %s hasNextQuestion as %s once verified', async (hasNextQuestion, label) => {
-    const wrapper = mountCard({
-      selectedAnswer: 1,
-      hasFeedbackEnabled: true,
-      isAnswerVerified: true,
-      isCurrentQuestionVerified: true,
-      hasNextQuestion,
-    })
-
-    const primary = button(wrapper, label)
-    expect(primary).toBeDefined()
-    await primary?.trigger('click')
-
-    expect(wrapper.emitted('continue')).toHaveLength(1)
-  })
-
-  it('disables the primary action while nothing is selected and the question is not verified', () => {
-    const wrapper = mountCard()
-
-    expect(button(wrapper, 'Next')?.attributes('disabled')).toBeDefined()
-  })
-
-  it('keeps the primary action disabled without a selection even once verified when feedback is off', () => {
-    const wrapper = mountCard({ isCurrentQuestionVerified: true })
-
-    expect(button(wrapper, 'Next')?.attributes('disabled')).toBeDefined()
-  })
-
-  it('disables Previous without a previous question', () => {
-    const wrapper = mountCard({ hasPreviousQuestion: false })
-
-    expect(button(wrapper, 'Previous')?.attributes('disabled')).toBeDefined()
-  })
-
-  it('disables Previous when the question has its own time limit', () => {
-    const wrapper = mountCard({ question: { ...baseQuestion, timeLimit: 30 } })
-
-    expect(button(wrapper, 'Previous')?.attributes('disabled')).toBeDefined()
-  })
-
-  it('enables Previous with a previous question and no per-question time limit', () => {
-    const wrapper = mountCard()
-
-    expect(button(wrapper, 'Previous')?.attributes('disabled')).toBeUndefined()
-  })
-
-  it('hides Skip when skipping is not allowed', () => {
-    const wrapper = mountCard({ canSkip: false })
-
-    expect(
-      wrapper.findAll('button').some((candidate) => candidate.text().trim().startsWith('Skip')),
-    ).toBe(false)
-  })
-
-  it('labels Skip without a count when skips are unlimited', () => {
-    const wrapper = mountCard({ canSkip: true, remainingSkips: null })
-
-    expect(button(wrapper, 'Skip')).toBeDefined()
-  })
-
-  it('labels Skip with the remaining count', () => {
-    const wrapper = mountCard({ canSkip: true, remainingSkips: 3 })
-
-    expect(button(wrapper, 'Skip (3)')).toBeDefined()
-  })
-
-  it('emits skip when Skip is pressed', async () => {
-    const wrapper = mountCard({ canSkip: true, remainingSkips: 2 })
-
-    await button(wrapper, 'Skip (2)')?.trigger('click')
-
-    expect(wrapper.emitted('skip')).toHaveLength(1)
-  })
-
   it('renders the context as Markdown after the heading and before the options', () => {
     const wrapper = mountCard({
       question: {
@@ -327,25 +220,20 @@ describe('QuizQuestionCard', () => {
     expect(html.indexOf('type="radio"')).toBeGreaterThan(html.indexOf(baseQuestion.text))
   })
 
-  it('keeps the heading, the context and the options inside the scroll area', () => {
+  it('wraps its content in no scrolling area', () => {
     const wrapper = mountCard({ question: { ...baseQuestion, context: 'Some context.' } })
 
-    const scroll = wrapper.find('.quiz-question-scroll')
-    expect(scroll.exists()).toBe(true)
-    expect(cardTitle(scroll)).toBeDefined()
-    expect(scroll.find('.quiz-prose').exists()).toBe(true)
-    expect(scroll.findAll('input[type="radio"]')).toHaveLength(2)
+    expect(wrapper.find('.quiz-question-scroll').exists()).toBe(false)
   })
 
-  it('keeps the action controls outside the scroll area', () => {
+  it('exposes no action control', () => {
     const wrapper = mountCard({ canSkip: true, remainingSkips: 2 })
 
-    const scroll = wrapper.find('.quiz-question-scroll')
+    const buttons = wrapper.findAll('button').map((candidate) => candidate.text().trim())
 
-    for (const label of ['Previous', 'Skip (2)', 'Next']) {
-      const action = button(wrapper, label)
-      expect(action).toBeDefined()
-      expect(scroll.element.contains(action!.element)).toBe(false)
-    }
+    expect(buttons).not.toContain('Previous')
+    expect(buttons).not.toContain('Next')
+    expect(buttons).not.toContain('Finish')
+    expect(buttons.some((label) => label.startsWith('Skip'))).toBe(false)
   })
 })

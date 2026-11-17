@@ -104,16 +104,18 @@ card, the review card, the form's review step and the feedback card all use it.
 
 ### Layout
 
-The question card is a panel of stable height on the play screen
-(`clamp(22rem, calc(100dvh - 22rem), 34rem)`), with a scrollable content area and
-the action row outside it. Measured on a production build: the action row sits
-at the same vertical position for a question without a context, with a short
-code context and with a long passage, at 1280×800 and 390×844.
+The play screen fills the viewport: the header stays put, the stage (question
+card and feedback) is the only scrolling area, and the action row is its own bar
+at the bottom, outside the card. The card keeps its natural height, so a short
+question is a short card. Measured on a production build: the bar sits at the
+same vertical position for a question without a context, with a short code
+context and with a long passage, at 1280×800 and 390×844.
 
 The context is bounded (`14rem`, its own scroll) so that a long passage never
-pushes the answers out of the panel. A short context is centred with the rest of
-the panel; a long one scrolls, and the box is focusable (`tabindex="0"`, labelled
-"Question context") so a keyboard user can scroll it.
+pushes the answers out of the card. The box is focusable (`tabindex="0"`,
+labelled "Question context") so a keyboard user can scroll it. The PWA banner
+rises above the bar while the play screen is active, so it never covers the
+primary control.
 
 ### Form
 
@@ -139,7 +141,8 @@ the real rendering, not an approximation.
 - A code sample, a quotation or a table is written in a syntax authors know.
 - One sanitizer, one renderer, one `v-html`, one place to audit.
 - No migration, no storage growth beyond the text itself.
-- The stable action row removes the observed jump between questions.
+- The stable action row removes the observed jump between questions without
+  inflating the card.
 
 ### Negative
 
@@ -158,8 +161,8 @@ the real rendering, not an approximation.
   two fields in the editor.
 - A bounded context over an unbounded one: the answers stay on screen, at the
   cost of a nested scroll area.
-- A fixed play panel over a card that hugs its content: stable actions, at the
-  cost of free space around a short question.
+- A detached action bar over a card that carries its own actions: stable
+  actions and a compact card, at the cost of the free space between the two.
 
 ## Alternatives Considered
 
@@ -176,10 +179,10 @@ the real rendering, not an approximation.
 5. **Inline images in the data URL, now**: rejected. The quota, the duplication
    in the persisted session and the export weight need the account storage to be
    decided. The images are deferred, not dropped.
-6. **Detached action bar** (outside the card, pinned to the play panel):
-   rejected for this change. It removes the free space, but moves the actions out
-   of the card and reshapes the feedback flow; the fixed panel solves the jump
-   with a smaller diff.
+6. **A fixed-height card with an internal scroll**: rejected after the review.
+   It kept the action row stable, but a short question sat in a tall empty card
+   with its content marooned in the middle. The detached bar keeps the row
+   stable without inflating the card.
 7. **A narrower URI allowlist** (`ALLOWED_URI_REGEXP`): rejected. It strips the
    `target` and `rel` attributes DOMPurify treats as URI-valued; the default
    policy already blocks `javascript:` and `data:`.

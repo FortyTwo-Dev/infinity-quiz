@@ -202,7 +202,7 @@ bun test:coverage          # the full suite with coverage, the pre-push gate
 ```
 
 Vitest runs on the Bun runtime: Bun's own test runner cannot compile a `.vue`
-single-file component. The suite holds 832 tests over 64 files, and the
+single-file component. The suite holds 841 tests over 65 files, and the
 `lines: 80` threshold is enforced by `vitest.config.ts`.
 
 Three layers:
