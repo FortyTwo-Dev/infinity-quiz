@@ -17,37 +17,27 @@ function token(
 
 describe('languageIdFor', () => {
   it.each([
-    ['javascript', 'javascript'],
-    ['typescript', 'typescript'],
-    ['jsx', 'jsx'],
-    ['tsx', 'tsx'],
-    ['json', 'json'],
-    ['html', 'html'],
-    ['css', 'css'],
-    ['bash', 'bash'],
-    ['python', 'python'],
-    ['java', 'java'],
-  ])('keeps the canonical name %j', (fence, expected) => {
-    expect(languageIdFor(fence)).toBe(expected)
-  })
-
-  it.each([
-    ['js', 'javascript'],
-    ['ts', 'typescript'],
-    ['py', 'python'],
-    ['sh', 'bash'],
-    ['shell', 'bash'],
-    ['zsh', 'bash'],
-    ['htm', 'html'],
-  ])('resolves the alias %j to %j', (fence, expected) => {
-    expect(languageIdFor(fence)).toBe(expected)
-  })
-
-  it.each([
-    ['JS', 'javascript'],
-    ['  js  ', 'javascript'],
-    ['js title="x"', 'javascript'],
-  ])('ignores case, whitespace and the info string of %j', (fence, expected) => {
+    { fence: 'javascript', expected: 'javascript' },
+    { fence: 'typescript', expected: 'typescript' },
+    { fence: 'jsx', expected: 'jsx' },
+    { fence: 'tsx', expected: 'tsx' },
+    { fence: 'json', expected: 'json' },
+    { fence: 'html', expected: 'html' },
+    { fence: 'css', expected: 'css' },
+    { fence: 'bash', expected: 'bash' },
+    { fence: 'python', expected: 'python' },
+    { fence: 'java', expected: 'java' },
+    { fence: 'js', expected: 'javascript' },
+    { fence: 'ts', expected: 'typescript' },
+    { fence: 'py', expected: 'python' },
+    { fence: 'sh', expected: 'bash' },
+    { fence: 'shell', expected: 'bash' },
+    { fence: 'zsh', expected: 'bash' },
+    { fence: 'htm', expected: 'html' },
+    { fence: 'JS', expected: 'javascript' },
+    { fence: '  js  ', expected: 'javascript' },
+    { fence: 'js title="x"', expected: 'javascript' },
+  ])('resolves $fence to $expected', ({ fence, expected }) => {
     expect(languageIdFor(fence)).toBe(expected)
   })
 

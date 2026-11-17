@@ -33,43 +33,51 @@ function codeOf(html: string): HTMLElement {
   return code as HTMLElement
 }
 
+interface MarkdownCase {
+  name: string
+  source: string
+  expected: string[]
+  text?: string[]
+}
+
 describe('renderMarkdown', () => {
-  it('renders bold text', () => {
-    expect(renderMarkdown('**bold**')).toContain('<strong>bold</strong>')
-  })
+  it.each<MarkdownCase>([
+    { name: 'renders bold text', source: '**bold**', expected: ['<strong>bold</strong>'] },
+    {
+      name: 'renders emphasis, strikethrough and inline code',
+      source: '*em* ~~del~~ `code`',
+      expected: ['<em>em</em>', '<del>del</del>', '<code>code</code>'],
+    },
+    {
+      name: 'renders a fenced code block and keeps its text',
+      source: '```\nconst answer = 42\n```',
+      expected: ['<pre>', '<code>', 'const answer = 42'],
+    },
+    {
+      name: 'renders a list',
+      source: '- one\n- two',
+      expected: ['<ul>', '<li>one</li>', '<li>two</li>'],
+    },
+    {
+      name: 'renders a table with a header and cells',
+      source: '| A | B |\n| - | - |\n| 1 | 2 |',
+      expected: ['<table>', '<thead>', '<th>', '<td>'],
+      text: ['1'],
+    },
+    {
+      name: 'keeps emphasis inside a blockquote as HTML',
+      source: '> A **quoted** line',
+      expected: ['<blockquote>', '<strong>quoted</strong>'],
+    },
+  ])('$name', ({ source, expected, text }) => {
+    const html = renderMarkdown(source)
 
-  it('renders emphasis, strikethrough and inline code', () => {
-    const html = renderMarkdown('*em* ~~del~~ `code`')
-
-    expect(html).toContain('<em>em</em>')
-    expect(html).toContain('<del>del</del>')
-    expect(html).toContain('<code>code</code>')
-  })
-
-  it('renders a fenced code block and keeps its text', () => {
-    const html = renderMarkdown('```\nconst answer = 42\n```')
-
-    expect(html).toContain('<pre>')
-    expect(html).toContain('<code>')
-    expect(html).toContain('const answer = 42')
-  })
-
-  it('renders a list', () => {
-    const html = renderMarkdown('- one\n- two')
-
-    expect(html).toContain('<ul>')
-    expect(html).toContain('<li>one</li>')
-    expect(html).toContain('<li>two</li>')
-  })
-
-  it('renders a table with a header and cells', () => {
-    const html = renderMarkdown('| A | B |\n| - | - |\n| 1 | 2 |')
-
-    expect(html).toContain('<table>')
-    expect(html).toContain('<thead>')
-    expect(html).toContain('<th>')
-    expect(html).toContain('<td>')
-    expect(textOf(html)).toContain('1')
+    for (const fragment of expected) {
+      expect(html).toContain(fragment)
+    }
+    for (const fragment of text ?? []) {
+      expect(textOf(html)).toContain(fragment)
+    }
   })
 
   it('keeps emphasis inside a paragraph as HTML', () => {
@@ -77,13 +85,6 @@ describe('renderMarkdown', () => {
 
     expect(html).toContain('<strong>important</strong>')
     expect(textOf(html)).toBe('An important sentence.')
-  })
-
-  it('keeps emphasis inside a blockquote as HTML', () => {
-    const html = renderMarkdown('> A **quoted** line')
-
-    expect(html).toContain('<blockquote>')
-    expect(html).toContain('<strong>quoted</strong>')
   })
 
   it.each(['# Title', '## Sub'])('renders the heading %j as a bold paragraph', (source) => {
