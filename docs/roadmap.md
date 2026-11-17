@@ -70,8 +70,10 @@ Create a minimal working quiz app that runs locally with basic question/answer f
 - [ ] **Question Types**: Support for true/false, multiple correct answers, open-ended
 - [ ] **Hints**: Optional hints for questions
 - [x] **Explanations**: Show explanation after answering
-- [ ] **Image Support**: Add images to questions
-- [ ] **Markdown Support**: Rich text formatting for questions and answers
+- [x] **Markdown Support**: a question's context and its explanation are
+  written and rendered as Markdown; the prompt and the answers stay plain text.
+- [ ] **Image Support**: add images to questions (deferred until the account with
+  cloud storage exists; see ADR-004)
 - [x] **Custom Themes**: Light/dark mode and color customization
 
 ---

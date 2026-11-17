@@ -28,6 +28,9 @@ Everything runs in the browser. Every quiz, attempt and preference lives in
 
 - One question at a time, with immediate feedback, the correct answer
   highlighted after a selection, and a full review at the end.
+- An optional Markdown context per question — a code sample, a quotation, a
+  table — shown between the prompt and the answers, and an explanation rendered
+  as Markdown in the feedback.
 - Optional time limit, global or per question, with a progress bar that reaches
   its end on the last question.
 - Question and answer shuffling from a persisted seed, so a reload replays the
@@ -55,6 +58,8 @@ Everything runs in the browser. Every quiz, attempt and preference lives in
 - Pinia 4 with `pinia-plugin-persistedstate`; every store declares its storage
   key and the exact fields it persists.
 - Zod 4 for the quiz format and vee-validate for the creation form.
+- `marked` and DOMPurify for the question context and the explanation: one
+  renderer, one sanitizer, one `v-html` (ADR-004).
 - Bun 1.4 as package manager and runtime, Vitest 4 for the suite, run on Bun.
 - The `@infinitylib/infinity-theme` design system, with `-vue` for its wrappers.
 - ESLint 10 with `eslint-plugin-vue`, Oxlint and Prettier.
@@ -157,7 +162,7 @@ src/
 │   ├── itheme/            # the widgets the theme package does not ship yet
 │   ├── layout/            # the shell and the L* layout primitives
 │   ├── common/            # modal, notification, theme toggle, PWA prompt
-│   ├── quiz/              # cards, form steps, charts, modal, search bar
+│   ├── quiz/              # cards, form steps, charts, modal, search bar, content
 │   └── quiz-import-export/
 ├── composables/           # stateful Vue logic, one concern per file
 ├── stores/
@@ -197,7 +202,7 @@ bun test:coverage          # the full suite with coverage, the pre-push gate
 ```
 
 Vitest runs on the Bun runtime: Bun's own test runner cannot compile a `.vue`
-single-file component. The suite holds 785 tests over 62 files, and the
+single-file component. The suite holds 832 tests over 64 files, and the
 `lines: 80` threshold is enforced by `vitest.config.ts`.
 
 Three layers:
@@ -225,6 +230,8 @@ ignored and recreated by `ibrain sync`; update the rules through
 ## Notes
 
 - TypeScript is pinned to 6 until `vue-tsc` supports TypeScript 7.
+- Markdown is rendered by `MarkdownContent` alone, from the sanitized output of
+  `renderMarkdown`; no other component binds `v-html`.
 - The stored theme is applied by `public/theme-init.js` before the first paint,
   and `src/css/style.css` binds the canvas to it; the stores reapply the same
   selection once Pinia rehydrates.
