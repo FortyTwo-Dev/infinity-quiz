@@ -104,17 +104,25 @@ card, the review card, the form's review step and the feedback card all use it.
 
 ### Layout
 
-The action controls stay at the bottom of the question card: the card keeps its
-natural height and the page scrolls, so a short question is a short card. The
-action row therefore moves with the card from one question to the next. Measured
-on a production build, at 1280×800 and 390×844, the primary control moved by
-102 px between a question without a context and one with a short code sample,
+On a desktop screen the action controls stay at the bottom of the question card:
+the card keeps its natural height and the page scrolls, so a short question is a
+short card. The action row therefore moves with the card from one question to
+the next. Measured on a production build, at 1280×800, the primary control moved
+by 102 px between a question without a context and one with a short code sample,
 and by 268 px up to a long passage.
 
-Two stable alternatives were built and measured, and both were rejected: a
-fixed-height card with an internal scroll wrapped a short question in a tall
-empty box, and a bar pinned to the bottom of the viewport left an empty middle
-on screen.
+On mobile (`max-width: 63.9375rem`) the row leaves the card and pins to the bottom
+of the viewport, where a thumb reaches it. The card is unchanged: the context
+still scrolls inside its own box, the answers are never inside a scroll area, and
+the page's bottom padding keeps the last answer above the bar. The PWA banner
+sits above the bar (measured: bar at the bottom edge, banner 22 px higher) so it
+never covers the primary control.
+
+Two stable desktop alternatives were built and measured, and both were rejected:
+a fixed-height card with an internal scroll wrapped a short question in a tall
+empty box, and a bar pinned to the bottom of the viewport left an empty middle on
+screen. On mobile, the pinned bar does not have that problem: the viewport is the
+frame, and the thumb reach justifies it.
 
 The context is bounded (`14rem`, its own scroll) so that a long passage never
 pushes the answers out of the card. The box is focusable (`tabindex="0"`,
@@ -153,9 +161,11 @@ the real rendering, not an approximation.
 - An older build silently drops the context on import and re-export.
 - A long context scrolls inside a bounded box; the answers stay visible but the
   passage is not read in one screen.
-- The action row moves with the card: 102 px between a plain question and a code
-  one, up to 268 px with a long passage. A user who clicks through questions
-  without looking can land somewhere else.
+- The action row moves with the card on desktop: 102 px between a plain question
+  and a code one, up to 268 px with a long passage. A user who clicks through
+  questions without looking can land somewhere else.
+- The mobile pinned bar is a second layout rule and a fixed element over the
+  page; the page needs a bottom padding to keep the last answer clear.
 
 ### Trade-offs
 
@@ -166,8 +176,9 @@ the real rendering, not an approximation.
   two fields in the editor.
 - A bounded context over an unbounded one: the answers stay on screen, at the
   cost of a nested scroll area.
-- A moving action row over a pinned bar: compact card and no empty band, at the
-  cost of a 100–270 px move between questions.
+- A moving action row over a pinned bar on desktop: compact card and no empty
+  band, at the cost of a 100–270 px move between questions. On mobile the pinned
+  bar wins: the thumb reach matters more than the movement.
 
 ## Alternatives Considered
 

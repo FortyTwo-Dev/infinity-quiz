@@ -39,4 +39,12 @@
   .pwa-message {
     margin-inline-end: auto;
   }
+
+  /* Mobile play: the action row is pinned to the bottom, so the banner sits
+   * above it instead of covering the primary control. */
+  @media (max-width: 63.9375rem) {
+    body:has(.app-shell-fullscreen) .pwa-banner {
+      inset-block-end: calc(var(--it-space-4) + 4.5rem);
+    }
+  }
 }

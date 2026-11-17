@@ -50,4 +50,26 @@
     text-align: center;
     color: var(--it-muted);
   }
+
+  /*
+   * Mobile: the action row leaves the card and pins to the bottom of the
+   * viewport, where a thumb reaches it. The card keeps its natural height, the
+   * context scrolls inside its own box, and the answers are never inside a
+   * scroll area. The extra bottom padding keeps the last answer clear of the
+   * bar.
+   */
+  @media (max-width: 63.9375rem) {
+    .quiz-play .quiz-question-actions {
+      position: fixed;
+      inset-inline: 0;
+      inset-block-end: 0;
+      z-index: 20;
+      padding: var(--it-space-3) var(--app-gutter);
+      background-color: var(--it-bg);
+    }
+
+    .quiz-play {
+      padding-block-end: calc(var(--it-space-5) + 3.5rem);
+    }
+  }
 }
