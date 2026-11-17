@@ -15,6 +15,17 @@ import { useQuizForm } from '../../composables/useQuizForm'
 type FormApi = ReturnType<typeof useQuizForm>
 
 /**
+ * VeeValidate resolves the value type of an indexed path, such as
+ * `questions[0].text`, to `never` with this Zod schema; the path is valid at
+ * runtime. The cast stays here, in the test, and the field and value remain
+ * explicit at every call site.
+ */
+function setField(api: FormApi, field: string, value: unknown) {
+  const setValue = api.setFieldValue as (name: string, val: unknown) => void
+  setValue(field, value)
+}
+
+/**
  * VeeValidate requires a component instance, so expose the composable through
  * a throwaway component and capture its return value.
  */
@@ -33,9 +44,9 @@ function withForm(quizId?: string) {
 async function fillValidForm(api: FormApi) {
   api.setFieldValue('title', 'My quiz')
   api.setFieldValue('description', 'A description')
-  api.setFieldValue('questions[0].text', 'Q1?')
-  api.setFieldValue('questions[0].options', ['A', 'B'])
-  api.setFieldValue('questions[0].correctAnswerIndex', 0)
+  setField(api, 'questions[0].text', 'Q1?')
+  setField(api, 'questions[0].options', ['A', 'B'])
+  setField(api, 'questions[0].correctAnswerIndex', 0)
   await nextTick()
 }
 
@@ -117,9 +128,9 @@ describe('useQuizForm', () => {
     api.setFieldValue('description', 'A description')
     await api.goToNextStep()
 
-    api.setFieldValue('questions[0].text', 'Q1?')
-    api.setFieldValue('questions[0].options', ['A', 'B'])
-    api.setFieldValue('questions[0].correctAnswerIndex', 0)
+    setField(api, 'questions[0].text', 'Q1?')
+    setField(api, 'questions[0].options', ['A', 'B'])
+    setField(api, 'questions[0].correctAnswerIndex', 0)
     await api.goToNextStep()
     await api.goToNextStep()
 
@@ -168,14 +179,12 @@ describe('useQuizForm', () => {
       id: 'quiz-1',
       title: 'Title',
       description: 'Description',
-      questions: [
-        { id: 'q-existing', text: 'Old?', options: ['A', 'B'], correctAnswerIndex: 0 },
-      ],
+      questions: [{ id: 'q-existing', text: 'Old?', options: ['A', 'B'], correctAnswerIndex: 0 }],
     }
     quizStore.addQuiz(quiz)
 
     const { api } = withForm('quiz-1')
-    api.setFieldValue('questions[0].text', 'Updated?')
+    setField(api, 'questions[0].text', 'Updated?')
     await nextTick()
     await api.submit()
 

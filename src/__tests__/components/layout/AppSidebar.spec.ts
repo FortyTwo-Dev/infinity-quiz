@@ -273,7 +273,8 @@ describe('AppSidebar', () => {
 
     // Nothing is rendered after it outside the closed dialog, which a user
     // never sees on the settings screen.
-    const renderedAfter = Array.from(wrapper.element.querySelectorAll('*')).filter(
+    const root = wrapper.element as Element
+    const renderedAfter = Array.from(root.querySelectorAll('*')).filter(
       (element) => !element.closest('dialog') && precedes(marker.element, element),
     )
     expect(renderedAfter.map((element) => normalize(element.textContent)).filter(Boolean)).toEqual(

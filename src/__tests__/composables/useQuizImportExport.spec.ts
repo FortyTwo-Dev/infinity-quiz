@@ -39,9 +39,7 @@ describe('useQuizImportExport', () => {
       const { importFromJson } = useQuizImportExport()
       const quizStore = useQuizStore()
 
-      const success = importFromJson(
-        JSON.stringify([validQuiz, { ...validQuiz, id: 'quiz-2' }]),
-      )
+      const success = importFromJson(JSON.stringify([validQuiz, { ...validQuiz, id: 'quiz-2' }]))
 
       expect(success).toBe(true)
       expect(quizStore.quizzes).toHaveLength(2)
@@ -147,7 +145,7 @@ describe('useQuizImportExport', () => {
 
       downloadQuiz('quiz-1')
 
-      const anchor = createElementSpy.mock.results[0].value as HTMLAnchorElement
+      const anchor = createElementSpy.mock.results[0]?.value as HTMLAnchorElement
       expect(anchor.download).toBe('My_Quiz_Title_.json')
     })
   })

@@ -435,8 +435,8 @@ describe('useQuizSessionStore', () => {
 
       const results = sessionStore.getQuestionResults
       expect(results).toHaveLength(2)
-      expect(results[0].isCorrect).toBe(true)
-      expect(results[1].isCorrect).toBe(false)
+      expect(results[0]?.isCorrect).toBe(true)
+      expect(results[1]?.isCorrect).toBe(false)
     })
 
     it('getCurrentQuestionTimeLimit should return null when no quiz', () => {
@@ -1002,7 +1002,7 @@ describe('useQuizSessionStore', () => {
       })
 
       expect(sessionStore.score).toBe(3)
-      expect(historyStore.results[0].passed).toBe(true)
+      expect(historyStore.results[0]?.passed).toBe(true)
     })
 
     it('completeQuiz should record a failure below the pass threshold', () => {
@@ -1016,7 +1016,7 @@ describe('useQuizSessionStore', () => {
       })
 
       expect(sessionStore.score).toBe(2)
-      expect(historyStore.results[0].passed).toBe(false)
+      expect(historyStore.results[0]?.passed).toBe(false)
     })
 
     it('restartQuiz should reset session state', () => {

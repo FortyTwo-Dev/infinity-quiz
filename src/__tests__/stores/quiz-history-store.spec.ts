@@ -7,7 +7,6 @@ describe('useQuizHistoryStore', () => {
     setupTestPinia()
   })
 
-
   describe('state', () => {
     it('should initialize with empty results array', () => {
       const store = useQuizHistoryStore()
@@ -104,7 +103,15 @@ describe('useQuizHistoryStore', () => {
       it('should handle a zero-question result gracefully', () => {
         const store = useQuizHistoryStore()
         store.$patch({
-          results: [{ quizId: 'quiz-1', score: 0, totalQuestions: 0, passed: false, date: new Date().toISOString() }],
+          results: [
+            {
+              quizId: 'quiz-1',
+              score: 0,
+              totalQuestions: 0,
+              passed: false,
+              date: new Date().toISOString(),
+            },
+          ],
         })
 
         const stats = store.getStatsByQuizId('quiz-1')
@@ -192,11 +199,11 @@ describe('useQuizHistoryStore', () => {
         expect(store.results).toHaveLength(0)
         store.addResult('quiz-1', 5, 10, true)
         expect(store.results).toHaveLength(1)
-        expect(store.results[0].quizId).toBe('quiz-1')
-        expect(store.results[0].score).toBe(5)
-        expect(store.results[0].totalQuestions).toBe(10)
-        expect(store.results[0].passed).toBe(true)
-        expect(store.results[0].date).toBeDefined()
+        expect(store.results[0]?.quizId).toBe('quiz-1')
+        expect(store.results[0]?.score).toBe(5)
+        expect(store.results[0]?.totalQuestions).toBe(10)
+        expect(store.results[0]?.passed).toBe(true)
+        expect(store.results[0]?.date).toBeDefined()
       })
 
       it('should add multiple results', () => {
@@ -209,15 +216,17 @@ describe('useQuizHistoryStore', () => {
       it('should store date as ISO string', () => {
         const store = useQuizHistoryStore()
         store.addResult('quiz-1', 5, 10, true)
-        const date = new Date(store.results[0].date)
-        expect(date.toISOString()).toBe(store.results[0].date)
+        const stored = store.results[0]
+        if (!stored) throw new Error('No result stored')
+        const date = new Date(stored.date)
+        expect(date.toISOString()).toBe(stored.date)
       })
 
       it('should handle passed=false', () => {
         const store = useQuizHistoryStore()
         store.addResult('quiz-1', 2, 10, false)
-        expect(store.results[0].passed).toBe(false)
-        expect(store.results[0].score).toBe(2)
+        expect(store.results[0]?.passed).toBe(false)
+        expect(store.results[0]?.score).toBe(2)
       })
     })
 
@@ -241,7 +250,7 @@ describe('useQuizHistoryStore', () => {
         expect(store.results).toHaveLength(3)
         store.clearResultByQuizId('quiz-1')
         expect(store.results).toHaveLength(1)
-        expect(store.results[0].quizId).toBe('quiz-2')
+        expect(store.results[0]?.quizId).toBe('quiz-2')
       })
 
       it('should do nothing when quiz not found', () => {

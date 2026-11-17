@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 // Mock Vue Router
 const mockRoute = ref({ query: {}, params: {} })
-const mockReplace = vi.fn<[object]>()
+const mockReplace = vi.fn<(arg: object) => void>()
 
 vi.mock('vue-router', () => ({
   useRoute: () => mockRoute.value,

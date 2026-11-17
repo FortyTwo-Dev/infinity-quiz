@@ -8,7 +8,6 @@ describe('useQuizStore', () => {
     setupTestPinia()
   })
 
-
   describe('state', () => {
     it('should initialize with empty quizzes array', () => {
       const store = useQuizStore()
@@ -112,7 +111,7 @@ describe('useQuizStore', () => {
       store.addQuiz(quiz2)
 
       expect(store.searchQuizzes('Science')).toHaveLength(1)
-      expect(store.searchQuizzes('Science')[0].title).toBe('Science Quiz')
+      expect(store.searchQuizzes('Science')[0]?.title).toBe('Science Quiz')
     })
 
     it('searchQuizzes should return quizzes matching search term in description', () => {
@@ -133,7 +132,7 @@ describe('useQuizStore', () => {
       store.addQuiz(quiz2)
 
       expect(store.searchQuizzes('science')).toHaveLength(1)
-      expect(store.searchQuizzes('science')[0].description).toBe('A quiz about science')
+      expect(store.searchQuizzes('science')[0]?.description).toBe('A quiz about science')
     })
   })
 
@@ -161,7 +160,7 @@ describe('useQuizStore', () => {
       }
       store.addQuiz(quiz)
       store.updateQuiz('test-quiz', { title: 'Updated Quiz' })
-      expect(store.quizzes[0].title).toBe('Updated Quiz')
+      expect(store.quizzes[0]?.title).toBe('Updated Quiz')
     })
 
     it('updateQuiz should do nothing when quiz not found', () => {
@@ -218,8 +217,10 @@ describe('useQuizStore', () => {
       expect(duplicatedQuiz!.category).toBe('Test')
       expect(duplicatedQuiz!.tags).toEqual(['test'])
       expect(duplicatedQuiz!.questions).toHaveLength(1)
-      expect(duplicatedQuiz!.questions[0].id).not.toBe('q1')
-      expect(duplicatedQuiz!.questions[0].id).toContain('copy')
+      const [duplicatedQuestion] = duplicatedQuiz!.questions
+      if (!duplicatedQuestion) throw new Error('No duplicated question')
+      expect(duplicatedQuestion.id).not.toBe('q1')
+      expect(duplicatedQuestion.id).toContain('copy')
       expect(store.quizzes).toHaveLength(2)
     })
 
@@ -286,7 +287,7 @@ describe('useQuizStore', () => {
       const success = store.importQuiz(jsonData)
       expect(success).toBe(true)
       expect(store.quizzes).toHaveLength(1)
-      expect(store.quizzes[0].id).toBe('imported-quiz')
+      expect(store.quizzes[0]?.id).toBe('imported-quiz')
     })
 
     it('importQuiz should return false for invalid JSON', () => {

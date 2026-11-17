@@ -1,9 +1,10 @@
 {
   "extends": "./tsconfig.app.json",
 
-  // Override to include only test files and clear exclusions.
-  // Application code imported in tests is automatically included via module resolution.
-  "include": ["src/**/__tests__/*", "src/vite-env.d.ts"],
+  // Override to include only test files and clear exclusions. The ambient
+  // declarations come along: a test reaches `seedrandom` through the
+  // application code, and its module declaration is only seen when included.
+  "include": ["src/**/__tests__/**/*", "src/**/*.d.ts"],
   "exclude": [],
 
   "compilerOptions": {
