@@ -76,20 +76,12 @@ describe('theme-init', () => {
       expect(dataset.theme).toBe('light')
     })
 
-    it('defaults to light on a malformed theme payload', () => {
-      const dataset = runThemeInit({ [THEME_KEY]: '{oops' })
-
-      expect(dataset.theme).toBe('light')
-    })
-
-    it('defaults to light on an unknown mode', () => {
-      const dataset = runThemeInit({ [THEME_KEY]: '{"globalTheme":{"mode":"purple"}}' })
-
-      expect(dataset.theme).toBe('light')
-    })
-
-    it('defaults to light on an empty theme payload', () => {
-      const dataset = runThemeInit({ [THEME_KEY]: '' })
+    it.each([
+      { label: 'a malformed theme payload', payload: '{oops' },
+      { label: 'an unknown mode', payload: '{"globalTheme":{"mode":"purple"}}' },
+      { label: 'an empty theme payload', payload: '' },
+    ])('defaults to light on $label', ({ payload }) => {
+      const dataset = runThemeInit({ [THEME_KEY]: payload })
 
       expect(dataset.theme).toBe('light')
     })
