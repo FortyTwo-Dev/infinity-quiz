@@ -1,0 +1,42 @@
+/*
+ * PWA prompt: the offline-ready and update notice. A fixed banner at the edge
+ * of the viewport, under the toast region and above the shell's mobile drawer.
+ */
+@layer it.tokens {
+  :where(.it-theme) {
+    --app-pwa-z: 45;
+  }
+}
+
+@layer components {
+  .pwa-banner {
+    position: fixed;
+    inset-inline: var(--it-space-4);
+    inset-block-end: var(--it-space-4);
+    z-index: var(--app-pwa-z);
+    border: var(--it-border-width) solid var(--it-border);
+    border-radius: var(--it-radius);
+    background-color: var(--it-surface);
+    color: var(--it-surface-fg);
+    box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.18);
+  }
+
+  @media (min-width: 40rem) {
+    .pwa-banner {
+      inset-inline-start: auto;
+      max-width: 28rem;
+    }
+  }
+
+  .pwa-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--it-space-2);
+    padding: var(--it-space-2) var(--it-space-3);
+  }
+
+  .pwa-message {
+    margin-inline-end: auto;
+  }
+}

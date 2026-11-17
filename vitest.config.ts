@@ -4,6 +4,16 @@ import viteConfig from './vite.config.ts'
 
 export default defineConfig({
   ...viteConfig,
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // The real module is produced by the service-worker build; the suite
+      // drives a controllable stand-in instead.
+      'virtual:pwa-register/vue': fileURLToPath(
+        new URL('./src/__tests__/support/pwa-register.ts', import.meta.url),
+      ),
+    },
+  },
   test: {
     environment: 'jsdom',
     exclude: [...configDefaults.exclude, 'e2e/**', '**/App.spec.ts'],

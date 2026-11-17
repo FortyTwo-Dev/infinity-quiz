@@ -9,3 +9,6 @@ export { ThemeToggle } from './theme'
 
 // Notification
 export { NotificationToast } from './notification'
+
+// PWA
+export { PwaPrompt } from './pwa'
