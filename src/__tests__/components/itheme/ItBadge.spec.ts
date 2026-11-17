@@ -16,7 +16,7 @@ describe('ItBadge', () => {
   })
 
   it('adds no remove button unless removable', () => {
-    const wrapper = mount(ItBadge, { props: { variant: 'accent' } })
+    const wrapper = mount(ItBadge, { props: { variant: 'success' } })
 
     expect(wrapper.find('button').exists()).toBe(false)
   })

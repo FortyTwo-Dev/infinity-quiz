@@ -25,6 +25,17 @@ function button(wrapper: ReturnType<typeof mountCard>, label: string) {
   return wrapper.findAll('button').find((candidate) => candidate.text() === label)
 }
 
+const STATUS_CASES: Array<{
+  status: NonNullable<LaunchProps['status']>
+  label: string
+  dataStatus: string
+}> = [
+  { status: 'not-attempted', label: 'Not attempted', dataStatus: 'neutral' },
+  { status: 'failed', label: 'Failed', dataStatus: 'error' },
+  { status: 'partial', label: 'Partial', dataStatus: 'warning' },
+  { status: 'passed', label: 'Passed', dataStatus: 'success' },
+]
+
 describe('QuizLaunchCard', () => {
   it('shows the primary tag in the category badge', () => {
     const wrapper = mountCard({ primaryTag: 'Geography' })
@@ -70,12 +81,7 @@ describe('QuizLaunchCard', () => {
     expect(wrapper.emitted('click')).toBeUndefined()
   })
 
-  it.each([
-    { status: 'not-attempted', label: 'Not attempted', dataStatus: 'neutral' },
-    { status: 'failed', label: 'Failed', dataStatus: 'error' },
-    { status: 'partial', label: 'Partial', dataStatus: 'warning' },
-    { status: 'passed', label: 'Passed', dataStatus: 'success' },
-  ])(
+  it.each(STATUS_CASES)(
     'renders the $status status as $label with data-status $dataStatus',
     ({ status, label, dataStatus }) => {
       const wrapper = mountCard({ status })
