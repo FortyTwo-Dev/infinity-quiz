@@ -12,10 +12,20 @@ export const ThemeSelectionSchema = z.object({
   accent: z.enum(THEME_ACCENTS),
 })
 
+/**
+ * The optional Markdown context of a question. A blank string counts as absent:
+ * an empty block would leave dead space in the card.
+ */
+export const QuestionContextSchema = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+  z.string().optional(),
+)
+
 export const QuestionSchema = z
   .object({
     id: z.string().min(1),
     text: z.string().min(1),
+    context: QuestionContextSchema,
     options: z.array(z.string().min(1)).min(2),
     correctAnswerIndex: z.number().int().nonnegative(),
     timeLimit: z.number().optional(),
@@ -62,6 +72,7 @@ export const FormQuestionSchema = z
   .object({
     id: z.string().optional(),
     text: z.string().min(1, 'Question text is required'),
+    context: QuestionContextSchema,
     options: z
       .array(z.string().min(1, 'Option cannot be empty'))
       .min(2, 'At least 2 options are required'),

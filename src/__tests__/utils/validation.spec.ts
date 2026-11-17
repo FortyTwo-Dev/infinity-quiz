@@ -135,6 +135,46 @@ describe('Zod validation utils', () => {
       const result = QuizSchema.safeParse(invalidQuizEmptyQuestions)
       expect(result.success).toBe(false)
     })
+
+    it('QuestionSchema should keep a Markdown context', () => {
+      const result = QuestionSchema.safeParse({
+        ...validQuestion,
+        context: 'Some **context**',
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.data?.context).toBe('Some **context**')
+    })
+
+    it('QuestionSchema should drop a whitespace-only context', () => {
+      const result = QuestionSchema.safeParse({ ...validQuestion, context: '   ' })
+
+      expect(result.success).toBe(true)
+      expect(result.data?.context).toBeUndefined()
+    })
+
+    it('QuestionSchema should reject a non-string context', () => {
+      const result = QuestionSchema.safeParse({ ...validQuestion, context: 42 })
+
+      expect(result.success).toBe(false)
+    })
+
+    it('QuizSchema should keep the context of a question', () => {
+      const result = QuizSchema.safeParse({
+        ...validQuiz,
+        questions: [{ ...validQuestion, context: 'Some **context**' }],
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.data?.questions[0]?.context).toBe('Some **context**')
+    })
+
+    it('QuizSchema should leave a quiz without a context unchanged', () => {
+      const result = QuizSchema.safeParse(validQuiz)
+
+      expect(result.success).toBe(true)
+      expect(result.data?.questions[0]).not.toHaveProperty('context')
+    })
   })
 
   describe('validateQuizJSON', () => {
@@ -245,6 +285,29 @@ describe('Zod validation utils', () => {
         options: ['A', 'B'],
         correctAnswerIndex: 5,
       })
+      expect(result.success).toBe(false)
+    })
+
+    it('should accept an optional Markdown context', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: 'Q?',
+        options: ['A', 'B'],
+        correctAnswerIndex: 1,
+        context: 'Some **context**',
+      })
+
+      expect(result.success).toBe(true)
+      expect(result.data?.context).toBe('Some **context**')
+    })
+
+    it('should reject a non-string context', () => {
+      const result = FormQuestionSchema.safeParse({
+        text: 'Q?',
+        options: ['A', 'B'],
+        correctAnswerIndex: 1,
+        context: 42,
+      })
+
       expect(result.success).toBe(false)
     })
   })

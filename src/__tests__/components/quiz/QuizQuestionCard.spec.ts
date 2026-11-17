@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mount, type VueWrapper } from '@vue/test-utils'
+import { mount, type DOMWrapper, type VueWrapper } from '@vue/test-utils'
 import QuizQuestionCard from '../../../components/quiz/card/QuizQuestionCard.vue'
 
 type Question = {
@@ -8,6 +8,7 @@ type Question = {
   options: string[]
   correctAnswerIndex: number
   timeLimit?: number
+  context?: string
 }
 
 type CardProps = {
@@ -75,7 +76,7 @@ function button(wrapper: VueWrapper, label: string) {
   return wrapper.findAll('button').find((candidate) => candidate.text().trim() === label)
 }
 
-function cardTitle(wrapper: VueWrapper) {
+function cardTitle(wrapper: VueWrapper | DOMWrapper<Element>) {
   return wrapper
     .findAll('h1,h2,h3,h4,h5,h6')
     .find((heading) => heading.text() === baseQuestion.text)
@@ -286,5 +287,65 @@ describe('QuizQuestionCard', () => {
     await button(wrapper, 'Skip (2)')?.trigger('click')
 
     expect(wrapper.emitted('skip')).toHaveLength(1)
+  })
+
+  it('renders the context as Markdown after the heading and before the options', () => {
+    const wrapper = mountCard({
+      question: {
+        ...baseQuestion,
+        context: '```ts\nconst answer = 42\n```',
+      },
+    })
+
+    const html = wrapper.html()
+    const heading = html.indexOf(baseQuestion.text)
+    const prose = html.indexOf('quiz-prose')
+    const firstOption = html.indexOf('type="radio"')
+
+    expect(prose).toBeGreaterThan(heading)
+    expect(prose).toBeLessThan(firstOption)
+    expect(wrapper.find('.quiz-prose pre').exists()).toBe(true)
+    expect(wrapper.find('.quiz-prose').text()).toContain('const answer = 42')
+  })
+
+  it('keeps the question text as the heading when a context is present', () => {
+    const wrapper = mountCard({ question: { ...baseQuestion, context: 'Some context.' } })
+
+    expect(cardTitle(wrapper)).toBeDefined()
+  })
+
+  it('renders no prose block without a context', () => {
+    const wrapper = mountCard()
+
+    expect(wrapper.find('.quiz-prose').exists()).toBe(false)
+  })
+
+  it('renders the options after the heading', () => {
+    const wrapper = mountCard()
+    const html = wrapper.html()
+
+    expect(html.indexOf('type="radio"')).toBeGreaterThan(html.indexOf(baseQuestion.text))
+  })
+
+  it('keeps the heading, the context and the options inside the scroll area', () => {
+    const wrapper = mountCard({ question: { ...baseQuestion, context: 'Some context.' } })
+
+    const scroll = wrapper.find('.quiz-question-scroll')
+    expect(scroll.exists()).toBe(true)
+    expect(cardTitle(scroll)).toBeDefined()
+    expect(scroll.find('.quiz-prose').exists()).toBe(true)
+    expect(scroll.findAll('input[type="radio"]')).toHaveLength(2)
+  })
+
+  it('keeps the action controls outside the scroll area', () => {
+    const wrapper = mountCard({ canSkip: true, remainingSkips: 2 })
+
+    const scroll = wrapper.find('.quiz-question-scroll')
+
+    for (const label of ['Previous', 'Skip (2)', 'Next']) {
+      const action = button(wrapper, label)
+      expect(action).toBeDefined()
+      expect(scroll.element.contains(action!.element)).toBe(false)
+    }
   })
 })

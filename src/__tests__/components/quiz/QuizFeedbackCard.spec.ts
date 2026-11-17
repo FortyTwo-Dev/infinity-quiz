@@ -149,6 +149,30 @@ describe('QuizFeedbackCard', () => {
     expect(wrapper.findComponent(ItAlert).exists()).toBe(false)
   })
 
+  it('renders the explanation as Markdown in the alert body', async () => {
+    startQuiz(
+      buildQuiz({
+        questions: [
+          {
+            id: 'q1',
+            text: 'Capital of France?',
+            options: ['Paris', 'Lyon'],
+            correctAnswerIndex: 0,
+            explanation: '**Because** it is.',
+          },
+        ],
+      }),
+    )
+    await answerAndVerify(0)
+
+    const wrapper = mountCard()
+    const alert = wrapper.findComponent(ItAlert)
+
+    expect(alert.exists()).toBe(true)
+    expect(alert.html()).toContain('<strong>Because</strong>')
+    expect(alert.text()).not.toContain('**Because**')
+  })
+
   it('renders nothing when the quiz disables feedback', async () => {
     startQuiz(buildQuiz({ id: 'no-feedback-quiz', feedbackEnabled: false }))
     await answerAndVerify(0)

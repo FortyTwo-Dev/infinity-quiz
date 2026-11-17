@@ -110,6 +110,26 @@ describe('useQuizImportExport', () => {
     })
   })
 
+  describe('round trip', () => {
+    it('should keep the question context through export and import', () => {
+      const quizStore = useQuizStore()
+      quizStore.addQuiz({
+        ...validQuiz,
+        questions: [{ ...validQuestion, context: 'Some **context**' }],
+      })
+
+      const exported = useQuizImportExport().exportSingleQuiz('quiz-1')
+      expect(typeof exported).toBe('string')
+
+      setupTestPinia()
+
+      const success = useQuizImportExport().importFromJson(exported as string)
+
+      expect(success).toBe(true)
+      expect(useQuizStore().quizzes[0]?.questions[0]?.context).toBe('Some **context**')
+    })
+  })
+
   describe('downloadQuiz', () => {
     afterEach(() => {
       vi.restoreAllMocks()

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ItBadge, ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
 import type { QuizFormValues } from '@/utils/validation'
+import { MarkdownContent } from '../content'
 
 interface Props {
   values: QuizFormValues
@@ -69,6 +70,7 @@ const settings = computed<SettingRow[]>(() => [
           class="quiz-review-question"
         >
           <div class="quiz-review-question-title">{{ index + 1 }}. {{ question.text }}</div>
+          <MarkdownContent v-if="question.context" :source="question.context" />
           <ul class="quiz-review-options">
             <li
               v-for="(option, optionIndex) in question.options"

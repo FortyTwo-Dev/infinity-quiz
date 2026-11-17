@@ -8,6 +8,7 @@ type Question = {
   text: string
   options: string[]
   correctAnswerIndex: number
+  context?: string
 }
 
 type QuestionResult = {
@@ -162,5 +163,29 @@ describe('QuizReviewCard', () => {
 
     expect(feedback(wrapper)?.text()).toBe('The correct answer was')
     expect(optionStates(wrapper)).toEqual(['plain', 'wrong'])
+  })
+
+  it('renders the question context as Markdown between the title and the options', () => {
+    const wrapper = mountCard({
+      question: { ...baseResult.question, context: 'Remember **this** first.' },
+    })
+
+    const prose = wrapper.find('.quiz-prose')
+    expect(prose.exists()).toBe(true)
+    expect(prose.find('strong').text()).toBe('this')
+    expect(wrapper.html().indexOf('quiz-prose')).toBeGreaterThan(
+      wrapper.html().indexOf(baseResult.question.text),
+    )
+    expect(
+      prose.element.compareDocumentPosition(optionRows(wrapper)[0]!.element) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(prose.text()).not.toContain('**this**')
+  })
+
+  it('renders no prose block without a context', () => {
+    const wrapper = mountCard()
+
+    expect(wrapper.find('.quiz-prose').exists()).toBe(false)
   })
 })
