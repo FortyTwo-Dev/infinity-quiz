@@ -19,6 +19,20 @@ function links(html: string): HTMLAnchorElement[] {
   return Array.from(container.querySelectorAll('a'))
 }
 
+/** The DOM the browser builds from the renderer's HTML. */
+function domOf(html: string): HTMLDivElement {
+  const container = document.createElement('div')
+  container.innerHTML = html
+  return container
+}
+
+/** The `<code>` element of the single fenced block the source renders. */
+function codeOf(html: string): HTMLElement {
+  const code = domOf(html).querySelector('pre > code')
+  if (!code) throw new Error('no fenced code block rendered')
+  return code as HTMLElement
+}
+
 describe('renderMarkdown', () => {
   it('renders bold text', () => {
     expect(renderMarkdown('**bold**')).toContain('<strong>bold</strong>')
@@ -120,5 +134,48 @@ describe('renderMarkdown', () => {
 
   it('returns an empty string for an empty source', () => {
     expect(renderMarkdown('')).toBe('')
+  })
+
+  it('labels a fenced block with its language', () => {
+    const code = codeOf(renderMarkdown('```js\nconst a = 1\n```'))
+
+    expect(code.getAttribute('data-lang')).toBe('js')
+    expect(code.textContent).toContain('const a = 1')
+  })
+
+  it('lowercases the language of a fenced block', () => {
+    expect(codeOf(renderMarkdown('```JS\nconst a = 1\n```')).getAttribute('data-lang')).toBe('js')
+  })
+
+  it('takes the first word of the info string as the language', () => {
+    const code = codeOf(renderMarkdown('```js title="x"\nconst a = 1\n```'))
+
+    expect(code.getAttribute('data-lang')).toBe('js')
+    expect(code.getAttribute('data-lang')).not.toContain('title')
+  })
+
+  it('leaves data-lang off a fence with no language', () => {
+    expect(codeOf(renderMarkdown('```\nconst a = 1\n```')).hasAttribute('data-lang')).toBe(false)
+  })
+
+  it('escapes markup inside a fenced block', () => {
+    const html = renderMarkdown('```\n<script>alert(1)</script>\n```')
+    const container = domOf(html)
+
+    expect(container.querySelector('script')).toBeNull()
+    expect(codeOf(html).textContent).toContain('<script>alert(1)</script>')
+  })
+
+  it('cannot break out of data-lang with a hostile fence name', () => {
+    const html = renderMarkdown('```"><img src=x onerror=alert(1)>\nconst a = 1\n```')
+    const container = domOf(html)
+    const code = codeOf(html)
+
+    expect(container.querySelector('img')).toBeNull()
+    expect(container.querySelector('[onerror]')).toBeNull()
+    expect(code.children).toHaveLength(0)
+    for (const attribute of Array.from(code.attributes)) {
+      expect(attribute.name).toBe('data-lang')
+    }
   })
 })

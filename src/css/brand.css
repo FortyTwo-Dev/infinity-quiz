@@ -85,6 +85,19 @@
     --it-warning-fg: oklch(41% 0.112 45.904);
     --it-danger: oklch(70% 0.191 22.216);
     --it-danger-fg: oklch(27% 0.105 12.094);
+
+    /* Code syntax. A fill mixed towards the foreground reads on either mode,
+     * like the accent ink above: the same declaration serves light and dark. */
+    --iq-code-keyword: var(--iq-accent-ink);
+    --iq-code-string: color-mix(in oklab, var(--it-warning) 45%, var(--it-fg));
+    --iq-code-number: color-mix(in oklab, var(--it-info) 55%, var(--it-fg));
+    --iq-code-comment: var(--it-muted);
+    --iq-code-function: color-mix(in oklab, var(--it-success) 45%, var(--it-fg));
+    --iq-code-type: color-mix(in oklab, var(--it-info) 40%, var(--it-fg));
+    --iq-code-tag: color-mix(in oklab, var(--it-danger) 45%, var(--it-fg));
+    --iq-code-attribute: color-mix(in oklab, var(--it-warning) 55%, var(--it-fg));
+    --iq-code-operator: var(--it-fg);
+    --iq-code-punctuation: var(--it-muted);
   }
 
   [data-theme='dark'] {

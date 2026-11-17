@@ -83,6 +83,8 @@
 | [Zod](https://zod.dev/) | ^4.4.3 | Type-safe schema validation for quiz data structures |
 | [marked](https://marked.js.org/) | 18.2.1 | Markdown renderer for a question context and its explanation |
 | [DOMPurify](https://github.com/cure53/DOMPurify) | 3.4.18 | Sanitization of the rendered Markdown |
+| [Shiki](https://shiki.style/) | 4.6.0 | Syntax highlighting, loaded on demand |
+| [@shikijs/langs](https://www.npmjs.com/package/@shikijs/langs) | 4.6.0 | Shiki grammars, one chunk per language |
 | [vee-validate](https://vee-validate.logaretm.com/) | ^4.15.1 | Form state and validation driver |
 | [@vee-validate/zod](https://vee-validate.logaretm.com/v4/integrations/zod.html) | ^4.15.1 | Form validation with Zod integration for Vue.js |
 

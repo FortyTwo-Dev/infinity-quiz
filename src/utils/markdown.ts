@@ -1,5 +1,6 @@
 import DOMPurify from 'dompurify'
 import { Marked, Renderer, type Tokens } from 'marked'
+import { escapeHtml } from './html'
 
 /**
  * The only place the application turns Markdown into HTML. The output is
@@ -29,15 +30,7 @@ const ALLOWED_TAGS = [
   'td',
 ]
 
-const ALLOWED_ATTRIBUTES = ['href', 'title', 'target', 'rel']
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
+const ALLOWED_ATTRIBUTES = ['href', 'title', 'target', 'rel', 'data-lang']
 
 const markdown = new Marked({ async: false, breaks: true, gfm: true })
 
@@ -45,6 +38,17 @@ const markdown = new Marked({ async: false, breaks: true, gfm: true })
 // `Renderer` subclass would be ignored, because only own properties are read.
 markdown.use({
   renderer: {
+    /**
+     * The fence language travels as `data-lang`: the highlighter runs after the
+     * sanitization, and finds the blocks it may colour.
+     */
+    code({ text, lang }: Tokens.Code): string {
+      const language = lang?.trim().toLowerCase().split(/\s+/)[0] ?? ''
+      const attribute = language ? ` data-lang="${escapeHtml(language)}"` : ''
+      const code = text.replace(/\n$/, '') + '\n'
+      return `<pre><code${attribute}>${escapeHtml(code)}</code></pre>\n`
+    },
+
     /** The prompt is the card's heading: a heading here would break the outline. */
     heading(this: Renderer, { tokens }: Tokens.Heading): string {
       return `<p><strong>${this.parser.parseInline(tokens)}</strong></p>\n`

@@ -84,8 +84,10 @@ the only place that produces HTML from user input.
 
 - **Sanitization** — allowlist of what the theme styles: `p, br, strong, em,
   del, code, pre, blockquote, ul, ol, li, a, hr, table, thead, tbody, tr, th,
-  td`; attributes `href, title, target, rel`; no data attributes. Raw HTML in
-  the source is parsed by `marked` and then reduced by the allowlist.
+  td`; attributes `href, title, target, rel, data-lang`; no other data
+  attribute. Raw HTML in the source is parsed by `marked` and then reduced by
+  the allowlist. Code blocks are highlighted **after** this step (ADR-005), so
+  the sanitizer never has to allow `style` or `class`.
 - **Headings** — a Markdown heading becomes `<p><strong>…</strong></p>`: an
   `<h1>` inside a card whose question is the `<h2>` would break the outline.
 - **Links** — every link carries `target="_blank"` and
