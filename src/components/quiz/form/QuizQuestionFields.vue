@@ -78,7 +78,8 @@ function removeOptionAt(optionIndex: number) {
           hint="A code sample, a quotation, a table: what the question refers to. Links open in a new tab."
         >
           <div class="quiz-context-editor">
-            <div class="quiz-context-tools" role="group" aria-label="Context preview">
+            <fieldset class="it-fieldset-plain quiz-context-tools">
+              <legend class="it-sr-only">Context preview</legend>
               <ItButton
                 type="button"
                 size="sm"
@@ -97,7 +98,7 @@ function removeOptionAt(optionIndex: number) {
               >
                 Preview
               </ItButton>
-            </div>
+            </fieldset>
 
             <ItTextarea
               v-show="!showContextPreview"
