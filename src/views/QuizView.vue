@@ -4,11 +4,7 @@ import { useRouter } from 'vue-router'
 import { ItButton } from '@infinitylib/infinity-theme-vue'
 import { ItProgress } from '@/components/itheme'
 import { AppTimer } from '@/components/quiz'
-import {
-  QuizFeedbackCard as FeedbackCard,
-  QuizQuestionActions,
-  QuizQuestionCard,
-} from '@/components/quiz/card'
+import { QuizFeedbackCard as FeedbackCard, QuizQuestionCard } from '@/components/quiz/card'
 import { useQuiz } from '@/composables'
 import { useThemeStore } from '@/stores'
 
@@ -80,37 +76,29 @@ watch(
       </div>
     </header>
 
-    <div class="quiz-play-stage">
-      <QuizQuestionCard
-        v-if="currentQuestion"
-        :question="currentQuestion"
-        :question-options="currentQuestionOptions"
-        :selected-answer="getCurrentAnswer()"
-        :is-answer-verified="isAnswerVerified"
-        :is-current-question-verified="isCurrentQuestionVerified"
-        @select="selectAnswer"
-      />
-
-      <p v-else class="quiz-play-empty">No questions available</p>
-
-      <FeedbackCard v-if="shouldShowFeedback" />
-    </div>
-
-    <QuizQuestionActions
+    <QuizQuestionCard
       v-if="currentQuestion"
+      :question="currentQuestion"
+      :question-options="currentQuestionOptions"
+      :selected-answer="getCurrentAnswer()"
+      :is-answer-verified="isAnswerVerified"
+      :is-current-question-verified="isCurrentQuestionVerified"
       :has-previous-question="hasPreviousQuestion"
       :has-next-question="hasNextQuestion"
       :can-skip="canSkip"
       :remaining-skips="remainingSkips"
       :has-feedback-enabled="hasFeedbackEnabled"
-      :is-current-question-verified="isCurrentQuestionVerified"
-      :selected-answer="getCurrentAnswer()"
       :has-time-limit="currentQuestion.timeLimit !== undefined"
+      @select="selectAnswer"
       @previous="goToPrevious"
       @skip="skipQuestion"
       @verify="verifyAnswer"
       @continue="continueToNext"
       @submit="submitAndNext"
     />
+
+    <p v-else class="quiz-play-empty">No questions available</p>
+
+    <FeedbackCard v-if="shouldShowFeedback" />
   </section>
 </template>

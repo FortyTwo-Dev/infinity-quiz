@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
 import QuizQuestionCard from '../../../components/quiz/card/QuizQuestionCard.vue'
+import { buttonNamed } from '../../support/accessibility'
 
 type Question = {
   id: string
@@ -22,6 +23,7 @@ type CardProps = {
   canSkip: boolean
   remainingSkips: number | null
   hasFeedbackEnabled: boolean
+  hasTimeLimit: boolean
 }
 
 const baseQuestion: Question = {
@@ -49,6 +51,7 @@ function mountCard(overrides: Partial<CardProps> = {}) {
       canSkip: false,
       remainingSkips: null,
       hasFeedbackEnabled: false,
+      hasTimeLimit: false,
       ...overrides,
     },
   })
@@ -226,14 +229,33 @@ describe('QuizQuestionCard', () => {
     expect(wrapper.find('.quiz-question-scroll').exists()).toBe(false)
   })
 
-  it('exposes no action control', () => {
+  it('renders its action controls inside the card, after the options', () => {
     const wrapper = mountCard({ canSkip: true, remainingSkips: 2 })
 
-    const buttons = wrapper.findAll('button').map((candidate) => candidate.text().trim())
+    const previous = buttonNamed(wrapper, 'Previous')
+    const skip = buttonNamed(wrapper, 'Skip (2)')
+    const next = buttonNamed(wrapper, 'Next')
 
-    expect(buttons).not.toContain('Previous')
-    expect(buttons).not.toContain('Next')
-    expect(buttons).not.toContain('Finish')
-    expect(buttons.some((label) => label.startsWith('Skip'))).toBe(false)
+    for (const control of [previous, skip, next]) {
+      expect(wrapper.element.contains(control.element)).toBe(true)
+    }
+
+    const lastOption = radios(wrapper)[radios(wrapper).length - 1]!
+    expect(
+      lastOption.element.compareDocumentPosition(previous.element) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+  })
+
+  it('forwards the events of its action controls', async () => {
+    const wrapper = mountCard({ selectedAnswer: 1, canSkip: true, remainingSkips: 2 })
+
+    await buttonNamed(wrapper, 'Previous').trigger('click')
+    await buttonNamed(wrapper, 'Skip (2)').trigger('click')
+    await buttonNamed(wrapper, 'Next').trigger('click')
+
+    expect(wrapper.emitted('previous')).toHaveLength(1)
+    expect(wrapper.emitted('skip')).toHaveLength(1)
+    expect(wrapper.emitted('submit')).toHaveLength(1)
   })
 })

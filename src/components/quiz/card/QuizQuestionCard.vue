@@ -3,6 +3,7 @@ import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
 import type { Question } from '@/types'
 import type { QuestionOption } from '@/composables/useQuiz'
 import { MarkdownContent } from '../content'
+import QuizQuestionActions from './QuizQuestionActions.vue'
 
 interface Props {
   question: Question
@@ -10,11 +11,24 @@ interface Props {
   selectedAnswer: number | null
   isAnswerVerified: boolean
   isCurrentQuestionVerified: boolean
+  hasPreviousQuestion: boolean
+  hasNextQuestion: boolean
+  canSkip: boolean
+  remainingSkips: number | null
+  hasFeedbackEnabled: boolean
+  hasTimeLimit: boolean
 }
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{ select: [answerIndex: number] }>()
+const emit = defineEmits<{
+  select: [answerIndex: number]
+  previous: []
+  skip: []
+  verify: []
+  continue: []
+  submit: []
+}>()
 
 /** The state of an option is a single value, so the template stays declarative. */
 function optionState(originalIndex: number): string {
@@ -64,6 +78,22 @@ function optionState(originalIndex: number): string {
           <span>{{ item.option }}</span>
         </label>
       </fieldset>
+
+      <QuizQuestionActions
+        :has-previous-question="hasPreviousQuestion"
+        :has-next-question="hasNextQuestion"
+        :can-skip="canSkip"
+        :remaining-skips="remainingSkips"
+        :has-feedback-enabled="hasFeedbackEnabled"
+        :is-current-question-verified="isCurrentQuestionVerified"
+        :selected-answer="selectedAnswer"
+        :has-time-limit="hasTimeLimit"
+        @previous="emit('previous')"
+        @skip="emit('skip')"
+        @verify="emit('verify')"
+        @continue="emit('continue')"
+        @submit="emit('submit')"
+      />
     </ItCardBody>
   </ItCard>
 </template>

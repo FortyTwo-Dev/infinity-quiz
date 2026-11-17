@@ -104,18 +104,21 @@ card, the review card, the form's review step and the feedback card all use it.
 
 ### Layout
 
-The play screen fills the viewport: the header stays put, the stage (question
-card and feedback) is the only scrolling area, and the action row is its own bar
-at the bottom, outside the card. The card keeps its natural height, so a short
-question is a short card. Measured on a production build: the bar sits at the
-same vertical position for a question without a context, with a short code
-context and with a long passage, at 1280×800 and 390×844.
+The action controls stay at the bottom of the question card: the card keeps its
+natural height and the page scrolls, so a short question is a short card. The
+action row therefore moves with the card from one question to the next. Measured
+on a production build, at 1280×800 and 390×844, the primary control moved by
+102 px between a question without a context and one with a short code sample,
+and by 268 px up to a long passage.
+
+Two stable alternatives were built and measured, and both were rejected: a
+fixed-height card with an internal scroll wrapped a short question in a tall
+empty box, and a bar pinned to the bottom of the viewport left an empty middle
+on screen.
 
 The context is bounded (`14rem`, its own scroll) so that a long passage never
 pushes the answers out of the card. The box is focusable (`tabindex="0"`,
-labelled "Question context") so a keyboard user can scroll it. The PWA banner
-rises above the bar while the play screen is active, so it never covers the
-primary control.
+labelled "Question context") so a keyboard user can scroll it.
 
 ### Form
 
@@ -141,8 +144,8 @@ the real rendering, not an approximation.
 - A code sample, a quotation or a table is written in a syntax authors know.
 - One sanitizer, one renderer, one `v-html`, one place to audit.
 - No migration, no storage growth beyond the text itself.
-- The stable action row removes the observed jump between questions without
-  inflating the card.
+- The card keeps its natural height: a short question is a short card, with no
+  empty band in the middle of the screen.
 
 ### Negative
 
@@ -150,7 +153,9 @@ the real rendering, not an approximation.
 - An older build silently drops the context on import and re-export.
 - A long context scrolls inside a bounded box; the answers stay visible but the
   passage is not read in one screen.
-- Markdown adds syntax authors can get wrong; the preview exists for that.
+- The action row moves with the card: 102 px between a plain question and a code
+  one, up to 268 px with a long passage. A user who clicks through questions
+  without looking can land somewhere else.
 
 ### Trade-offs
 
@@ -161,8 +166,8 @@ the real rendering, not an approximation.
   two fields in the editor.
 - A bounded context over an unbounded one: the answers stay on screen, at the
   cost of a nested scroll area.
-- A detached action bar over a card that carries its own actions: stable
-  actions and a compact card, at the cost of the free space between the two.
+- A moving action row over a pinned bar: compact card and no empty band, at the
+  cost of a 100–270 px move between questions.
 
 ## Alternatives Considered
 
@@ -179,10 +184,11 @@ the real rendering, not an approximation.
 5. **Inline images in the data URL, now**: rejected. The quota, the duplication
    in the persisted session and the export weight need the account storage to be
    decided. The images are deferred, not dropped.
-6. **A fixed-height card with an internal scroll**: rejected after the review.
-   It kept the action row stable, but a short question sat in a tall empty card
-   with its content marooned in the middle. The detached bar keeps the row
-   stable without inflating the card.
+6. **A stable action row** (a fixed-height card with an internal scroll, then a
+   bar pinned to the viewport bottom): rejected after the review. The first
+   wrapped a short question in a tall empty card with its content marooned in
+   the middle; the second left an empty band in the middle of the screen. The
+   row moves with the card instead.
 7. **A narrower URI allowlist** (`ALLOWED_URI_REGEXP`): rejected. It strips the
    `target` and `rel` attributes DOMPurify treats as URI-valued; the default
    policy already blocks `javascript:` and `data:`.

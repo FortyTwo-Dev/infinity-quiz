@@ -50,29 +50,4 @@
     text-align: center;
     color: var(--it-muted);
   }
-
-  /*
-   * The play route owns the viewport: the stage (question and feedback) is the
-   * only thing that scrolls, and the action bar stays at the bottom. The card
-   * keeps its natural height, so a short question is a short card.
-   */
-  .app-shell.app-shell-fullscreen .app-content {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .quiz-play {
-    flex: 1;
-    min-block-size: 0;
-  }
-
-  .quiz-play-stage {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: var(--it-space-5);
-    min-block-size: 0;
-    overflow-y: auto;
-  }
 }
