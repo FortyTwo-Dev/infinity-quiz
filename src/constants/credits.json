@@ -72,6 +72,12 @@
     "href": "https://github.com/cure53/DOMPurify"
   },
   {
+    "name": "Shiki",
+    "role": "Syntax highlighting of code blocks, loaded on demand",
+    "license": "MIT",
+    "href": "https://shiki.style"
+  },
+  {
     "name": "Phosphor Icons",
     "role": "Icon set",
     "license": "MIT",
