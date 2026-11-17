@@ -23,6 +23,7 @@
 | [Vite](https://vitejs.dev/) | ^8.1.5 | Next-generation frontend tooling |
 | [@vitejs/plugin-vue](https://github.com/vitejs/vite-plugin-vue) | ^6.0.8 | Vite plugin for Vue single-file components |
 | [vite-plugin-vue-devtools](https://github.com/vue-devtools/vite-plugin-vue-devtools) | ^8.1.5 | Vue DevTools integration for Vite |
+| [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) | 2.0.0 | Service worker, precache and web manifest at build time |
 
 ## Testing
 

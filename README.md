@@ -41,12 +41,17 @@ Everything runs in the browser. Every quiz, attempt and preference lives in
 - An optional OpenDyslexic typeface, for readers who need it.
 - An attempt survives a reload: the question, the answers, the score and the
   remaining time all rehydrate.
+- Installable PWA: the shell, the styles and the typefaces are precached, so
+  the application opens offline, and a new build is offered in a banner rather
+  than forced onto an attempt in progress (ADR-003).
 
 ## Stack
 
 - Vue 3.5 with the Composition API and `<script setup lang="ts">`.
 - TypeScript 6, pinned because `vue-tsc` 3.3 does not support TypeScript 7.
 - Vite 8 and Vue Router 5, with a lazy route per screen.
+- `vite-plugin-pwa` 2 with Workbox: one service worker, the build output and
+  the typefaces precached, an explicit update prompt.
 - Pinia 4 with `pinia-plugin-persistedstate`; every store declares its storage
   key and the exact fields it persists.
 - Zod 4 for the quiz format and vee-validate for the creation form.
@@ -151,7 +156,7 @@ src/
 ├── components/
 │   ├── itheme/            # the widgets the theme package does not ship yet
 │   ├── layout/            # the shell and the L* layout primitives
-│   ├── common/            # modal, notification, theme toggle
+│   ├── common/            # modal, notification, theme toggle, PWA prompt
 │   ├── quiz/              # cards, form steps, charts, modal, search bar
 │   └── quiz-import-export/
 ├── composables/           # stateful Vue logic, one concern per file
@@ -192,7 +197,7 @@ bun test:coverage          # the full suite with coverage, the pre-push gate
 ```
 
 Vitest runs on the Bun runtime: Bun's own test runner cannot compile a `.vue`
-single-file component. The suite holds 733 tests over 57 files, and the
+single-file component. The suite holds 785 tests over 62 files, and the
 `lines: 80` threshold is enforced by `vitest.config.ts`.
 
 Three layers:
@@ -220,6 +225,9 @@ ignored and recreated by `ibrain sync`; update the rules through
 ## Notes
 
 - TypeScript is pinned to 6 until `vue-tsc` supports TypeScript 7.
+- The stored theme is applied by `public/theme-init.js` before the first paint,
+  and `src/css/style.css` binds the canvas to it; the stores reapply the same
+  selection once Pinia rehydrates.
 - `bun.lock` is the only lockfile; do not add an npm, yarn or pnpm lockfile.
 - The coverage figure counts the files in `src/__tests__/support/`, which are
   test harnesses, not application code: the production layers sit near 95 %.
