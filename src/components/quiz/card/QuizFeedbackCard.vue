@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 import { ItAlert, ItCard, ItCardBody } from '@/components/itheme'
 import { useQuizSessionStore, useQuizVerificationStore } from '../../../stores'
+import { MarkdownContent } from '../content'
 
 const sessionStore = useQuizSessionStore()
 const verificationStore = useQuizVerificationStore()
@@ -50,7 +51,9 @@ const userAnswerText = computed(() => {
         <p class="quiz-feedback-answer"><strong>Correct answer:</strong> {{ correctAnswerText }}</p>
 
         <ItAlert v-if="explanation" variant="info">
-          <span class="it-alert-body">{{ explanation }}</span>
+          <div class="it-alert-body">
+            <MarkdownContent :source="explanation" />
+          </div>
         </ItAlert>
 
         <p v-if="!verifiedAnswerCorrect && userAnswerText" class="quiz-feedback-chosen">

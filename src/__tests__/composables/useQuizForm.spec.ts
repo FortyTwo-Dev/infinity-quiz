@@ -200,4 +200,50 @@ describe('useQuizForm', () => {
 
     expect(quizStore.quizzes).toHaveLength(0)
   })
+
+  it('should pre-fill the context of an edited question', () => {
+    const quizStore = useQuizStore()
+    quizStore.addQuiz({
+      id: 'quiz-1',
+      title: 'Title',
+      description: 'Description',
+      questions: [
+        {
+          id: 'q1',
+          text: 'Q?',
+          options: ['A', 'B'],
+          correctAnswerIndex: 0,
+          context: 'Some **context**',
+        },
+      ],
+    })
+
+    const { api } = withForm('quiz-1')
+
+    expect(api.values.questions[0]?.context).toBe('Some **context**')
+  })
+
+  it('should save the context of a submitted question', async () => {
+    const quizStore = useQuizStore()
+    const { api } = withForm()
+    await fillValidForm(api)
+    setField(api, 'questions[0].context', 'Read **this**')
+    await nextTick()
+
+    await api.submit()
+
+    expect(quizStore.quizzes[0]?.questions[0]?.context).toBe('Read **this**')
+  })
+
+  it('should save a whitespace-only context as absent', async () => {
+    const quizStore = useQuizStore()
+    const { api } = withForm()
+    await fillValidForm(api)
+    setField(api, 'questions[0].context', '   ')
+    await nextTick()
+
+    await api.submit()
+
+    expect(quizStore.quizzes[0]?.questions[0]?.context).toBeUndefined()
+  })
 })

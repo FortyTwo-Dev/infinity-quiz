@@ -2,6 +2,8 @@
  * Quiz domain components. Feature-named classes, `components` layer, values
  * from the theme tokens.
  */
+@import './prose.css';
+
 @layer components {
   /* ---- Quiz cards ------------------------------------------------------- */
   .quiz-launch-card {

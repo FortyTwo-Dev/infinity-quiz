@@ -3,6 +3,8 @@ import type { ThemeSelection } from '../constants/themes'
 export interface Question {
   id: string
   text: string
+  /** Optional Markdown shown under the question: a code sample, a passage, a table. */
+  context?: string
   options: string[]
   correctAnswerIndex: number
   timeLimit?: number // Time limit in seconds for this specific question

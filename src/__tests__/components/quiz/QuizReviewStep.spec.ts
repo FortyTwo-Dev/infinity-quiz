@@ -14,7 +14,12 @@ type ReviewValues = {
   shuffleAnswers: boolean
   enableReviewMode: boolean
   feedbackEnabled: boolean
-  questions: Array<{ text: string; options: string[]; correctAnswerIndex: number }>
+  questions: Array<{
+    text: string
+    options: string[]
+    correctAnswerIndex: number
+    context?: string
+  }>
 }
 
 const baseValues: ReviewValues = {
@@ -188,5 +193,38 @@ describe('QuizReviewStep', () => {
     const rendered = text(mountStep())
 
     expect(new RegExp('\\?\\.\\s*Bordeaux').test(rendered)).toBe(true)
+  })
+
+  it('renders the question context as Markdown between the question line and its options', () => {
+    const wrapper = mountStep({
+      questions: [
+        {
+          text: 'What is the capital of France?',
+          options: ['Paris', 'Lyon'],
+          correctAnswerIndex: 0,
+          context: 'Hint: it starts with **P**.',
+        },
+      ],
+    })
+
+    const prose = wrapper.find('.quiz-prose')
+    expect(prose.exists()).toBe(true)
+    expect(prose.find('strong').text()).toBe('P')
+    expect(prose.text()).not.toContain('**P**')
+
+    const rendered = text(wrapper)
+    const question = rendered.indexOf('1. What is the capital of France?')
+    const context = rendered.indexOf('Hint: it starts with P.')
+    const options = rendered.indexOf('A. Paris')
+
+    expect(question).toBeGreaterThanOrEqual(0)
+    expect(context).toBeGreaterThan(question)
+    expect(options).toBeGreaterThan(context)
+  })
+
+  it('renders no prose block when no question carries a context', () => {
+    const wrapper = mountStep()
+
+    expect(wrapper.find('.quiz-prose').exists()).toBe(false)
   })
 })

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { ItCard, ItCardActions, ItCardBody, ItCardTitle } from '@/components/itheme'
-import { ItButton } from '@infinitylib/infinity-theme-vue'
+import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
 import type { Question } from '@/types'
 import type { QuestionOption } from '@/composables/useQuiz'
+import { MarkdownContent } from '../content'
+import QuizQuestionActions from './QuizQuestionActions.vue'
 
 interface Props {
   question: Question
@@ -16,6 +16,7 @@ interface Props {
   canSkip: boolean
   remainingSkips: number | null
   hasFeedbackEnabled: boolean
+  hasTimeLimit: boolean
 }
 
 const props = defineProps<Props>()
@@ -38,30 +39,21 @@ function optionState(originalIndex: number): string {
   if (props.selectedAnswer === originalIndex) return 'wrong'
   return 'plain'
 }
-
-const primaryLabel = computed(() => {
-  if (props.hasFeedbackEnabled && !props.isCurrentQuestionVerified && props.selectedAnswer !== null)
-    return 'Check'
-  return props.hasNextQuestion ? 'Next' : 'Finish'
-})
-
-const primaryDisabled = computed(() =>
-  props.hasFeedbackEnabled
-    ? props.selectedAnswer === null && !props.isCurrentQuestionVerified
-    : props.selectedAnswer === null,
-)
-
-function handlePrimary() {
-  if (props.hasFeedbackEnabled && !props.isCurrentQuestionVerified) emit('verify')
-  else if (props.hasFeedbackEnabled) emit('continue')
-  else emit('submit')
-}
 </script>
 
 <template>
   <ItCard border class="quiz-question-card">
     <ItCardBody size="lg">
       <ItCardTitle as="h2" size="lg">{{ question.text }}</ItCardTitle>
+
+      <MarkdownContent
+        v-if="question.context"
+        class="quiz-question-context"
+        role="group"
+        aria-label="Question context"
+        tabindex="0"
+        :source="question.context"
+      />
 
       <fieldset class="quiz-answer-grid">
         <legend class="it-sr-only">Answers</legend>
@@ -87,21 +79,21 @@ function handlePrimary() {
         </label>
       </fieldset>
 
-      <ItCardActions justify="between" class="quiz-question-actions">
-        <ItButton
-          variant="secondary"
-          :disabled="!hasPreviousQuestion || question.timeLimit !== undefined"
-          @click="emit('previous')"
-        >
-          Previous
-        </ItButton>
-        <ItButton v-if="canSkip" variant="ghost" :disabled="!canSkip" @click="emit('skip')">
-          Skip{{ remainingSkips !== null ? ` (${remainingSkips})` : '' }}
-        </ItButton>
-        <ItButton variant="primary" :disabled="primaryDisabled" @click="handlePrimary">
-          {{ primaryLabel }}
-        </ItButton>
-      </ItCardActions>
+      <QuizQuestionActions
+        :has-previous-question="hasPreviousQuestion"
+        :has-next-question="hasNextQuestion"
+        :can-skip="canSkip"
+        :remaining-skips="remainingSkips"
+        :has-feedback-enabled="hasFeedbackEnabled"
+        :is-current-question-verified="isCurrentQuestionVerified"
+        :selected-answer="selectedAnswer"
+        :has-time-limit="hasTimeLimit"
+        @previous="emit('previous')"
+        @skip="emit('skip')"
+        @verify="emit('verify')"
+        @continue="emit('continue')"
+        @submit="emit('submit')"
+      />
     </ItCardBody>
   </ItCard>
 </template>

@@ -1,0 +1,49 @@
+/*
+ * Rendered Markdown: the theme package already styles the bare elements, so
+ * this only sets the rhythm inside a card and keeps wide tables scrollable.
+ */
+@layer components {
+  .quiz-prose {
+    overflow-wrap: anywhere;
+  }
+
+  .quiz-prose > :first-child {
+    margin-block-start: 0;
+  }
+
+  .quiz-prose > :last-child {
+    margin-block-end: 0;
+  }
+
+  .quiz-prose pre {
+    max-inline-size: 100%;
+  }
+
+  /* A table cannot scroll on its own: it becomes a scroll container. */
+  .quiz-prose table {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+
+  /* The context is a bounded region: a long passage scrolls inside it instead
+   * of pushing the answers out of the panel. A thin scrollbar is the cue, so
+   * no extra frame competes with the code block's own border. */
+  .quiz-question-context {
+    max-block-size: 14rem;
+    margin-block: var(--it-space-3) var(--it-space-4);
+    overflow-y: auto;
+    scrollbar-color: var(--it-border) transparent;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+  }
+
+  .quiz-question-context:focus-visible {
+    outline: var(--it-focus-width) solid var(--it-focus-ring);
+    outline-offset: var(--it-focus-offset);
+  }
+
+  .quiz-review-context {
+    margin-block: var(--it-space-2) var(--it-space-3);
+  }
+}

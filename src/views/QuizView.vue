@@ -88,6 +88,7 @@ watch(
       :can-skip="canSkip"
       :remaining-skips="remainingSkips"
       :has-feedback-enabled="hasFeedbackEnabled"
+      :has-time-limit="currentQuestion.timeLimit !== undefined"
       @select="selectAnswer"
       @previous="goToPrevious"
       @skip="skipQuestion"

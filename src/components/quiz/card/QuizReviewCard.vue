@@ -4,6 +4,7 @@ import { PhCheckCircle, PhXCircle, PhArrowClockwise } from '@phosphor-icons/vue'
 import { ItBadge, ItCard, ItCardBody } from '@/components/itheme'
 import type { WidgetVariant } from '@/components/itheme'
 import type { QuestionResult } from '@/types'
+import { MarkdownContent } from '../content'
 
 interface Props {
   questionResult: QuestionResult
@@ -53,6 +54,11 @@ const correctAnswerText = computed(
         </ItBadge>
         <h3 class="quiz-review-question-title">{{ questionResult.question.text }}</h3>
       </div>
+
+      <MarkdownContent
+        v-if="questionResult.question.context"
+        :source="questionResult.question.context"
+      />
 
       <ul class="quiz-review-answer-list">
         <li
