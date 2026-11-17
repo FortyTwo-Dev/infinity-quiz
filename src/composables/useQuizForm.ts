@@ -59,6 +59,7 @@ function quizToFormValues(quiz: Quiz): QuizFormValues {
     questions: quiz.questions.map((q) => ({
       id: q.id,
       text: q.text,
+      context: q.context,
       options: [...q.options],
       correctAnswerIndex: q.correctAnswerIndex,
       timeLimit: q.timeLimit,
@@ -86,6 +87,7 @@ function formValuesToQuiz(values: QuizFormValues, quizId: string): Quiz {
       // Reuse the existing id when editing; assign one for new questions.
       id: q.id ?? `q-${Date.now()}-${index}`,
       text: q.text,
+      context: q.context?.trim() || undefined,
       options: q.options,
       correctAnswerIndex: q.correctAnswerIndex,
       timeLimit: q.timeLimit,

@@ -1,4 +1,4 @@
-import { accessibleName, normalize } from '../../support/accessibility'
+import { normalize } from '../../support/accessibility'
 import { describe, it, expect } from 'vitest'
 import { nextTick } from 'vue'
 import QuizQuestionFields from '../../../components/quiz/form/QuizQuestionFields.vue'
@@ -11,13 +11,12 @@ import {
 } from '../../support/form'
 
 function questionTextControl(wrapper: Wrapper) {
-  const textareas = wrapper.findAll('textarea')
-  if (textareas.length > 0) return textareas[0]
+  const byName = controlMatching(wrapper, /Question text/i)
+  if (byName) return byName
 
-  return wrapper.findAll('input').find((candidate) => {
-    const haystack = `${accessibleName(candidate.element)} ${candidate.attributes('name') ?? ''}`
-    return !/option/i.test(haystack)
-  })
+  return wrapper
+    .findAll('textarea, input')
+    .find((candidate) => /^question-\d+-text$/.test(candidate.attributes('id') ?? ''))
 }
 
 function mountStep(
@@ -37,6 +36,21 @@ function mountStep(
 
 function stepComponent(wrapper: Wrapper) {
   return wrapper.findComponent(QuizQuestionFields)
+}
+
+/** Reveal the advanced section when the step still starts it collapsed. */
+async function expandAdvanced(wrapper: Wrapper) {
+  const toggle = control(wrapper, 'Advanced options')
+  if (toggle && toggle.attributes('aria-expanded') === 'false') {
+    await toggle.trigger('click')
+    await nextTick()
+  }
+}
+
+const contextLabel = 'Context (optional, Markdown)'
+
+function contextField(wrapper: Wrapper) {
+  return control(wrapper, contextLabel)
 }
 
 describe('QuizQuestionFields', () => {
@@ -140,5 +154,78 @@ describe('QuizQuestionFields', () => {
     expect(controlMatching(wrapper, /explanation/i)).toBeDefined()
     expect(controlMatching(wrapper, /time limit/i)).toBeDefined()
     expect(controlMatching(wrapper, /shuffle/i)).toBeDefined()
+  })
+
+  it('renders a Markdown context textarea keyed to the question index', async () => {
+    const { wrapper } = mountStep()
+    await expandAdvanced(wrapper)
+
+    const field = contextField(wrapper)
+    expect(field).toBeDefined()
+    expect(field!.element.tagName).toBe('TEXTAREA')
+    expect(field!.attributes('id')).toBe('question-0-context')
+  })
+
+  it('indexes the context textarea after the questionIndex prop', async () => {
+    const { wrapper } = mountStep({ questionIndex: 1 }, 2)
+    await expandAdvanced(wrapper)
+
+    expect(contextField(wrapper)?.attributes('id')).toBe('question-1-context')
+  })
+
+  it('stores the context in the form', async () => {
+    const { wrapper, form } = mountStep()
+    await expandAdvanced(wrapper)
+
+    await contextField(wrapper)!.setValue('Use **markdown**')
+    await nextTick()
+
+    expect(form.values.questions[0].context).toBe('Use **markdown**')
+  })
+
+  it('starts in Write mode with both context toggles exposed', async () => {
+    const { wrapper } = mountStep()
+    await expandAdvanced(wrapper)
+
+    expect(control(wrapper, 'Write')?.attributes('aria-pressed')).toBe('true')
+    expect(control(wrapper, 'Preview')?.attributes('aria-pressed')).toBe('false')
+  })
+
+  it('previews the context as rendered HTML and returns to the textarea', async () => {
+    const { wrapper } = mountStep()
+    await expandAdvanced(wrapper)
+    await contextField(wrapper)!.setValue('Use **markdown**')
+    await nextTick()
+
+    await control(wrapper, 'Preview')!.trigger('click')
+    await nextTick()
+
+    const preview = wrapper.find('.quiz-context-preview')
+    expect(preview.exists()).toBe(true)
+    expect(preview.find('strong').text()).toBe('markdown')
+
+    await control(wrapper, 'Write')!.trigger('click')
+    await nextTick()
+
+    expect(contextField(wrapper)?.element.tagName).toBe('TEXTAREA')
+  })
+
+  it('says there is nothing to preview for an empty context', async () => {
+    const { wrapper } = mountStep()
+    await expandAdvanced(wrapper)
+
+    await control(wrapper, 'Preview')!.trigger('click')
+    await nextTick()
+
+    expect(normalize(wrapper.find('.quiz-context-preview').text())).toContain(
+      'Nothing to preview yet.',
+    )
+  })
+
+  it('labelled the explanation as Markdown', async () => {
+    const { wrapper } = mountStep()
+    await expandAdvanced(wrapper)
+
+    expect(controlMatching(wrapper, /explanation[\s\S]*markdown/i)).toBeDefined()
   })
 })

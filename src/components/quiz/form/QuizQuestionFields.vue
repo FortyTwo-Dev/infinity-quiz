@@ -4,6 +4,7 @@ import { Field, useFieldArray } from 'vee-validate'
 import { ItCard, ItCardBody, ItCardTitle } from '@/components/itheme'
 import { ItButton, ItCheckbox, ItField, ItInput, ItTextarea } from '@infinitylib/infinity-theme-vue'
 import { PhPlus, PhTrash, PhCaretDown, PhCaretUp } from '@phosphor-icons/vue'
+import { MarkdownContent } from '../content'
 
 interface Props {
   questionIndex: number
@@ -16,6 +17,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{ remove: [] }>()
 
 const showAdvanced = ref(false)
+const showContextPreview = ref(false)
 
 const basePath = computed(() => `questions[${props.questionIndex}]` as const)
 
@@ -66,6 +68,52 @@ function removeOptionAt(optionIndex: number) {
             @update:model-value="field.onChange"
             @blur="field.onBlur"
           />
+        </ItField>
+      </Field>
+
+      <Field v-slot="{ field }" :name="`${basePath}.context`">
+        <ItField
+          label="Context (optional, Markdown)"
+          :html-for="`question-${questionIndex}-context`"
+          hint="A code sample, a quotation, a table: what the question refers to. Links open in a new tab."
+        >
+          <div class="quiz-context-editor">
+            <div class="quiz-context-tools" role="group" aria-label="Context preview">
+              <ItButton
+                type="button"
+                size="sm"
+                :variant="showContextPreview ? 'ghost' : 'secondary'"
+                :aria-pressed="!showContextPreview"
+                @click="showContextPreview = false"
+              >
+                Write
+              </ItButton>
+              <ItButton
+                type="button"
+                size="sm"
+                :variant="showContextPreview ? 'secondary' : 'ghost'"
+                :aria-pressed="showContextPreview"
+                @click="showContextPreview = true"
+              >
+                Preview
+              </ItButton>
+            </div>
+
+            <ItTextarea
+              v-show="!showContextPreview"
+              :id="`question-${questionIndex}-context`"
+              :model-value="field.value ?? ''"
+              :rows="4"
+              placeholder="Write Markdown shown with the question"
+              @update:model-value="field.onChange"
+              @blur="field.onBlur"
+            />
+
+            <div v-show="showContextPreview" class="quiz-context-preview">
+              <MarkdownContent v-if="field.value" :source="field.value" />
+              <p v-else class="quiz-context-empty">Nothing to preview yet.</p>
+            </div>
+          </div>
         </ItField>
       </Field>
 
@@ -139,7 +187,7 @@ function removeOptionAt(optionIndex: number) {
         >
           <Field v-slot="{ field }" :name="`${basePath}.explanation`">
             <ItField
-              label="Explanation (shown with feedback)"
+              label="Explanation (Markdown, shown with feedback)"
               :html-for="`question-${questionIndex}-explanation`"
             >
               <ItTextarea
